@@ -1,1 +1,30 @@
-# care-navigator
+# Care-pacity Planner
+
+Helps a family get from "something has happened to Mum" to "we know roughly what care will cost us and exactly who to call", in one sitting, before they talk to the system. It's a static site, built for Singapore family caregivers of older parents.
+
+**Repository:** https://github.com/gabrielneo/care-navigator · **Planned site:** https://care-pacity-planner.vercel.app
+
+**Status:** an unpublicised prototype. Figures and wording have not yet been reviewed by a care professional. Working name: Caregiver Navigator.
+
+## Where things are
+
+| Path | What |
+|---|---|
+| `PRODUCT.md` | Product record (users, purpose, constraints) |
+| `docs/product-design-v2.md` | Product and solution design, including the pre-build checklist |
+| `docs/architecture-prompts-v2.md` | The six build stages |
+| `docs/specs/` | Approved specs 06–11 (navigation, legal text, wording, edge cases, data contract, sharing) |
+| `docs/adr/` | Architecture decision records |
+| `docs/verified/` | Facts checked against official sources, with dates |
+| `docs/brand/` | Colour tokens (warm palette), icons, preview image |
+| `docs/wireframes/index.html` | Lo-fi wireframes of every screen |
+| `data/curated/` | Hand-curated rules, prices, grants and contacts (YAML; every row has a source) |
+| `pipeline/` | Python 3.12 pipeline that validates the YAML and builds the JSON the site reads (Stage 2) |
+| `web/` | Next.js static site (Stages 3–5). `web/public/data/` holds the built JSON |
+| `reports/`, `research_notes/` | The research behind the design |
+
+## Ground rules
+
+- No server, no database, and no outside service at run time. Nothing a user enters is stored.
+- Every figure traces to a row in `data/curated/source_registry.yaml`, with a `checked_on` date.
+- Re-check subsidy, grant and price tables after each February Budget and March Committee of Supply.

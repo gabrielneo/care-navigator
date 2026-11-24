@@ -1,0 +1,99 @@
+# Matching rules: which answers suggest which service. Reason lines come from docs/specs/08 (not yet practitioner-reviewed).
+# Each condition is a list of clauses that must ALL hold. Clause forms:
+#   {q: <question>, in: [values]}       the answer is one of these values
+#   {q: adl, any: [activities]}         she needs help with at least one of these activities
+#   {q: adl, none: true}                she needs help with none of the activities
+#   {q: discharged, is: false}          for the in-hospital branch: not yet discharged
+# Questions and values (docs/specs/10 session object):
+#   where: in_hospital | changed_at_home | struggling | in_nursing_home
+#   adl: bath, dress, eat, toilet, move, transfer
+#   alone: weekdays | most | no | unsure       memory: dx | undx | no | unsure
+#   helper: yes | considering | no | unsure    limits: ok | tired | cant | unsure
+#   med: true | false   (the "Medical care at home" card on question 2b; not one of the 6 activities, so it never counts toward adlCount)
+# priority: lower number shows first. At most 5 are shown (edge case 12).
+rules:
+  - rule_id: R01
+    service_id: interim_caregiver_service
+    when:
+      - {q: where, in: [in_hospital]}
+      - {q: discharged, is: false}
+    reason_text: Ask the ward team before she leaves. Some help can only be requested from there.
+    priority: 1
+    source_id: thk_ics
+  - rule_id: R02
+    service_id: dementia_day_care
+    when:
+      - {q: alone, in: [weekdays, most]}
+      - {q: memory, in: [dx, undx]}
+    reason_text: Staff trained in dementia care look after her during the day.
+    priority: 2
+    source_id: aic_day_care
+  - rule_id: R03
+    service_id: day_care
+    when:
+      - {q: alone, in: [weekdays, most]}
+      - {q: memory, in: ["no", unsure]}
+      - {q: adl, any: [bath, dress, eat, toilet, move, transfer]}
+    reason_text: Someone is with her while you're at work.
+    priority: 2
+    source_id: aic_day_care
+  - rule_id: R04
+    service_id: home_personal_care
+    when:
+      - {q: adl, any: [bath, dress, toilet]}
+    reason_text: A trained carer helps with daily care at home.
+    priority: 3
+    source_id: aic_home_personal_care
+  - rule_id: R05
+    service_id: home_therapy
+    when:
+      - {q: where, in: [in_hospital]}
+      - {q: adl, any: [move, transfer]}
+    reason_text: Therapy helps her get back her strength and movement.
+    priority: 4
+    source_id: moh_nonres_subsidy
+  - rule_id: R06
+    service_id: centre_rehab
+    when:
+      - {q: where, in: [changed_at_home]}
+      - {q: adl, any: [move, transfer]}
+    reason_text: Therapy helps her get back her strength and movement.
+    priority: 4
+    source_id: moh_nonres_subsidy
+  - rule_id: R07
+    service_id: medical_escort
+    when:
+      - {q: adl, any: [move]}
+    reason_text: Someone gets her safely to clinic visits.
+    priority: 6
+    source_id: moh_nonres_subsidy
+  - rule_id: R08
+    service_id: meals_on_wheels
+    when:
+      - {q: adl, any: [eat]}
+    reason_text: Regular meals arrive at her door.
+    priority: 6
+    source_id: moh_nonres_subsidy
+  - rule_id: R09
+    service_id: respite
+    when:
+      - {q: limits, in: [tired, cant]}
+    reason_text: You need a break too. This gives you one.
+    priority: 5
+    source_id: moh_res_subsidy
+  - rule_id: R10
+    service_id: active_ageing_centre
+    when:
+      - {q: alone, in: [weekdays, most]}
+      - {q: memory, in: ["no"]}
+      - {q: adl, none: true}
+    reason_text: Company and activities close to home.
+    priority: 7
+    source_id: aic_aac
+  - rule_id: R11
+    service_id: home_nursing
+    when:
+      - {q: med, is: true}
+    reason_text: A nurse handles the medical care at home.
+    priority: 3
+    source_id: aic_home_nursing

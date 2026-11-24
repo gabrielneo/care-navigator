@@ -1,0 +1,50 @@
+# Rebuilds web/public/data/ from the curated YAML and five open data.gov.sg layers.
+# Runs on curated-data edits, every Monday, and on demand. Commits the JSON only when it changed;
+# Vercel's Git integration then redeploys the site. No GitHub Releases, no deploy hook (review fix 7).
+name: data
+
+on:
+  push:
+    branches: [main]
+    paths: ["data/curated/**", "pipeline/**"]
+  schedule:
+    - cron: "0 1 * * 1"        # Mondays 09:00 Singapore time
+  workflow_dispatch:
+
+permissions:
+  contents: write              # to commit the rebuilt JSON; nothing else (checklist item 12)
+
+concurrency:
+  group: data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+      - run: pip install -r pipeline/requirements.txt
+      - name: Test the pipeline
+        run: python -m pytest pipeline -q
+      - name: Build the data release
+        run: python -m pipeline.build_release
+      - name: Check the committed schema is current
+        run: |
+          python -m pipeline.export_schema
+          git diff --exit-code web/src/lib/data/schema.json
+      - name: Commit changed data
+        run: |
+          if git diff --quiet web/public/data; then
+            echo "No data change."
+          else
+            git config user.name "care-navigator-data-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add web/public/data
+            git commit -m "data: rebuild release $(python -c 'import json;print(json.load(open("web/public/data/manifest.json"))["dataVersion"])')"
+            git push
+          fi

@@ -1,0 +1,44 @@
+# Opens a reminder issue: monthly for sources and contacts due for review, and after each Budget (Feb) and
+# Committee of Supply (Mar) to re-check every subsidy, grant and price table.
+name: review
+
+on:
+  schedule:
+    - cron: "0 1 1 * *"        # 1st of every month, 09:00 Singapore time
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml==6.0.2
+      - name: Write the reminder
+        run: |
+          python - <<'PY' > body.md
+          import yaml, datetime
+          today = datetime.date.today()
+          soon = today + datetime.timedelta(days=31)
+          src = yaml.safe_load(open("data/curated/source_registry.yaml"))["sources"]
+          con = yaml.safe_load(open("data/curated/contacts.yaml"))["contacts"]
+          due = [s for s in src if s["next_review"] <= soon]
+          old = [c for c in con if (today - c["checked_on"]).days > 60]
+          print("Sources due for review by", soon, ":\n")
+          print("\n".join(f"- [ ] `{s['source_id']}`: [{s['title']}]({s['url']}) (review by {s['next_review']})" for s in due) or "- none")
+          print("\nContacts last checked over 60 days ago:\n")
+          print("\n".join(f"- [ ] `{c['contact_id']}` {c['name']} (checked {c['checked_on']})" for c in old) or "- none")
+          if today.month in (3, 4):
+              print("\n**Budget / Committee of Supply season:** re-check every table in `subsidy_tiers.yaml`, `grant_rules.yaml` and `price_references.yaml` against the official pages, from raw HTML.")
+          print("\nAfter checking, update `checked_on` and `next_review` and push; the data workflow rebuilds the release.")
+          PY
+      - name: Open the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Data review $(date +%Y-%m)" --body-file body.md

@@ -1,0 +1,71 @@
+# One branch per answer to "Where is Mum right now?". Answer labels reuse AIC's Care Services Recommender wording
+# (docs/verified/gate1-recommender-walkthrough-2026-11-25.md). Ask lists come from docs/specs/08 (not yet practitioner-reviewed).
+answers:
+  - label: Soon to be discharged from hospital
+    branch_id: in_hospital
+    discharged: false
+  - label: Recently discharged from hospital (within 2 weeks)
+    branch_id: in_hospital
+    discharged: true
+  - label: Living at home, and something has just changed
+    branch_id: changed_at_home
+  - label: Living at home, and we're struggling to cope
+    branch_id: struggling
+  - label: In a nursing home
+    branch_id: in_nursing_home
+  - label: Not sure
+    branch_id: changed_at_home
+    not_sure: true
+branches:
+  - branch_id: in_hospital
+    first_contact: The medical social worker on her ward
+    flags: [show_ward_only_services]
+    ask_list:
+      - When is she likely to be discharged?
+      - Can you refer her for short-term help at home, like the Interim Caregiver Service or Hospital-to-Home?
+      - Can you start the single assessment and care plan before she leaves?
+      - Which services can you refer her to from here?
+      - Can she be assessed for the Home Caregiving Grant?
+      - Who do I call if things go wrong in the first week at home?
+    ask_list_conditions:
+      "Can she be assessed for the Home Caregiving Grant?": {adl_min: 3}
+    timeline_notes:
+      - Short-term help after discharge usually lasts about 2 weeks to 2 months.
+      - Ward-only services drop off once she has been discharged.
+    links:
+      - {label: "AIC's discharge tips", source_id: aic_csr}
+    source_ids: [thk_ics, sgh_h2h, agewellsg_care_plan, aic_csr]
+  - branch_id: changed_at_home
+    first_contact: Her GP, a polyclinic doctor or an AIC Link
+    flags: []
+    ask_list:
+      - Can you assess what care she needs now?
+      - Can you refer her for the services in this plan?
+      - Which subsidy range is she in, and how do we confirm it?
+      - Is there a waiting list, and what can we use until then?
+    timeline_notes: []
+    source_ids: [aic_day_care, agewellsg_care_plan]
+  - branch_id: struggling
+    first_contact: An AIC Link, or the AIC hotline on 1800-650-6060
+    flags: [lead_with_respite]
+    ask_list:
+      - What respite care can we get soon?
+      - Can she go to day care while I work or rest?
+      - What caregiver support or training is there near us?
+      - Am I likely to qualify for the Home Caregiving Grant or the Caregivers Training Grant?
+    timeline_notes: []
+    source_ids: [aic_contact_links, tfb_caregivers]
+  - branch_id: in_nursing_home
+    first_contact: The nursing home's office
+    flags: [skip_matching, show_nursing_home_cost]
+    ask_list:
+      - What will we pay each month after subsidy?
+      - Can CareShield Life, MediSave Care or ElderFund payouts go straight to you?
+      - What isn't included in the monthly fee?
+    timeline_notes:
+      - "Median wait for a subsidised nursing home bed: about 1 month (general), 2–4 months (psychiatric). MOH, Aug 2024."
+    source_ids: [aic_nursing_home, moh_nh_wait, renci_fees]
+dementia_flag:
+  when: {q: memory, in: [dx, undx]}
+  note: "Dementia day care and psychiatric nursing home beds usually have longer waits. Psychiatric nursing home median: 2–4 months (MOH, Aug 2024)."
+  source_id: moh_nh_wait

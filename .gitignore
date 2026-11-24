@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Raw open-data snapshots (rebuilt by the pipeline)
+data/raw/*
+!data/raw/.gitkeep
+
+# Node / Next.js
+node_modules/
+web/.next/
+web/out/
+*.tsbuildinfo
+
+# Impeccable runtime files (config.json is kept)
+.impeccable/shots/
+.impeccable/hook.cache.json
+
+# OS
+.DS_Store

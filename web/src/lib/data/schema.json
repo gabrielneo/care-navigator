@@ -1,0 +1,1473 @@
+{
+ "rules.json": {
+  "$defs": {
+   "Branch": {
+    "additionalProperties": false,
+    "properties": {
+     "branchId": {
+      "enum": [
+       "in_hospital",
+       "changed_at_home",
+       "struggling",
+       "in_nursing_home"
+      ],
+      "title": "Branchid",
+      "type": "string"
+     },
+     "firstContact": {
+      "title": "Firstcontact",
+      "type": "string"
+     },
+     "flags": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Flags",
+      "type": "array"
+     },
+     "askList": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Asklist",
+      "type": "array"
+     },
+     "askListConditions": {
+      "anyOf": [
+       {
+        "additionalProperties": {
+         "additionalProperties": {
+          "type": "integer"
+         },
+         "type": "object"
+        },
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Asklistconditions"
+     },
+     "timelineNotes": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Timelinenotes",
+      "type": "array"
+     },
+     "links": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/$defs/Link"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Links"
+     },
+     "sourceIds": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Sourceids",
+      "type": "array"
+     }
+    },
+    "required": [
+     "branchId",
+     "firstContact",
+     "flags",
+     "askList",
+     "timelineNotes",
+     "sourceIds"
+    ],
+    "title": "Branch",
+    "type": "object"
+   },
+   "BranchAnswer": {
+    "additionalProperties": false,
+    "properties": {
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "branchId": {
+      "enum": [
+       "in_hospital",
+       "changed_at_home",
+       "struggling",
+       "in_nursing_home"
+      ],
+      "title": "Branchid",
+      "type": "string"
+     },
+     "discharged": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Discharged"
+     },
+     "notSure": {
+      "default": false,
+      "title": "Notsure",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "label",
+     "branchId"
+    ],
+    "title": "BranchAnswer",
+    "type": "object"
+   },
+   "BranchRules": {
+    "additionalProperties": false,
+    "properties": {
+     "answers": {
+      "items": {
+       "$ref": "#/$defs/BranchAnswer"
+      },
+      "title": "Answers",
+      "type": "array"
+     },
+     "branches": {
+      "items": {
+       "$ref": "#/$defs/Branch"
+      },
+      "title": "Branches",
+      "type": "array"
+     },
+     "dementiaFlag": {
+      "$ref": "#/$defs/DementiaFlag"
+     }
+    },
+    "required": [
+     "answers",
+     "branches",
+     "dementiaFlag"
+    ],
+    "title": "BranchRules",
+    "type": "object"
+   },
+   "Clause": {
+    "additionalProperties": false,
+    "properties": {
+     "q": {
+      "enum": [
+       "where",
+       "discharged",
+       "adl",
+       "alone",
+       "memory",
+       "helper",
+       "limits",
+       "med"
+      ],
+      "title": "Q",
+      "type": "string"
+     },
+     "in": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "In"
+     },
+     "any": {
+      "anyOf": [
+       {
+        "items": {
+         "enum": [
+          "bath",
+          "dress",
+          "eat",
+          "toilet",
+          "move",
+          "transfer"
+         ],
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Any"
+     },
+     "none": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "None"
+     },
+     "is": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Is"
+     }
+    },
+    "required": [
+     "q"
+    ],
+    "title": "Clause",
+    "type": "object"
+   },
+   "DementiaFlag": {
+    "additionalProperties": false,
+    "properties": {
+     "when": {
+      "$ref": "#/$defs/Clause"
+     },
+     "note": {
+      "title": "Note",
+      "type": "string"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "when",
+     "note",
+     "sourceId"
+    ],
+    "title": "DementiaFlag",
+    "type": "object"
+   },
+   "GrantRule": {
+    "additionalProperties": false,
+    "properties": {
+     "grantId": {
+      "title": "Grantid",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "grant",
+       "payout",
+       "concession"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "period": {
+      "enum": [
+       "month",
+       "once_then_yearly"
+      ],
+      "title": "Period",
+      "type": "string"
+     },
+     "amountByBand": {
+      "additionalProperties": {
+       "type": "number"
+      },
+      "title": "Amountbyband",
+      "type": "object"
+     },
+     "amountIsMaximum": {
+      "default": false,
+      "title": "Amountismaximum",
+      "type": "boolean"
+     },
+     "amountMeaning": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Amountmeaning"
+     },
+     "minAdl": {
+      "maximum": 6,
+      "minimum": 0,
+      "title": "Minadl",
+      "type": "integer"
+     },
+     "altMinAge": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Altminage"
+     },
+     "requiresHelper": {
+      "default": false,
+      "title": "Requireshelper",
+      "type": "boolean"
+     },
+     "citizensOnly": {
+      "default": false,
+      "title": "Citizensonly",
+      "type": "boolean"
+     },
+     "otherConditions": {
+      "title": "Otherconditions",
+      "type": "string"
+     },
+     "officialUrl": {
+      "title": "Officialurl",
+      "type": "string"
+     },
+     "officialSourceId": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Officialsourceid"
+     },
+     "standardLevySourceId": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Standardlevysourceid"
+     },
+     "effectiveFrom": {
+      "format": "date",
+      "title": "Effectivefrom",
+      "type": "string"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "grantId",
+     "name",
+     "kind",
+     "period",
+     "amountByBand",
+     "minAdl",
+     "otherConditions",
+     "officialUrl",
+     "effectiveFrom",
+     "sourceId"
+    ],
+    "title": "GrantRule",
+    "type": "object"
+   },
+   "GrantStep": {
+    "additionalProperties": false,
+    "properties": {
+     "grantId": {
+      "title": "Grantid",
+      "type": "string"
+     },
+     "steps": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Steps"
+     },
+     "extraDocuments": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Extradocuments"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "grantId",
+     "sourceId"
+    ],
+    "title": "GrantStep",
+    "type": "object"
+   },
+   "HowToApply": {
+    "additionalProperties": false,
+    "properties": {
+     "alwaysBring": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Alwaysbring",
+      "type": "array"
+     },
+     "routes": {
+      "items": {
+       "$ref": "#/$defs/Route"
+      },
+      "title": "Routes",
+      "type": "array"
+     },
+     "grantSteps": {
+      "items": {
+       "$ref": "#/$defs/GrantStep"
+      },
+      "title": "Grantsteps",
+      "type": "array"
+     }
+    },
+    "required": [
+     "alwaysBring",
+     "routes",
+     "grantSteps"
+    ],
+    "title": "HowToApply",
+    "type": "object"
+   },
+   "Link": {
+    "additionalProperties": false,
+    "properties": {
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "label",
+     "sourceId"
+    ],
+    "title": "Link",
+    "type": "object"
+   },
+   "NeedRule": {
+    "additionalProperties": false,
+    "properties": {
+     "ruleId": {
+      "title": "Ruleid",
+      "type": "string"
+     },
+     "serviceId": {
+      "title": "Serviceid",
+      "type": "string"
+     },
+     "when": {
+      "items": {
+       "$ref": "#/$defs/Clause"
+      },
+      "title": "When",
+      "type": "array"
+     },
+     "reasonText": {
+      "title": "Reasontext",
+      "type": "string"
+     },
+     "priority": {
+      "minimum": 1,
+      "title": "Priority",
+      "type": "integer"
+     },
+     "enabled": {
+      "default": true,
+      "title": "Enabled",
+      "type": "boolean"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Note"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "ruleId",
+     "serviceId",
+     "when",
+     "reasonText",
+     "priority",
+     "sourceId"
+    ],
+    "title": "NeedRule",
+    "type": "object"
+   },
+   "PriceReference": {
+    "additionalProperties": false,
+    "properties": {
+     "serviceId": {
+      "title": "Serviceid",
+      "type": "string"
+     },
+     "unit": {
+      "title": "Unit",
+      "type": "string"
+     },
+     "priceLowSgd": {
+      "exclusiveMinimum": 0.0,
+      "title": "Pricelowsgd",
+      "type": "number"
+     },
+     "lowSourceId": {
+      "title": "Lowsourceid",
+      "type": "string"
+     },
+     "lowConfidence": {
+      "enum": [
+       "official",
+       "provider",
+       "aggregator"
+      ],
+      "title": "Lowconfidence",
+      "type": "string"
+     },
+     "priceHighSgd": {
+      "exclusiveMinimum": 0.0,
+      "title": "Pricehighsgd",
+      "type": "number"
+     },
+     "highSourceId": {
+      "title": "Highsourceid",
+      "type": "string"
+     },
+     "highConfidence": {
+      "enum": [
+       "official",
+       "provider",
+       "aggregator"
+      ],
+      "title": "Highconfidence",
+      "type": "string"
+     },
+     "derived": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Derived"
+     },
+     "realBillAnchor": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/RealBillAnchor"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null
+     },
+     "checkedOn": {
+      "format": "date",
+      "title": "Checkedon",
+      "type": "string"
+     }
+    },
+    "required": [
+     "serviceId",
+     "unit",
+     "priceLowSgd",
+     "lowSourceId",
+     "lowConfidence",
+     "priceHighSgd",
+     "highSourceId",
+     "highConfidence",
+     "checkedOn"
+    ],
+    "title": "PriceReference",
+    "type": "object"
+   },
+   "PriceReferences": {
+    "additionalProperties": false,
+    "properties": {
+     "gstSourceId": {
+      "title": "Gstsourceid",
+      "type": "string"
+     },
+     "prices": {
+      "items": {
+       "$ref": "#/$defs/PriceReference"
+      },
+      "title": "Prices",
+      "type": "array"
+     }
+    },
+    "required": [
+     "gstSourceId",
+     "prices"
+    ],
+    "title": "PriceReferences",
+    "type": "object"
+   },
+   "Rates": {
+    "additionalProperties": false,
+    "properties": {
+     "scLe1969": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Scle1969",
+      "type": "integer"
+     },
+     "scGt1969": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Scgt1969",
+      "type": "integer"
+     },
+     "pr": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Pr",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "scLe1969",
+     "scGt1969",
+     "pr"
+    ],
+    "title": "Rates",
+    "type": "object"
+   },
+   "RealBillAnchor": {
+    "additionalProperties": false,
+    "properties": {
+     "low": {
+      "title": "Low",
+      "type": "number"
+     },
+     "high": {
+      "title": "High",
+      "type": "number"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "low",
+     "high",
+     "sourceId"
+    ],
+    "title": "RealBillAnchor",
+    "type": "object"
+   },
+   "Route": {
+    "additionalProperties": false,
+    "properties": {
+     "applyId": {
+      "title": "Applyid",
+      "type": "string"
+     },
+     "firstContact": {
+      "title": "Firstcontact",
+      "type": "string"
+     },
+     "steps": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Steps",
+      "type": "array"
+     },
+     "extraDocuments": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Extradocuments",
+      "type": "array"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "applyId",
+     "firstContact",
+     "steps",
+     "extraDocuments",
+     "sourceId"
+    ],
+    "title": "Route",
+    "type": "object"
+   },
+   "ServiceType": {
+    "additionalProperties": false,
+    "properties": {
+     "serviceId": {
+      "title": "Serviceid",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "officialTerm": {
+      "title": "Officialterm",
+      "type": "string"
+     },
+     "description": {
+      "title": "Description",
+      "type": "string"
+     },
+     "setting": {
+      "enum": [
+       "home",
+       "centre",
+       "residential",
+       "ward"
+      ],
+      "title": "Setting",
+      "type": "string"
+     },
+     "scheme": {
+      "anyOf": [
+       {
+        "enum": [
+         "non_residential",
+         "residential"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Scheme"
+     },
+     "unit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Unit"
+     },
+     "defaultUnitsPerWeek": {
+      "anyOf": [
+       {
+        "maximum": 7,
+        "minimum": 1,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Defaultunitsperweek"
+     },
+     "blockHours": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Blockhours"
+     },
+     "wardOnly": {
+      "default": false,
+      "title": "Wardonly",
+      "type": "boolean"
+     },
+     "howToApplyId": {
+      "title": "Howtoapplyid",
+      "type": "string"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "serviceId",
+     "name",
+     "officialTerm",
+     "description",
+     "setting",
+     "scheme",
+     "unit",
+     "howToApplyId",
+     "sourceId"
+    ],
+    "title": "ServiceType",
+    "type": "object"
+   },
+   "SubsidyScheme": {
+    "additionalProperties": false,
+    "properties": {
+     "scheme": {
+      "enum": [
+       "non_residential",
+       "residential"
+      ],
+      "title": "Scheme",
+      "type": "string"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     },
+     "rates": {
+      "additionalProperties": {
+       "$ref": "#/$defs/Rates"
+      },
+      "title": "Rates",
+      "type": "object"
+     }
+    },
+    "required": [
+     "scheme",
+     "sourceId",
+     "rates"
+    ],
+    "title": "SubsidyScheme",
+    "type": "object"
+   },
+   "SubsidyTiers": {
+    "additionalProperties": false,
+    "properties": {
+     "effectiveFrom": {
+      "format": "date",
+      "title": "Effectivefrom",
+      "type": "string"
+     },
+     "tiers": {
+      "items": {
+       "$ref": "#/$defs/Tier"
+      },
+      "title": "Tiers",
+      "type": "array"
+     },
+     "schemes": {
+      "items": {
+       "$ref": "#/$defs/SubsidyScheme"
+      },
+      "title": "Schemes",
+      "type": "array"
+     }
+    },
+    "required": [
+     "effectiveFrom",
+     "tiers",
+     "schemes"
+    ],
+    "title": "SubsidyTiers",
+    "type": "object"
+   },
+   "Tier": {
+    "additionalProperties": false,
+    "properties": {
+     "tierId": {
+      "enum": [
+       "T0",
+       "T1",
+       "T2",
+       "T3",
+       "T4",
+       "T5"
+      ],
+      "title": "Tierid",
+      "type": "string"
+     },
+     "pchiMin": {
+      "minimum": 0,
+      "title": "Pchimin",
+      "type": "integer"
+     },
+     "pchiMax": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Pchimax"
+     },
+     "avRule": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Avrule"
+     }
+    },
+    "required": [
+     "tierId",
+     "pchiMin"
+    ],
+    "title": "Tier",
+    "type": "object"
+   }
+  },
+  "additionalProperties": false,
+  "description": "rules.json: everything the engine needs to match and cost.",
+  "properties": {
+   "serviceTypes": {
+    "items": {
+     "$ref": "#/$defs/ServiceType"
+    },
+    "title": "Servicetypes",
+    "type": "array"
+   },
+   "needRules": {
+    "items": {
+     "$ref": "#/$defs/NeedRule"
+    },
+    "title": "Needrules",
+    "type": "array"
+   },
+   "branchRules": {
+    "$ref": "#/$defs/BranchRules"
+   },
+   "priceReferences": {
+    "$ref": "#/$defs/PriceReferences"
+   },
+   "subsidyTiers": {
+    "$ref": "#/$defs/SubsidyTiers"
+   },
+   "grantRules": {
+    "items": {
+     "$ref": "#/$defs/GrantRule"
+    },
+    "title": "Grantrules",
+    "type": "array"
+   },
+   "howToApply": {
+    "$ref": "#/$defs/HowToApply"
+   }
+  },
+  "required": [
+   "serviceTypes",
+   "needRules",
+   "branchRules",
+   "priceReferences",
+   "subsidyTiers",
+   "grantRules",
+   "howToApply"
+  ],
+  "title": "RulesBundle",
+  "type": "object"
+ },
+ "contacts.json": {
+  "$defs": {
+   "Contact": {
+    "additionalProperties": false,
+    "properties": {
+     "contactId": {
+      "title": "Contactid",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "aic_link",
+       "polyclinic"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "address": {
+      "title": "Address",
+      "type": "string"
+     },
+     "postalCode": {
+      "pattern": "^\\d{6}$",
+      "title": "Postalcode",
+      "type": "string"
+     },
+     "lat": {
+      "maximum": 1.48,
+      "minimum": 1.15,
+      "title": "Lat",
+      "type": "number"
+     },
+     "lng": {
+      "maximum": 104.1,
+      "minimum": 103.6,
+      "title": "Lng",
+      "type": "number"
+     },
+     "hours": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Hours"
+     },
+     "locationNote": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Locationnote"
+     },
+     "locationPrecision": {
+      "default": "exact",
+      "enum": [
+       "exact",
+       "sector"
+      ],
+      "title": "Locationprecision",
+      "type": "string"
+     },
+     "checkedOn": {
+      "format": "date",
+      "title": "Checkedon",
+      "type": "string"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "contactId",
+     "kind",
+     "name",
+     "address",
+     "postalCode",
+     "lat",
+     "lng",
+     "checkedOn",
+     "sourceId"
+    ],
+    "title": "Contact",
+    "type": "object"
+   },
+   "Hotline": {
+    "additionalProperties": false,
+    "properties": {
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "phone": {
+      "title": "Phone",
+      "type": "string"
+     },
+     "hours": {
+      "title": "Hours",
+      "type": "string"
+     },
+     "languages": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Languages",
+      "type": "array"
+     },
+     "checkedOn": {
+      "format": "date",
+      "title": "Checkedon",
+      "type": "string"
+     },
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     }
+    },
+    "required": [
+     "name",
+     "phone",
+     "hours",
+     "languages",
+     "checkedOn",
+     "sourceId"
+    ],
+    "title": "Hotline",
+    "type": "object"
+   }
+  },
+  "additionalProperties": false,
+  "description": "contacts.json.",
+  "properties": {
+   "contacts": {
+    "items": {
+     "$ref": "#/$defs/Contact"
+    },
+    "title": "Contacts",
+    "type": "array"
+   },
+   "hotline": {
+    "$ref": "#/$defs/Hotline"
+   }
+  },
+  "required": [
+   "contacts",
+   "hotline"
+  ],
+  "title": "ContactsBundle",
+  "type": "object"
+ },
+ "places.json": {
+  "$defs": {
+   "Place": {
+    "additionalProperties": false,
+    "properties": {
+     "placeId": {
+      "title": "Placeid",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "fsc",
+       "cc"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "name": {
+      "title": "Name",
+      "type": "string"
+     },
+     "address": {
+      "title": "Address",
+      "type": "string"
+     },
+     "postalCode": {
+      "pattern": "^\\d{6}$",
+      "title": "Postalcode",
+      "type": "string"
+     },
+     "lat": {
+      "maximum": 1.48,
+      "minimum": 1.15,
+      "title": "Lat",
+      "type": "number"
+     },
+     "lng": {
+      "maximum": 104.1,
+      "minimum": 103.6,
+      "title": "Lng",
+      "type": "number"
+     },
+     "featureUpdatedOn": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Featureupdatedon"
+     }
+    },
+    "required": [
+     "placeId",
+     "kind",
+     "name",
+     "address",
+     "postalCode",
+     "lat",
+     "lng"
+    ],
+    "title": "Place",
+    "type": "object"
+   }
+  },
+  "items": {
+   "$ref": "#/$defs/Place"
+  },
+  "type": "array"
+ },
+ "sectors.json": {
+  "$defs": {
+   "RegionCentre": {
+    "additionalProperties": false,
+    "properties": {
+     "lat": {
+      "maximum": 1.48,
+      "minimum": 1.15,
+      "title": "Lat",
+      "type": "number"
+     },
+     "lng": {
+      "maximum": 104.1,
+      "minimum": 103.6,
+      "title": "Lng",
+      "type": "number"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     }
+    },
+    "required": [
+     "lat",
+     "lng",
+     "label"
+    ],
+    "title": "RegionCentre",
+    "type": "object"
+   },
+   "SectorCentre": {
+    "additionalProperties": false,
+    "properties": {
+     "lat": {
+      "maximum": 1.48,
+      "minimum": 1.15,
+      "title": "Lat",
+      "type": "number"
+     },
+     "lng": {
+      "maximum": 104.1,
+      "minimum": 103.6,
+      "title": "Lng",
+      "type": "number"
+     },
+     "n": {
+      "minimum": 1,
+      "title": "N",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "lat",
+     "lng",
+     "n"
+    ],
+    "title": "SectorCentre",
+    "type": "object"
+   }
+  },
+  "additionalProperties": false,
+  "properties": {
+   "sectors": {
+    "additionalProperties": {
+     "$ref": "#/$defs/SectorCentre"
+    },
+    "title": "Sectors",
+    "type": "object"
+   },
+   "regions": {
+    "additionalProperties": {
+     "$ref": "#/$defs/RegionCentre"
+    },
+    "title": "Regions",
+    "type": "object"
+   }
+  },
+  "required": [
+   "sectors",
+   "regions"
+  ],
+  "title": "Sectors",
+  "type": "object"
+ },
+ "manifest.json": {
+  "$defs": {
+   "ManifestSource": {
+    "additionalProperties": false,
+    "properties": {
+     "sourceId": {
+      "title": "Sourceid",
+      "type": "string"
+     },
+     "title": {
+      "title": "Title",
+      "type": "string"
+     },
+     "url": {
+      "title": "Url",
+      "type": "string"
+     },
+     "licence": {
+      "title": "Licence",
+      "type": "string"
+     },
+     "checkedOn": {
+      "format": "date",
+      "title": "Checkedon",
+      "type": "string"
+     },
+     "nextReview": {
+      "format": "date",
+      "title": "Nextreview",
+      "type": "string"
+     }
+    },
+    "required": [
+     "sourceId",
+     "title",
+     "url",
+     "licence",
+     "checkedOn",
+     "nextReview"
+    ],
+    "title": "ManifestSource",
+    "type": "object"
+   }
+  },
+  "additionalProperties": false,
+  "properties": {
+   "dataVersion": {
+    "pattern": "^\\d{4}\\.\\d{2}\\.\\d{2}-\\d+$",
+    "title": "Dataversion",
+    "type": "string"
+   },
+   "builtAt": {
+    "title": "Builtat",
+    "type": "string"
+   },
+   "curatedHash": {
+    "title": "Curatedhash",
+    "type": "string"
+   },
+   "sources": {
+    "items": {
+     "$ref": "#/$defs/ManifestSource"
+    },
+    "title": "Sources",
+    "type": "array"
+   },
+   "files": {
+    "additionalProperties": {
+     "type": "string"
+    },
+    "title": "Files",
+    "type": "object"
+   },
+   "sizes": {
+    "additionalProperties": {
+     "type": "integer"
+    },
+    "title": "Sizes",
+    "type": "object"
+   },
+   "warnings": {
+    "items": {
+     "type": "string"
+    },
+    "title": "Warnings",
+    "type": "array"
+   }
+  },
+  "required": [
+   "dataVersion",
+   "builtAt",
+   "curatedHash",
+   "sources",
+   "files",
+   "sizes",
+   "warnings"
+  ],
+  "title": "Manifest",
+  "type": "object"
+ }
+}

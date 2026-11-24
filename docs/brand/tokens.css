@@ -1,0 +1,43 @@
+/*
+ * Care-pacity Planner colour tokens: "Warm kitchen table" (25 Nov 2026).
+ * Replaces sg-care-capacity's purple and white for this product. The owner asked for a warm scheme that invites people in.
+ * Cream paper, espresso text, terracotta for every action, sage for reassurance ("why this fits", first contact),
+ * marigold for the prototype banner only. Light theme only; no theme switch.
+ * Contrast checked 25 Nov 2026 (WCAG 2.x): body text 15.5:1, secondary 6.0–7.0:1, terracotta text and white on terracotta 5.6:1,
+ * control borders 4.3:1, sage on sage fill 5.5:1, banner 6.6:1, hero text 8.8:1 and 6.6:1, error 7.9:1.
+ */
+:root {
+  /* Surfaces and lines */
+  --bg-page: #FFF8F0;        /* cream paper */
+  --bg-band: #FBEEDF;        /* warm band behind sections */
+  --bg-surface: #FFFDF9;     /* cards and panels */
+  --bg-sunken: #F7EBDD;      /* wells, breakdowns */
+  --border-subtle: #EADBC8;
+  --border-control: #8C7461; /* inputs, options: 4.3:1 on surface */
+
+  /* Text */
+  --text-primary: #2B1D14;   /* espresso */
+  --text-secondary: #6A5444;
+  --text-heading: #8E3A12;   /* burnt sienna, for small headings only */
+
+  /* Action: terracotta. Every button, link and selected state; nothing decorative. */
+  --primary: #B0451D;
+  --primary-hover: #8F3614;
+  --on-primary: #FFFDF9;
+  --sel-fill: #FCE6D6;       /* selected option or card */
+
+  /* Reassurance: sage. "Why this fits", the first contact, success. */
+  --sage: #3E6A3A;
+  --sage-fill: #E9F1E2;
+
+  /* Headline block (start screen, cost total) */
+  --hero-bg: #7C3415;        /* deep clay */
+  --on-hero: #FFFDF9;
+  --on-hero-muted: #FBD8B5;
+
+  /* Notices */
+  --banner: #7A4A06;         /* prototype banner text */
+  --banner-fill: #FDF0D5;    /* marigold wash */
+  --danger: #9F1239;         /* crimson, kept clearly apart from terracotta */
+  --danger-fill: #FDE8EC;
+}

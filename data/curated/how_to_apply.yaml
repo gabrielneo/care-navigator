@@ -1,0 +1,53 @@
+# How each service is reached, and what to bring. Documents come from docs/specs/08 (not yet practitioner-reviewed).
+always_bring:
+  - Her NRIC
+  - Your NRIC (as the person arranging care)
+  - The hospital discharge summary or doctor's memo, if any
+  - A list of her current medicines
+  - A rough idea of household income (details come from government records; payslips only if asked)
+routes:
+  - apply_id: via_doctor_or_aic_link
+    first_contact: Her doctor at the hospital or polyclinic, or an AIC Link
+    steps:
+      - Ask the doctor to submit an online application for the service.
+      - Or visit an AIC Link and they will help you apply.
+      - The provider assesses her and confirms the fee after the means test.
+    extra_documents:
+      - The doctor's referral or the application made by the hospital or polyclinic
+    source_id: aic_day_care
+  - apply_id: via_ward_msw
+    first_contact: The medical social worker on her ward
+    steps:
+      - Ask before she is discharged. Only the ward team can refer her.
+    extra_documents: []
+    source_id: thk_ics
+  - apply_id: via_ward_msw_or_aic
+    first_contact: The ward's medical social worker, or AIC
+    steps:
+      - The hospital or AIC refers her to nursing homes after an assessment finds care at home can't meet her needs.
+    extra_documents:
+      - The referral from the hospital or AIC
+      - Any recent medical reports
+    source_id: aic_nursing_home
+  - apply_id: via_aic_link
+    first_contact: An AIC Link or the AIC hotline
+    steps:
+      - Ask for respite care and how much notice is needed.
+    extra_documents: []
+    source_id: aic_contact_links
+  - apply_id: via_provider
+    first_contact: The centre or provider directly
+    steps:
+      - Call or walk in and ask what's available.
+    extra_documents: []
+    source_id: aic_aac
+grant_steps:
+  - grant_id: home_caregiving_grant
+    steps:
+      - Get a Functional Assessment Report from an approved assessor.
+      - Apply online on AIC's eFASS.
+    source_id: ntuc_hcg_howto
+  - grant_id: levy_concession
+    extra_documents:
+      - Details of the helper's work permit
+    source_id: mom_levy_concession

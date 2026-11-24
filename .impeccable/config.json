@@ -1,0 +1,53 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "docs/diagrams/journey.html"
+        ],
+        "createdAt": "2026-11-24T17:20:15.939Z",
+        "reason": "owner asked on 25 Nov 2026 for a warm palette so caregivers feel invited; cream paper is that brief (docs/brand/tokens.css)"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "docs/diagrams/architecture.html"
+        ],
+        "createdAt": "2026-11-24T17:20:15.950Z",
+        "reason": "owner asked on 25 Nov 2026 for a warm palette so caregivers feel invited; cream paper is that brief (docs/brand/tokens.css)"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "docs/wireframes/index.html"
+        ],
+        "createdAt": "2026-11-24T17:20:15.961Z",
+        "reason": "owner asked on 25 Nov 2026 for a warm palette so caregivers feel invited; cream paper is that brief (docs/brand/tokens.css)"
+      },
+      {
+        "rule": "overused-font",
+        "value": "instrument serif",
+        "createdAt": "2026-11-24T17:20:15.972Z",
+        "reason": "diagram-design skill style guide mandates these families for diagrams"
+      },
+      {
+        "rule": "overused-font",
+        "value": "geist",
+        "createdAt": "2026-11-24T17:20:15.983Z",
+        "reason": "diagram-design skill style guide mandates these families for diagrams"
+      },
+      {
+        "rule": "overused-font",
+        "value": "geist mono",
+        "createdAt": "2026-11-24T17:20:15.994Z",
+        "reason": "diagram-design skill style guide mandates these families for diagrams"
+      }
+    ]
+  }
+}

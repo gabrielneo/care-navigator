@@ -1,0 +1,45 @@
+# MOH long-term care subsidy tiers, effective 1 Jul 2026, copied from each page's raw HTML.
+# In the HTML, the "$900 and below" cells span two rows (rowspan=2), so $901–$1,500 shares the top rates.
+# Rates are percentages: sc_le1969 = Singapore Citizen born 1969 or earlier; sc_gt1969 = born after 1969; pr = Permanent Resident.
+# pchi_max: null means no upper bound. 2026 subsidies use 2025 Annual Values (AV).
+effective_from: 2026-07-01
+tiers:
+  - tier_id: T0
+    pchi_min: 0
+    pchi_max: 1500
+    av_rule: "No household income and home Annual Value at or below $21,000 also falls here."
+  - tier_id: T1
+    pchi_min: 1501
+    pchi_max: 2300
+  - tier_id: T2
+    pchi_min: 2301
+    pchi_max: 2600
+  - tier_id: T3
+    pchi_min: 2601
+    pchi_max: 3600
+  - tier_id: T4
+    pchi_min: 3601
+    pchi_max: 4800
+  - tier_id: T5
+    pchi_min: 4801
+    pchi_max: null
+    av_rule: "No household income and home Annual Value above $21,000 also falls here."
+schemes:
+  - scheme: non_residential
+    source_id: moh_nonres_subsidy
+    rates:
+      T0: {sc_le1969: 95, sc_gt1969: 80, pr: 55}
+      T1: {sc_le1969: 85, sc_gt1969: 70, pr: 45}
+      T2: {sc_le1969: 75, sc_gt1969: 60, pr: 35}
+      T3: {sc_le1969: 55, sc_gt1969: 40, pr: 20}
+      T4: {sc_le1969: 35, sc_gt1969: 20, pr: 10}
+      T5: {sc_le1969: 0, sc_gt1969: 0, pr: 0}
+  - scheme: residential
+    source_id: moh_res_subsidy
+    rates:
+      T0: {sc_le1969: 80, sc_gt1969: 75, pr: 50}
+      T1: {sc_le1969: 65, sc_gt1969: 60, pr: 40}
+      T2: {sc_le1969: 55, sc_gt1969: 50, pr: 30}
+      T3: {sc_le1969: 35, sc_gt1969: 30, pr: 15}
+      T4: {sc_le1969: 15, sc_gt1969: 10, pr: 5}
+      T5: {sc_le1969: 0, sc_gt1969: 0, pr: 0}

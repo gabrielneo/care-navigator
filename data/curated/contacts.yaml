@@ -1,0 +1,403 @@
+# "Who to call" contacts (ADR-005). Every entry is copied from an official page, with the date it was checked.
+# 9 AIC Links (AIC map data) and 28 polyclinics (cluster sites), all checked 25 Nov 2026. Hospitals are not listed:
+# 8 of the 9 AIC Links sit inside hospitals, and the in-hospital branch points to the ward social worker. Never add entries from memory.
+contacts:
+  - contact_id: aic_link_ah
+    kind: aic_link
+    name: AIC Link @ Alexandra Hospital
+    address: 378 Alexandra Road, Clinic J, Integrated Care Clinic, Level 2, Zone B
+    postal_code: "159964"
+    lat: 1.286640024
+    lng: 103.8012818
+    hours: "Mon–Fri 9.30am–5.30pm; weekends and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  - contact_id: aic_link_cgh
+    kind: aic_link
+    name: AIC Link @ Changi General Hospital
+    address: 2 Simei Street 3, Patient Service Centre, Main Building, Level 1, Blue Zone
+    postal_code: "529889"
+    lat: 1.341568425
+    lng: 103.9495877
+    hours: "Mon–Fri 9.30am–5.30pm; Sat 9am–12.30pm; Sun and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  - contact_id: aic_link_ktph
+    kind: aic_link
+    name: AIC Link @ Khoo Teck Puat Hospital
+    address: 90 Yishun Central, Patient Service Centre, Tower B, Level 1
+    postal_code: "768828"
+    lat: 1.424655892
+    lng: 103.8384145
+    hours: "Mon–Fri 9.30am–5.30pm; Sat 9am–12.30pm; Sun and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  - contact_id: aic_link_nuh
+    kind: aic_link
+    name: AIC Link @ National University Hospital
+    address: 5 Lower Kent Ridge Road, Main Building Zone G, Level 1
+    postal_code: "119074"
+    lat: 1.295551133
+    lng: 103.7829174
+    hours: "Mon–Fri 9.30am–5.30pm; Sat 9am–12.30pm; Sun and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  - contact_id: aic_link_ntfgh
+    kind: aic_link
+    name: AIC Link @ Ng Teng Fong General Hospital
+    address: 1 Jurong East Street 21, Tower B, Level 2
+    postal_code: "609606"
+    lat: 1.33398077
+    lng: 103.7454505
+    hours: "Mon–Fri 9.30am–5.30pm; Sat 9am–12.30pm; Sun and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  - contact_id: aic_link_skch
+    kind: aic_link
+    name: AIC Link @ Sengkang Community Hospital
+    address: 1 Anchorvale Street, Patient Service Centre, Green Zone
+    postal_code: "544835"
+    lat: 1.39561651
+    lng: 103.8934524
+    hours: "Mon–Fri 9.30am–5.30pm; Sat 9am–12.30pm; Sun and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  - contact_id: aic_link_sgh
+    kind: aic_link
+    name: AIC Link @ Singapore General Hospital
+    address: Block 6, Level 1, Outram Road
+    postal_code: "169608"
+    lat: 1.27953576
+    lng: 103.8342714
+    hours: "Mon–Fri 9.30am–5.30pm; Sat 9am–12.30pm; Sun and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  - contact_id: aic_link_ttsh
+    kind: aic_link
+    name: AIC Link @ Tan Tock Seng Hospital
+    address: 11 Jalan Tan Tock Seng, Centre for Health Activation, Level 1, Atrium
+    postal_code: "308433"
+    lat: 1.321912
+    lng: 103.845704
+    location_note: Coordinates are the map centre in AIC's Google Maps link, so approximate.
+    hours: "Mon–Fri 9.30am–5.30pm; Sat 9am–12.30pm; Sun and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  - contact_id: aic_link_wh
+    kind: aic_link
+    name: AIC Link @ Woodlands Hospital
+    address: 17 Woodlands Drive 17, Patient Services Centre, Tower B, Basement 1
+    postal_code: "737628"
+    lat: 1.425222477
+    lng: 103.7946839
+    hours: "Mon–Fri 9.30am–5.30pm; weekends and public holidays closed"
+    checked_on: 2026-11-25
+    source_id: aic_contact_links
+  # Polyclinics: addresses copied from each cluster's official site on 25 Nov 2026.
+  # The pages give no coordinates, so lat/lng is the centre of the postal sector (first 2 digits), built from the
+  # five open data.gov.sg layers (docs/verified/postal-sectors-2026-11-25.md). Accurate to the neighbourhood (ADR-006).
+  - contact_id: poly_bedok
+    kind: polyclinic
+    name: SingHealth Polyclinics – Bedok
+    address: 11 Bedok North Street 1, Heartbeat@Bedok, #02-01/#03-01
+    postal_code: "469662"
+    lat: 1.32632
+    lng: 103.93448
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_bukit_merah
+    kind: polyclinic
+    name: SingHealth Polyclinics – Bukit Merah
+    address: Blk 163 Bukit Merah Central, #04-3565
+    postal_code: "150163"
+    lat: 1.28627
+    lng: 103.81558
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_eunos
+    kind: polyclinic
+    name: SingHealth Polyclinics – Eunos
+    address: 1 Chin Cheng Avenue
+    postal_code: "429400"
+    lat: 1.31026
+    lng: 103.90422
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_marine_parade
+    kind: polyclinic
+    name: SingHealth Polyclinics – Marine Parade
+    address: Blk 80 Marine Parade Central, #01-792
+    postal_code: "440080"
+    lat: 1.30378
+    lng: 103.91145
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_outram
+    kind: polyclinic
+    name: SingHealth Polyclinics – Outram
+    address: 3 Second Hospital Avenue, #02-00 Health Promotion Board Building
+    postal_code: "168937"
+    lat: 1.28414
+    lng: 103.83092
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_pasir_ris
+    kind: polyclinic
+    name: SingHealth Polyclinics – Pasir Ris
+    address: 6 Pasir Ris Drive 8, #1M-01
+    postal_code: "519466"
+    lat: 1.37236
+    lng: 103.9517
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_punggol
+    kind: polyclinic
+    name: SingHealth Polyclinics – Punggol
+    address: 681 Punggol Drive, Oasis Terraces #02-01
+    postal_code: "820681"
+    lat: 1.40507
+    lng: 103.90444
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_sengkang
+    kind: polyclinic
+    name: SingHealth Polyclinics – Sengkang
+    address: 2 Sengkang Square, #01-06 Sengkang Community Hub
+    postal_code: "545025"
+    lat: 1.38939
+    lng: 103.896
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_tampines
+    kind: polyclinic
+    name: SingHealth Polyclinics – Tampines
+    address: 1 Tampines Street 41
+    postal_code: "529203"
+    lat: 1.35257
+    lng: 103.94613
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_tampines_north
+    kind: polyclinic
+    name: SingHealth Polyclinics – Tampines North
+    address: 35 Tampines Street 61
+    postal_code: "528566"
+    lat: 1.35257
+    lng: 103.94613
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: shp_polyclinics
+  - contact_id: poly_bukit_batok
+    kind: polyclinic
+    name: Bukit Batok Polyclinic
+    address: 50 Bukit Batok West Avenue 3
+    postal_code: "659164"
+    lat: 1.35066
+    lng: 103.74931
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nup_polyclinics
+  - contact_id: poly_bukit_panjang
+    kind: polyclinic
+    name: Bukit Panjang Polyclinic
+    address: 50 Woodlands Road, #03-02
+    postal_code: "677726"
+    lat: 1.38009
+    lng: 103.76477
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nup_polyclinics
+  - contact_id: poly_choa_chu_kang
+    kind: polyclinic
+    name: Choa Chu Kang Polyclinic
+    address: 2 Teck Whye Crescent
+    postal_code: "688846"
+    lat: 1.38693
+    lng: 103.74677
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nup_polyclinics
+  - contact_id: poly_clementi
+    kind: polyclinic
+    name: Clementi Polyclinic
+    address: Blk 451 Clementi Avenue 3, #02-307
+    postal_code: "120451"
+    lat: 1.31199
+    lng: 103.76569
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nup_polyclinics
+  - contact_id: poly_jurong
+    kind: polyclinic
+    name: Jurong Polyclinic
+    address: 190 Jurong East Avenue 1
+    postal_code: "609788"
+    lat: 1.33572
+    lng: 103.74043
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nup_polyclinics
+  - contact_id: poly_pioneer
+    kind: polyclinic
+    name: Pioneer Polyclinic
+    address: 26 Jurong West Street 61
+    postal_code: "648201"
+    lat: 1.3443
+    lng: 103.70836
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nup_polyclinics
+  - contact_id: poly_queenstown
+    kind: polyclinic
+    name: Queenstown Polyclinic
+    address: 580 Stirling Road
+    postal_code: "148958"
+    lat: 1.29782
+    lng: 103.80292
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nup_polyclinics
+  - contact_id: poly_tengah
+    kind: polyclinic
+    name: Tengah Polyclinic
+    address: 302 Tengah Park Avenue, #01-04
+    postal_code: "690302"
+    lat: 1.35717
+    lng: 103.73431
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nup_polyclinics
+  - contact_id: poly_ang_mo_kio
+    kind: polyclinic
+    name: Ang Mo Kio Polyclinic
+    address: 21 Ang Mo Kio Central 2
+    postal_code: "569666"
+    lat: 1.37116
+    lng: 103.846
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_geylang
+    kind: polyclinic
+    name: Geylang Polyclinic
+    address: 21 Geylang East Central
+    postal_code: "389707"
+    lat: 1.31657
+    lng: 103.88142
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_hougang
+    kind: polyclinic
+    name: Hougang Polyclinic
+    address: 89 Hougang Avenue 4
+    postal_code: "538829"
+    lat: 1.36732
+    lng: 103.88935
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_kallang
+    kind: polyclinic
+    name: Kallang Polyclinic
+    address: 701 Serangoon Road
+    postal_code: "328263"
+    lat: 1.32317
+    lng: 103.8549
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_khatib
+    kind: polyclinic
+    name: Khatib Polyclinic
+    address: 690 Yishun Ring Road
+    postal_code: "769567"
+    lat: 1.42631
+    lng: 103.83586
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_sembawang
+    kind: polyclinic
+    name: Sembawang Polyclinic
+    address: 21 Canberra Link, #01-03
+    postal_code: "756973"
+    lat: 1.44894
+    lng: 103.82234
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_serangoon
+    kind: polyclinic
+    name: Serangoon Polyclinic
+    address: 587 Upper Serangoon Road
+    postal_code: "534564"
+    lat: 1.36732
+    lng: 103.88935
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_toa_payoh
+    kind: polyclinic
+    name: Toa Payoh Polyclinic
+    address: 2003 Toa Payoh Lorong 8
+    postal_code: "319260"
+    lat: 1.3354
+    lng: 103.8496
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_woodlands
+    kind: polyclinic
+    name: Woodlands Polyclinic
+    address: 10 Woodlands Street 31
+    postal_code: "738579"
+    lat: 1.43635
+    lng: 103.78833
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+  - contact_id: poly_yishun
+    kind: polyclinic
+    name: Yishun Polyclinic
+    address: 2 Yishun Avenue 9
+    postal_code: "768898"
+    lat: 1.42631
+    lng: 103.83586
+    location_precision: sector
+    checked_on: 2026-11-25
+    source_id: nhg_polyclinics
+hotline:
+  name: AIC hotline
+  phone: "1800-650-6060"
+  hours: "Mon–Fri 8.30am–8.30pm; Sat 8.30am–4pm; Sun and public holidays closed"
+  languages: [English, Chinese, Malay, Tamil]
+  checked_on: 2026-11-25
+  source_id: aic_contact_links
+# Region picker (used only when a postal sector has no centre). Each region's centre is the mean of the listed AIC Links.
+# Grouped by the area each AIC Link serves, not by URA planning boundaries.
+regions:
+  - region_id: central
+    label: Central
+    contact_ids: [aic_link_sgh, aic_link_ttsh, aic_link_ah]
+  - region_id: north
+    label: North
+    contact_ids: [aic_link_ktph, aic_link_wh]
+  - region_id: northeast
+    label: North-East
+    contact_ids: [aic_link_skch]
+  - region_id: east
+    label: East
+    contact_ids: [aic_link_cgh]
+  - region_id: west
+    label: West
+    contact_ids: [aic_link_ntfgh, aic_link_nuh]

@@ -1,0 +1,207 @@
+# Every row in every curated table points to one of these sources.
+# licence: site-terms = cited as fact, not republished; sg-odl-1.0 = Singapore Open Data Licence v1.0.
+# checked_on = the date a person last confirmed the figure on the page. next_review = when to check again.
+sources:
+  - source_id: moh_nonres_subsidy
+    title: Subsidy framework for non-residential long-term care services
+    owner: MOH
+    url: https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/subsidy-framework-for-non-residential-long-term-care-services/
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: moh_res_subsidy
+    title: Subsidies for residential long-term care services
+    owner: MOH
+    url: https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/subsidies-for-residential-long-term-care-services/
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: moh_gst_absorbed
+    title: MOH absorbs GST for subsidised intermediate and long-term care patients
+    owner: MOH
+    url: https://www.moh.gov.sg/news-highlights/details/more-affordable-intermediate-and-long-term-care-services-to-help-singaporeans-age-in-place
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: moh_ltc_financing_2026
+    title: Long-term care financing support enhanced (MediSave Care up to $200)
+    owner: MOH
+    url: https://www.moh.gov.sg/newsroom/long-term-care-financing-support-enhanced-to-improve-care-affordability/
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: moh_nh_wait
+    title: Nursing home wait time (parliamentary reply, Aug 2024)
+    owner: MOH
+    url: https://www.moh.gov.sg/newsroom/nursing-home-wait-time/
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-05-31
+  - source_id: agewellsg_care_plan
+    title: Age Well SG care support (single assessment and care plan)
+    owner: MOH
+    url: https://www.agewellsg.gov.sg/care-support/
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: aic_day_care
+    title: AIC Day Care (fees from $55 / $63 a session, how to apply)
+    owner: AIC
+    url: https://www.aic.sg/care-services/day-care
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2026-12-31
+  - source_id: aic_home_personal_care
+    title: AIC Home Personal Care (from $25 an hour)
+    owner: AIC
+    url: https://www.aic.sg/care-services/home-personal-care
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2026-12-31
+  - source_id: aic_home_nursing
+    title: AIC Home Nursing (from $62 a visit)
+    owner: AIC
+    url: https://aic.sg/care-services/home-nursing
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2026-12-31
+  - source_id: aic_nursing_home
+    title: AIC Nursing Home (basic cost from $4,900 a month)
+    owner: AIC
+    url: https://www.aic.sg/care-services/nursing-home
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2026-12-31
+  - source_id: aic_aac
+    title: AIC Active Ageing Centres
+    owner: AIC
+    url: https://aic.sg/care-services/active-ageing-centres
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: aic_contact_links
+    title: AIC Contact Us and AIC Link locations (map data)
+    owner: AIC
+    url: https://www.aic.sg/Contact-Us
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2026-12-31
+  - source_id: aic_csr
+    title: AIC Care Services Recommender (incl. discharge tips)
+    owner: AIC
+    url: https://www.aic.sg/care-services-recommender
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: aic_medisave_care
+    title: AIC MediSave Care
+    owner: AIC
+    url: https://www.aic.sg/MediSaveCare
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: tfb_caregivers
+    title: Together for Better, caregivers (Home Caregiving Grant, Caregivers Training Grant)
+    owner: Government of Singapore
+    url: https://www.togetherforbetter.gov.sg/lifestage/caregivers/
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: ntuc_hcg_howto
+    title: How to apply for the Home Caregiving Grant (FAR, then eFASS)
+    owner: NTUC Health
+    url: https://ntuchealth.sg/elderly-care/resources/home-care/how-to-apply-for-the-home-caregiving-grant-for-care-at-home
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: cpf_careshield
+    title: CareShield Life monthly payout ($689 in 2026)
+    owner: CPF Board
+    url: https://www.cpf.gov.sg/service/article/what-is-the-monthly-payout-amount-for-careshield-life
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-01-31
+  - source_id: healthhub_elderfund
+    title: ElderFund (up to $250 a month)
+    owner: HealthHub (MOH)
+    url: https://www.healthhub.sg/a-z/costs-and-financing/elderfund
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: mom_levy
+    title: Paying the migrant domestic worker levy ($300 / $450 / $60)
+    owner: MOM
+    url: https://www.mom.gov.sg/passes-and-permits/work-permit-for-foreign-domestic-worker/foreign-domestic-worker-levy/paying-levy
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: mom_levy_concession
+    title: Levy concession for families with an elderly member or person with disability
+    owner: MOM
+    url: https://mom.gov.sg/passes-and-permits/work-permit-for-foreign-domestic-worker/foreign-domestic-worker-levy/levy-concession
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: ntuc_fees
+    title: NTUC Health elderly care FAQ (published fee ranges)
+    owner: NTUC Health
+    url: https://ntuchealth.sg/elderly-care/elderly-care-faq
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2026-12-31
+  - source_id: renci_fees
+    title: Ren Ci financial charges (nursing home bills, rates from 1 Jul 2026)
+    owner: Ren Ci
+    url: https://www.renci.org.sg/financial-charges/
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2026-12-31
+  - source_id: thk_ics
+    title: THK Interim Caregiver Service (ward referral only)
+    owner: Thye Hua Kwan Moral Charities
+    url: https://www.thkmc.org.sg/for-the-seniors/thk-home-care-services/
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: sgh_h2h
+    title: SGH Hospital-to-Home programme
+    owner: SingHealth
+    url: https://www.sgh.com.sg/community-care/community-health-services/for-patients-recovering-in-the-community/hospital-to-home
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2027-02-28
+  - source_id: agg_thebestsingapore
+    title: Aggregator, eldercare service prices citing AIC (May 2026)
+    owner: thebestsingapore.com
+    url: https://thebestsingapore.com/?p=34309
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2026-12-31
+  - source_id: agg_misslobang
+    title: Aggregator, home care provider rate cards (re-checked Nov 2026)
+    owner: MissLobang
+    url: https://www.misslobang.com/article/best-home-care-eldercare-services-singapore-2026
+    licence: site-terms
+    checked_on: 2026-11-24
+    next_review: 2026-12-31
+  - source_id: shp_polyclinics
+    title: SingHealth Polyclinics locations (10)
+    owner: SingHealth Polyclinics
+    url: https://polyclinic.singhealth.com.sg/content/singhealth-web/shp/en/our-polyclinics
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2026-12-31
+  - source_id: nup_polyclinics
+    title: National University Polyclinics locations (8)
+    owner: National University Polyclinics
+    url: https://www.nup.com.sg/our-clinics/all-nup-polyclinics
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2026-12-31
+  - source_id: nhg_polyclinics
+    title: NHG Polyclinics locations (10)
+    owner: National Healthcare Group Polyclinics
+    url: https://www.nhghealth.com.sg/nhg-polyclinics
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2026-12-31

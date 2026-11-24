@@ -1,0 +1,77 @@
+# Grants, payouts and concessions. Always shown as "may qualify" and never subtracted (ADR-004).
+# amount_by_band: SGD per period for each subsidy tier (0 = not available at that tier).
+# min_adl: how many of the 6 daily activities she must need help with (0 = no requirement).
+grants:
+  - grant_id: home_caregiving_grant
+    name: Home Caregiving Grant
+    kind: grant
+    period: month
+    amount_by_band: {T0: 600, T1: 400, T2: 400, T3: 400, T4: 200, T5: 0}
+    min_adl: 3
+    other_conditions: >-
+      Not living in a nursing home or other residential facility. Households owning more than one property get $200.
+      Needs a Functional Assessment Report from an approved assessor, then an online application on AIC's eFASS.
+    official_url: https://www.togetherforbetter.gov.sg/lifestage/caregivers/
+    effective_from: 2026-04-01
+    source_id: tfb_caregivers
+  - grant_id: medisave_care
+    name: MediSave Care
+    kind: payout
+    period: month
+    amount_by_band: {T0: 200, T1: 200, T2: 200, T3: 200, T4: 200, T5: 200}
+    amount_is_maximum: true
+    min_adl: 3
+    other_conditions: Withdraw up to $200 a month from MediSave. The amount depends on the MediSave balance, not income.
+    official_url: https://www.aic.sg/MediSaveCare
+    official_source_id: aic_medisave_care
+    effective_from: 2026-07-01
+    source_id: moh_ltc_financing_2026
+  - grant_id: careshield_life
+    name: CareShield Life payout
+    kind: payout
+    period: month
+    amount_by_band: {T0: 689, T1: 689, T2: 689, T3: 689, T4: 689, T5: 689}
+    min_adl: 3
+    other_conditions: For people covered by CareShield Life who need help with 3 or more daily activities. $689 a month is the 2026 claim amount; it is fixed by the year of the first claim.
+    official_url: https://www.cpf.gov.sg/service/article/what-is-the-monthly-payout-amount-for-careshield-life
+    effective_from: 2026-01-01
+    source_id: cpf_careshield
+  - grant_id: elderfund
+    name: ElderFund
+    kind: payout
+    period: month
+    amount_by_band: {T0: 250, T1: 250, T2: 250, T3: 250, T4: 250, T5: 250}
+    amount_is_maximum: true
+    min_adl: 3
+    citizens_only: true
+    other_conditions: >-
+      For Singapore Citizens with severe disability and low income and MediSave balance. Up to $250 a month; individual amounts can be lower.
+      The income and MediSave limits aren't encoded here, so confirm with AIC.
+    official_url: https://www.healthhub.sg/a-z/costs-and-financing/elderfund
+    effective_from: 2020-01-01
+    source_id: healthhub_elderfund
+  - grant_id: levy_concession
+    name: Helper levy concession
+    kind: concession
+    period: month
+    amount_by_band: {T0: 60, T1: 60, T2: 60, T3: 60, T4: 60, T5: 60}
+    amount_meaning: Monthly levy payable with the concession (instead of $300).
+    standard_levy_source_id: mom_levy
+    min_adl: 1
+    alt_min_age: 67
+    requires_helper: true
+    other_conditions: For a household with a live-in migrant domestic worker and a Singapore Citizen aged 67 or over, or a person who needs help with at least 1 daily activity.
+    official_url: https://mom.gov.sg/passes-and-permits/work-permit-for-foreign-domestic-worker/foreign-domestic-worker-levy/levy-concession
+    effective_from: 2019-04-01
+    source_id: mom_levy_concession
+  - grant_id: caregivers_training_grant
+    name: Caregivers Training Grant
+    kind: grant
+    period: once_then_yearly
+    amount_by_band: {T0: 400, T1: 400, T2: 400, T3: 400, T4: 400, T5: 400}
+    amount_meaning: $400 to start, then $200 a year, for approved caregiver courses.
+    min_adl: 0
+    other_conditions: For caregivers taking approved courses.
+    official_url: https://www.togetherforbetter.gov.sg/lifestage/caregivers/
+    effective_from: 2026-01-01
+    source_id: tfb_caregivers

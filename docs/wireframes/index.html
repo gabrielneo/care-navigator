@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Care-pacity Planner wireframes</title>
+<style>
+  /* Colour tokens: docs/brand/tokens.css (warm palette, 25 Nov 2026). */
+  :root {
+  /* Surfaces and lines */
+  --bg-page: #FFF8F0;        /* cream paper */
+  --bg-band: #FBEEDF;        /* warm band behind sections */
+  --bg-surface: #FFFDF9;     /* cards and panels */
+  --bg-sunken: #F7EBDD;      /* wells, breakdowns */
+  --border-subtle: #EADBC8;
+  --border-control: #8C7461; /* inputs, options: 4.3:1 on surface */
+
+  /* Text */
+  --text-primary: #2B1D14;   /* espresso */
+  --text-secondary: #6A5444;
+  --text-heading: #8E3A12;   /* burnt sienna, for small headings only */
+
+  /* Action: terracotta. Every button, link and selected state; nothing decorative. */
+  --primary: #B0451D;
+  --primary-hover: #8F3614;
+  --on-primary: #FFFDF9;
+  --sel-fill: #FCE6D6;       /* selected option or card */
+
+  /* Reassurance: sage. "Why this fits", the first contact, success. */
+  --sage: #3E6A3A;
+  --sage-fill: #E9F1E2;
+
+  /* Headline block (start screen, cost total) */
+  --hero-bg: #7C3415;        /* deep clay */
+  --on-hero: #FFFDF9;
+  --on-hero-muted: #FBD8B5;
+
+  /* Notices */
+  --banner: #7A4A06;         /* prototype banner text */
+  --banner-fill: #FDF0D5;    /* marigold wash */
+  --danger: #9F1239;         /* crimson, kept clearly apart from terracotta */
+  --danger-fill: #FDE8EC;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, "Iowan Old Style", Georgia, serif;
+    --r-sm:6px; --r-md:10px; --r-lg:14px;
+    --fs-body:1.125rem; --fs-small:1rem; --fs-meta:0.875rem; --fs-h1:1.75rem; --fs-h2:1.375rem;
+  }
+  * { box-sizing:border-box; margin:0; }
+  b, strong, h1, h2, h3 { font-weight:600; }
+  ::selection { background:var(--sel-fill); color:var(--text-primary); }
+  body { background:var(--bg-band); color:var(--text-primary); font-family:var(--font-sans); font-size:var(--fs-body); line-height:1.6; }
+  .doc { padding:32px 24px 8px; max-width:72ch; }
+  .doc h1 { font-family:var(--font-serif); font-weight:600; font-size:2rem; line-height:1.2; color:var(--text-heading); margin-bottom:8px; }
+  .doc p { color:var(--text-secondary); font-size:var(--fs-small); }
+  .strip { display:flex; gap:32px; overflow-x:auto; padding:24px; align-items:flex-start; scroll-padding:24px; }
+  figure { flex:0 0 375px; }
+  figcaption { font-size:var(--fs-meta); color:var(--text-secondary); margin-top:12px; line-height:1.4; }
+  figcaption b { color:var(--text-primary); }
+  .phone { width:375px; background:var(--bg-page); border:1px solid var(--border-subtle); border-radius:24px; overflow:hidden; box-shadow:0 8px 24px rgba(43,29,20,0.08); }
+  .proto { background:var(--banner-fill); color:var(--banner); font-size:var(--fs-meta); padding:8px 16px; line-height:1.4; }
+  .scr { padding:20px 16px 24px; display:flex; flex-direction:column; gap:16px; }
+  .top { display:flex; justify-content:space-between; align-items:center; font-size:var(--fs-meta); color:var(--text-secondary); }
+  .back { min-height:48px; display:inline-flex; align-items:center; color:var(--primary); text-decoration:underline; text-underline-offset:3px; }
+  .progress { height:6px; background:var(--border-subtle); border-radius:3px; }
+  .progress i { display:block; height:100%; background:var(--primary); border-radius:3px; }
+  h2 { font-family:var(--font-serif); font-weight:600; font-size:var(--fs-h1); line-height:1.2; text-wrap:balance; }
+  h3 { font-size:var(--fs-body); font-weight:600; line-height:1.3; }
+  .help { color:var(--text-secondary); font-size:var(--fs-small); }
+  .opt { min-height:56px; border:1px solid var(--border-control); border-radius:var(--r-md); background:var(--bg-surface); display:flex; align-items:center; gap:12px; padding:12px 16px; }
+  .opt.on { border:2px solid var(--primary); background:var(--sel-fill); }
+  .dot { width:20px; height:20px; border-radius:50%; border:2px solid var(--border-control); flex:none; }
+  .on .dot { border:6px solid var(--primary); }
+  .box { width:20px; height:20px; border-radius:4px; border:2px solid var(--border-control); flex:none; display:grid; place-items:center; }
+  .on .box { background:var(--primary); border-color:var(--primary); }
+  .on .box::after { content:""; width:10px; height:5px; border-left:2px solid var(--on-primary); border-bottom:2px solid var(--on-primary); transform:rotate(-45deg) translate(1px,-1px); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .card { border:1px solid var(--border-control); border-radius:var(--r-md); background:var(--bg-surface); min-height:112px; padding:12px; display:flex; flex-direction:column; justify-content:space-between; gap:8px; }
+  .card.on { border:2px solid var(--primary); background:var(--sel-fill); }
+  .pic { height:44px; border-radius:var(--r-sm); background:var(--bg-sunken); border:1px dashed var(--border-subtle); font-size:var(--fs-meta); color:var(--text-secondary); display:grid; place-items:center; }
+  .btn { min-height:52px; border-radius:var(--r-md); background:var(--primary); color:var(--on-primary); font-weight:600; display:flex; align-items:center; justify-content:center; padding:0 20px; text-align:center; }
+  .btn.sec { background:var(--bg-surface); color:var(--primary); border:1.5px solid var(--primary); }
+  .btn[aria-disabled="true"] { background:var(--border-subtle); color:var(--text-secondary); }
+  .row { display:flex; gap:12px; }
+  .row > * { flex:1; }
+  .field label { display:block; font-weight:600; margin-bottom:4px; }
+  .input { min-height:52px; border:1.5px solid var(--border-control); border-radius:var(--r-md); background:var(--bg-surface); padding:12px 14px; font-variant-numeric:tabular-nums; }
+  .input.err { border-color:var(--danger); }
+  .errtxt { color:var(--danger); font-size:var(--fs-small); margin-top:6px; }
+  .svc { border:1px solid var(--border-subtle); border-radius:var(--r-md); background:var(--bg-surface); padding:14px 16px; display:flex; flex-direction:column; gap:8px; }
+  .why { background:var(--sage-fill); border-radius:var(--r-sm); padding:8px 10px; font-size:var(--fs-small); }
+  .why b { color:var(--sage); }
+  .price { font-size:var(--fs-small); color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .chip { display:inline-flex; align-items:center; min-height:48px; padding:0 14px; border-radius:var(--r-md); border:1px solid var(--border-control); font-weight:600; background:var(--bg-surface); }
+  .day { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-subtle); padding:10px 0; gap:8px; }
+  .day:last-child { border-bottom:0; }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; }
+  .tag { font-size:var(--fs-meta); padding:4px 8px; border-radius:var(--r-sm); background:var(--sel-fill); color:var(--primary-hover); font-weight:600; }
+  .stepper { display:flex; align-items:center; gap:8px; }
+  .stepper b { min-width:2ch; text-align:center; font-variant-numeric:tabular-nums; }
+  .sq { width:48px; height:48px; border-radius:var(--r-md); border:1.5px solid var(--border-control); display:grid; place-items:center; font-size:1.4rem; color:var(--primary); background:var(--bg-surface); }
+  .panel { border:1px solid var(--border-subtle); border-radius:var(--r-md); background:var(--bg-surface); padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+  .seg { display:flex; border:1.5px solid var(--border-control); border-radius:var(--r-md); overflow:hidden; }
+  .seg span { flex:1; min-height:48px; display:grid; place-items:center; font-size:var(--fs-small); font-weight:600; text-align:center; padding:4px; }
+  .seg span + span { border-left:1px solid var(--border-control); }
+  .seg .on { background:var(--primary); color:var(--on-primary); }
+  .total { background:var(--hero-bg); color:var(--on-hero); border-radius:var(--r-lg); padding:18px 16px; display:flex; flex-direction:column; gap:12px; }
+  .total .lbl { color:var(--on-hero-muted); font-size:var(--fs-small); }
+  .total .big { font-family:var(--font-serif); font-size:2.25rem; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .total .sub { font-size:var(--fs-small); color:var(--on-hero-muted); font-variant-numeric:tabular-nums; }
+  .total hr { border:0; border-top:1px solid rgba(251,216,181,0.35); }
+  .line { border:1px solid var(--border-subtle); border-radius:var(--r-md); background:var(--bg-surface); padding:12px 14px; display:flex; flex-direction:column; gap:6px; }
+  .line .two { display:grid; grid-template-columns:1fr 1fr; gap:8px; font-variant-numeric:tabular-nums; }
+  .line .two small { display:block; color:var(--text-secondary); font-size:var(--fs-meta); }
+  .note { font-size:var(--fs-meta); color:var(--text-secondary); line-height:1.45; }
+  .exp { border-top:1px solid var(--border-subtle); padding-top:10px; display:flex; justify-content:space-between; align-items:center; min-height:48px; color:var(--primary); font-weight:600; }
+  .link { color:var(--primary); text-decoration:underline; text-underline-offset:3px; min-height:48px; display:inline-flex; align-items:center; }
+  .contact { border:1px solid var(--border-subtle); border-radius:var(--r-md); background:var(--bg-surface); padding:14px 16px; display:flex; flex-direction:column; gap:4px; }
+  .contact.first { border:2px solid var(--sage); background:var(--sage-fill); }
+  .meta { font-size:var(--fs-meta); color:var(--text-secondary); }
+  ol.steps { padding-left:1.4em; display:flex; flex-direction:column; gap:12px; }
+  ol.steps li::marker { font-weight:600; color:var(--primary); }
+  ul.plain { padding-left:1.2em; display:flex; flex-direction:column; gap:4px; font-size:var(--fs-small); }
+  footer.ft { border-top:1px solid var(--border-subtle); padding:16px; font-size:var(--fs-meta); color:var(--text-secondary); display:flex; flex-direction:column; gap:6px; line-height:1.45; background:var(--bg-surface); }
+  footer.ft b { color:var(--text-primary); }
+  .hero { background:var(--hero-bg); color:var(--on-hero); padding:28px 16px 24px; display:flex; flex-direction:column; gap:14px; }
+  .hero h2 { color:var(--on-hero); font-size:2rem; }
+  .hero p { color:var(--on-hero-muted); }
+  .hero .btn { background:var(--on-hero); color:var(--hero-bg); }
+  .legend { padding:8px 24px 40px; max-width:72ch; font-size:var(--fs-small); color:var(--text-secondary); }
+  .legend li { margin-bottom:6px; }
+  @media (prefers-reduced-motion: no-preference) { .strip { scroll-behavior:smooth; } }
+</style>
+</head>
+<body>
+<header class="doc">
+  <h1>Care-pacity Planner: lo-fi wireframes</h1>
+  <p>Mobile frames at 375px, using Mei's scenario. Her mother, 86, is about to be discharged after a fall. She needs help washing and dressing, lives alone on weekdays, and her household income is $1,200 per person (range T0). Figures follow the 1 Jul 2026 rules in <code>docs/product-design-v2.md</code>. Wording comes from specs 08 and 09 and hasn't had a practitioner review yet. Scroll sideways to see every frame.</p>
+</header>
+
+<main class="strip" aria-label="Wireframe frames">
+
+<!-- 1 START -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked by a care professional.</div>
+  <section class="hero">
+    <h2>Plan care for someone you look after</h2>
+    <p>See which services fit, what they may cost after the 2026 subsidies, and who to call first. About 5 minutes. Nothing you enter is saved.</p>
+    <div class="btn">Start planning</div>
+  </section>
+  <div class="scr">
+    <p class="help">Planning for two people? Make one plan for each, then share both links.</p>
+    <div class="row"><span class="link">About</span><span class="link">Privacy</span></div>
+  </div>
+  <footer class="ft"><span><b>AIC hotline 1800-650-6060</b> · Mon–Fri 8.30am–8.30pm, Sat 8.30am–4pm</span><span>Medical emergency: <b>995</b></span><span>Independent student project. Not affiliated with MOH, AIC or the Government of Singapore.</span></footer>
+</div>
+<figcaption><b>1 · Start</b>: one action. 995 appears in the footer only.</figcaption>
+</figure>
+
+<!-- 2a WHERE -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Question 1 of 7</span></div>
+    <div class="progress" role="presentation"><i style="width:14%"></i></div>
+    <h2>Where is Mum right now?</h2>
+    <p class="help">The person you care for. We use "Mum" in examples.</p>
+    <div class="opt on"><span class="dot"></span>Soon to be discharged from hospital</div>
+    <div class="opt"><span class="dot"></span>Recently discharged from hospital (within 2 weeks)</div>
+    <div class="opt"><span class="dot"></span>Living at home, and something has just changed</div>
+    <div class="opt"><span class="dot"></span>Living at home, and we're struggling to cope</div>
+    <div class="opt"><span class="dot"></span>In a nursing home</div>
+    <div class="opt"><span class="dot"></span>Not sure</div>
+    <div class="btn">Next</div>
+  </div>
+</div>
+<figcaption><b>2a · Where</b>: answers use AIC's wording. Each answer sets the branch. Next is always clickable; with no answer it shows an inline error.</figcaption>
+</figure>
+
+<!-- 2b ADL -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Question 2 of 7</span></div>
+    <div class="progress"><i style="width:28%"></i></div>
+    <h2>Which of these does she need help with?</h2>
+    <p class="help">Pick all that apply. "Help" means someone has to assist or watch.</p>
+    <div class="grid2">
+      <div class="card on"><div class="pic">image</div><span class="row" style="align-items:center"><span class="box" style="flex:none"></span><span>Washing</span></span></div>
+      <div class="card on"><div class="pic">image</div><span class="row" style="align-items:center"><span class="box" style="flex:none"></span><span>Dressing</span></span></div>
+      <div class="card"><div class="pic">image</div><span class="row" style="align-items:center"><span class="box" style="flex:none"></span><span>Eating</span></span></div>
+      <div class="card"><div class="pic">image</div><span class="row" style="align-items:center"><span class="box" style="flex:none"></span><span>Toilet</span></span></div>
+      <div class="card"><div class="pic">image</div><span class="row" style="align-items:center"><span class="box" style="flex:none"></span><span>Walking</span></span></div>
+      <div class="card"><div class="pic">image</div><span class="row" style="align-items:center"><span class="box" style="flex:none"></span><span>Bed or chair</span></span></div>
+    </div>
+    <div class="opt"><span class="box"></span><span><b>Medical care at home</b><br><span class="help">Wounds, tubes, injections or many medicines</span></span></div>
+    <div class="row"><div class="opt"><span class="box"></span>None of these</div><div class="opt"><span class="box"></span>Not sure</div></div>
+    <div class="btn">Next</div>
+  </div>
+</div>
+<figcaption><b>2b · Daily activities</b>: the six activities of daily living as cards with text labels (checkboxes). The count decides grants only. Questions 3–6 (alone, memory, helper, coping) use the 2a pattern.</figcaption>
+</figure>
+
+<!-- 2g POSTAL error + region -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Question 7 of 7</span></div>
+    <div class="progress"><i style="width:100%"></i></div>
+    <h2>Where does she live?</h2>
+    <div class="field">
+      <label for="pc">Postal code</label>
+      <div class="input err" id="pc">0212</div>
+      <p class="errtxt">Enter 6 digits, e.g. 560123.</p>
+      <p class="help" style="margin-top:8px">6 digits, e.g. 560123. Only the first 2 digits are used, and they stay on your phone.</p>
+    </div>
+    <div class="btn">Next</div>
+    <span class="link">Skip and pick a region</span>
+    <div class="panel">
+      <h3>We can't place that area. Pick yours:</h3>
+      <div class="grid2"><span class="chip">Central</span><span class="chip">North</span><span class="chip">North-East</span><span class="chip">East</span><span class="chip">West</span></div>
+    </div>
+  </div>
+</div>
+<figcaption><b>2g · Postal code</b>: checked when you leave the field, never while typing. The region picker covers skipped or unplaceable codes (edge cases 9 and 10). Nothing is sent anywhere.</figcaption>
+</figure>
+
+<!-- 3 MATCHES -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Your matches</span></div>
+    <h2>3 services may fit</h2>
+    <div class="svc">
+      <h3>Short-term carer after discharge <span class="meta">(Interim Caregiver Service)</span></h3>
+      <p class="why"><b>Why this fits:</b> Ask the ward team before she leaves. Some help can only be requested from there.</p>
+      <p class="price">Ask the ward's medical social worker</p>
+    </div>
+    <div class="svc">
+      <h3>Day care centre <span class="meta">(Day Care)</span></h3>
+      <p>A centre where she spends the day with meals, activities and care, while you work.</p>
+      <p class="why"><b>Why this fits:</b> Someone is with her while you're at work.</p>
+      <p class="price">From $55 a session (a day) before subsidy</p>
+    </div>
+    <div class="svc">
+      <h3>Help with washing and dressing at home <span class="meta">(Home Personal Care)</span></h3>
+      <p class="why"><b>Why this fits:</b> A trained carer helps with daily care at home.</p>
+      <p class="price">From $25 an hour before subsidy</p>
+    </div>
+    <div class="btn">Build her week</div>
+  </div>
+</div>
+<figcaption><b>3 · Matches</b>: 1–5 cards, plain name first, official term in brackets. No same-size icon tiles. Empty state: "We need a bit more to suggest services" (edge case 11).</figcaption>
+</figure>
+
+<!-- 4 WEEK -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Her week</span></div>
+    <h2>Build her week</h2>
+    <p class="help">We've filled in a starting point. It's our assumption, so change it to fit.</p>
+    <div class="panel">
+      <div class="row" style="align-items:center"><h3>Day care</h3><div class="stepper" style="flex:none"><span class="sq" aria-label="Remove a day">−</span><b>5</b><span class="sq" aria-label="Add a day">+</span></div></div>
+      <p class="meta">days a week · most centres open weekdays</p>
+    </div>
+    <div class="panel">
+      <div class="row" style="align-items:center"><h3>Home personal care</h3><div class="stepper" style="flex:none"><span class="sq" aria-label="Remove a visit">−</span><b>2</b><span class="sq" aria-label="Add a visit">+</span></div></div>
+      <p class="meta">4-hour visits a week</p>
+    </div>
+    <div class="panel" style="gap:0">
+      <div class="day"><b>Mon</b><span class="tags"><span class="tag">Day care</span></span></div>
+      <div class="day"><b>Tue</b><span class="tags"><span class="tag">Day care</span></span></div>
+      <div class="day"><b>Wed</b><span class="tags"><span class="tag">Day care</span></span></div>
+      <div class="day"><b>Thu</b><span class="tags"><span class="tag">Day care</span></span></div>
+      <div class="day"><b>Fri</b><span class="tags"><span class="tag">Day care</span></span></div>
+      <div class="day"><b>Sat</b><span class="tags"><span class="tag">Home care 4h</span></span></div>
+      <div class="day"><b>Sun</b><span class="tags"><span class="tag">Home care 4h</span></span></div>
+    </div>
+    <span class="chip">Add a service</span>
+    <div class="btn">See the cost</div>
+  </div>
+</div>
+<figcaption><b>4 · Week</b>: steppers only, no drag and drop. The 7-day grid is a vertical list at 375px. An empty plan triggers edge case 4.</figcaption>
+</figure>
+
+<!-- 5 COST (full detail) -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Monthly cost</span></div>
+    <h2>What her care may cost each month</h2>
+
+    <div class="panel">
+      <div class="field"><label>Household income per person (PCHI)</label>
+        <div class="input">$1,500 and below · range T0</div></div>
+      <span class="link">Not sure which range? Work it out in 3 questions.</span>
+      <div class="field"><label>She is a</label>
+        <div class="seg"><span class="on">Singapore Citizen</span><span>PR</span><span>Neither</span></div></div>
+      <div class="field"><label>She was born</label>
+        <div class="seg"><span class="on">1969 or earlier</span><span>After 1969</span></div></div>
+    </div>
+
+    <div class="total" aria-label="Estimated total">
+      <div><p class="lbl">At a government-funded provider, with subsidy</p>
+        <p class="big">$355 – $575</p><p class="sub">a month · 95% subsidy · estimate</p></div>
+      <hr>
+      <div><p class="lbl">Full price, at a private provider</p>
+        <p class="sub" style="font-size:1.25rem;color:var(--on-hero)">$2,310 – $3,155 a month</p><p class="sub">may add 9% GST</p></div>
+    </div>
+
+    <div class="line">
+      <h3>Day care · 5 days a week</h3>
+      <div class="two"><span><small>With subsidy</small>$60 – $80</span><span><small>Full price</small>$1,190 – $1,605</span></div>
+      <span class="link">Enter a quote</span>
+    </div>
+    <div class="line">
+      <h3>Home personal care · 2 × 4 hours a week</h3>
+      <div class="two"><span><small>With subsidy</small>$45 – $55</span><span><small>Full price</small>$865 – $1,110</span></div>
+      <span class="link">Enter a quote</span>
+    </div>
+    <div class="line">
+      <h3>Day care transport</h3>
+      <div class="two"><span><small>With subsidy</small>$250 – $440</span><span><small>Full price</small>$250 – $440</span></div>
+      <p class="note">Full price in both columns: no source says transport is subsidised.</p>
+    </div>
+
+    <div class="panel">
+      <h3>You may qualify for</h3>
+      <ul class="plain"><li><b>Caregivers Training Grant</b>: $400, then $200 a year, for approved courses</li></ul>
+      <p class="note">Not shown: the Home Caregiving Grant ($600 a month at this range). It needs help with 3 or more daily activities. Ask about it if her needs grow.</p>
+      <p class="note">Grants are never taken off the totals above.</p>
+    </div>
+
+    <div class="exp"><span>How is this worked out</span><span aria-hidden="true">+</span></div>
+    <div class="panel" style="background:var(--bg-sunken)">
+      <p class="note">Day care: 5 days × 52 ÷ 12 = 21.7 days a month × $55–$74 a day (AIC "from" price; NTUC Health top) × (1 − 95%). Subsidy: MOH non-residential long-term care, from 1 Jul 2026, checked 25 Nov 2026. Sources link to each page.</p>
+    </div>
+
+    <p class="note">Estimate only, based on published rules as of 25 Nov 2026. Not a quote, an eligibility decision or medical advice.</p>
+    <div class="btn">See who to call</div>
+  </div>
+</div>
+<figcaption><b>5 · Cost (full detail)</b>: every line shows both prices; ranges, not single numbers; GST noted on full price only; grants listed, never subtracted. The income helper and the breakdown open inline (frame 5b).</figcaption>
+</figure>
+
+<!-- 5b INCOME HELPER -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Monthly cost</span></div>
+    <h2>Work out her income range</h2>
+    <div class="panel">
+      <h3>1. Does anyone living at her address earn an income?</h3>
+      <p class="help">Count everyone on the NRIC address, including her. Income includes salary, bonuses, allowances and self-employed earnings.</p>
+      <div class="row"><div class="opt on"><span class="dot"></span>Yes</div><div class="opt"><span class="dot"></span>No</div></div>
+    </div>
+    <div class="panel">
+      <h3>2. How many people live there, including her?</h3>
+      <div class="stepper"><span class="sq" aria-label="Fewer people">−</span><b>2</b><span class="sq" aria-label="More people">+</span></div>
+    </div>
+    <div class="panel">
+      <h3>3. Roughly how much do they earn in total each month, before CPF?</h3>
+      <div class="opt on"><span class="dot"></span>Up to $3,000</div>
+      <div class="opt"><span class="dot"></span>$3,001 – $4,600</div>
+      <div class="opt"><span class="dot"></span>$4,601 – $5,200</div>
+      <div class="opt"><span class="dot"></span>$5,201 – $7,200</div>
+      <div class="opt"><span class="dot"></span>$7,201 – $9,600</div>
+      <div class="opt"><span class="dot"></span>Above $9,600</div>
+    </div>
+    <p class="why">This puts her in range <b>T0</b>: $1,500 and below per person. You can change it any time.</p>
+    <div class="btn">Use this range</div>
+  </div>
+</div>
+<figcaption><b>5b · Income helper</b>: opens inline on the cost screen, not as a pop-up. Choices are each band limit × household size. An exact income is never asked for.</figcaption>
+</figure>
+
+<!-- 5c NURSING HOME -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Nursing home</span></div>
+    <h2>What a nursing home may cost</h2>
+    <div class="total">
+      <p class="lbl">Subsidised bed at a government-funded home, after assessment</p>
+      <p class="big">from $980</p>
+      <p class="sub">a month · 80% residential subsidy on AIC's "from" $4,900 · estimate</p>
+    </div>
+    <div class="panel">
+      <h3>What families actually pay at one home</h3>
+      <p>Ren Ci, Jul 2026: $620 – $3,069 a month for subsidised residents.</p>
+      <p class="note">Bills vary a lot with the ward and the care needed. Ask the home for its fee schedule.</p>
+    </div>
+    <div class="panel">
+      <h3>Payouts that may go straight to the home</h3>
+      <ul class="plain"><li>CareShield Life: $689 a month (2026 claims)</li><li>MediSave Care: up to $200 a month</li><li>ElderFund: up to $250 a month</li></ul>
+      <p class="note">Listed only. Never taken off the figure above.</p>
+    </div>
+    <p class="note">Private homes set their own fees and get no subsidy.</p>
+    <div class="btn">See what to ask</div>
+  </div>
+</div>
+<figcaption><b>5c · Nursing home</b>: a "from" figure next to real bills, never one exact number, and never ranked against home care (ADR-007).</figcaption>
+</figure>
+
+<!-- 6 WHO TO CALL -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Who to call</span></div>
+    <h2>Who to call first</h2>
+    <div class="contact first">
+      <h3>The medical social worker on her ward</h3>
+      <p>Ask before she's discharged. Some help can only be requested from the ward.</p>
+      <span class="link">See what to ask</span>
+    </div>
+    <div class="contact">
+      <h3>AIC Link @ Tan Tock Seng Hospital</h3>
+      <p class="meta">About 5 km · 11 Jalan Tan Tock Seng, Centre for Health Activation, Level 1</p>
+      <p class="meta">Mon–Fri 9.30am–5.30pm · Sat 9am–12.30pm · checked 25 Nov 2026</p>
+    </div>
+    <div class="contact">
+      <h3>AIC hotline</h3>
+      <p class="meta">1800-650-6060 · Mon–Fri 8.30am–8.30pm, Sat 8.30am–4pm</p>
+    </div>
+    <div class="contact">
+      <h3>Nearest Family Service Centre</h3>
+      <p class="meta">About 1 km · for stress, money or family help</p>
+    </div>
+    <span class="link">Find day care centres near her on AIC's map</span>
+    <div class="btn">See her action plan</div>
+  </div>
+</div>
+<figcaption><b>6 · Who to call</b>: a list, no map, inside a bordered panel. In the hospital branch the ward social worker always comes first. Distances come from the area centre, so they're approximate.</figcaption>
+</figure>
+
+<!-- 7 ACTION PLAN (full detail) -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="link">Change answers</span><span>25 Nov 2026</span></div>
+    <h2>Mum's care plan</h2>
+    <ol class="steps">
+      <li><h3>Call the ward's medical social worker, before Friday</h3>
+        <ul class="plain">
+          <li>"When is she likely to be discharged?"</li>
+          <li>"Can you refer her for the Interim Caregiver Service or Hospital-to-Home?"</li>
+          <li>"Can you start the single assessment and care plan before she leaves?"</li>
+          <li>"Can you refer her to day care and home personal care?"</li>
+          <li>"Who do I call if things go wrong in the first week?"</li>
+        </ul>
+        <span class="link">AIC's discharge tips</span></li>
+      <li><h3>Bring</h3>
+        <ul class="plain"><li>Her NRIC and yours</li><li>The discharge summary or doctor's memo</li><li>A list of her medicines</li><li>A rough idea of household income</li></ul></li>
+      <li><h3>If you need help after discharge</h3>
+        <p class="meta">AIC Link @ Tan Tock Seng Hospital, or the AIC hotline 1800-650-6060.</p></li>
+    </ol>
+    <div class="panel">
+      <h3>Estimated monthly cost</h3>
+      <p style="font-variant-numeric:tabular-nums">$355 – $575 with subsidy<br><span class="meta">$2,310 – $3,155 at full price</span></p>
+      <div class="row" style="align-items:center"><span>Split between</span><div class="stepper" style="flex:none"><span class="sq" aria-label="Fewer people">−</span><b>3</b><span class="sq" aria-label="More people">+</span></div></div>
+      <p style="font-variant-numeric:tabular-nums"><b>$120 – $190 each</b> a month, with subsidy</p>
+    </div>
+    <div class="panel"><h3>She may qualify for</h3><p class="meta">Caregivers Training Grant. Confirm on the official page.</p></div>
+    <div class="btn">Share on WhatsApp</div>
+    <div class="row"><div class="btn sec">Print plan</div><div class="btn sec">Save as PDF</div></div>
+    <p class="note">Figures as of 25 Nov 2026. Estimate only. Not a quote, an eligibility decision or medical advice. Prints on one A4 page.</p>
+  </div>
+</div>
+<figcaption><b>7 · Action plan (full detail)</b>: a numbered checklist, the cost with a sibling split, and share and print actions. A shared link opens here, read-only, with "Change answers".</figcaption>
+</figure>
+
+<!-- EMPTY PLAN -->
+<figure>
+<div class="phone">
+  <div class="proto">Prototype for testing. Figures and wording have not yet been checked.</div>
+  <div class="scr">
+    <div class="top"><span class="back">Back</span><span>Her week</span></div>
+    <h2>Her plan is empty</h2>
+    <p>Add a service, or see who to call for advice.</p>
+    <div class="btn">Add a service</div>
+    <div class="btn sec">See who to call</div>
+    <div class="btn" aria-disabled="true">Print plan</div>
+    <p class="note">Add a service to print a plan.</p>
+  </div>
+</div>
+<figcaption><b>State · Empty plan</b>: edge cases 4 and 20. The cost screen is skipped; contacts still work.</figcaption>
+</figure>
+
+</main>
+
+<section class="legend">
+  <p><b>Not drawn here:</b> questions 3–6 (same pattern as 2a), the old-link banner "Figures updated on {date}", the damaged-link banner, the 404 page, and the desktop layout (the same column, centred, max 640px). For a lo-fi pass, a terracotta outline on a peach fill means selected, sage marks reassurance ("why this fits", the first contact), the deep clay block is the headline figure, and dashed boxes stand for pictures still to be drawn.</p>
+</section>
+</body>
+</html>

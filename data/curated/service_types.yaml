@@ -1,0 +1,136 @@
+# Service types the planner can suggest. Wording follows docs/specs/08 (not yet practitioner-reviewed).
+# setting: home | centre | residential | ward. scheme: which subsidy table applies (null = not MOH-subsidised).
+# unit: what one price is for. default_units_per_week: the editable assumption shown on screen 4 (null = not added to the week).
+services:
+  - service_id: day_care
+    name: Day care centre
+    official_term: Day Care
+    description: A centre where she spends the day with meals, activities and care, while you work.
+    setting: centre
+    scheme: non_residential
+    unit: session
+    default_units_per_week: 5
+    how_to_apply_id: via_doctor_or_aic_link
+    source_id: aic_day_care
+  - service_id: dementia_day_care
+    name: Day care for dementia
+    official_term: Dementia Day Care
+    description: Day care with staff and activities for people living with dementia.
+    setting: centre
+    scheme: non_residential
+    unit: session
+    default_units_per_week: 5
+    how_to_apply_id: via_doctor_or_aic_link
+    source_id: aic_day_care
+  - service_id: day_care_transport
+    name: Transport to and from day care
+    official_term: Day care transport
+    description: Pick-up and drop-off between home and the centre.
+    setting: centre
+    scheme: null
+    unit: month
+    default_units_per_week: null
+    how_to_apply_id: via_provider
+    source_id: aic_day_care
+  - service_id: home_personal_care
+    name: Help with washing and dressing at home
+    official_term: Home Personal Care
+    description: A trained care worker comes home to help with daily care.
+    setting: home
+    scheme: non_residential
+    unit: hour
+    block_hours: 4
+    default_units_per_week: 3
+    how_to_apply_id: via_doctor_or_aic_link
+    source_id: aic_home_personal_care
+  - service_id: home_nursing
+    name: Nurse visits at home
+    official_term: Home Nursing
+    description: A nurse visits to handle wounds, tubes, injections or medicines.
+    setting: home
+    scheme: non_residential
+    unit: visit
+    default_units_per_week: 1
+    how_to_apply_id: via_doctor_or_aic_link
+    source_id: aic_home_nursing
+  - service_id: home_therapy
+    name: Therapy at home
+    official_term: Home Therapy
+    description: A therapist helps her regain movement and do daily tasks safely at home.
+    setting: home
+    scheme: non_residential
+    unit: visit
+    default_units_per_week: 1
+    how_to_apply_id: via_doctor_or_aic_link
+    source_id: moh_nonres_subsidy
+  - service_id: centre_rehab
+    name: Therapy at a centre
+    official_term: Centre-based Rehabilitation
+    description: Exercise and therapy sessions at a nearby centre to rebuild strength.
+    setting: centre
+    scheme: non_residential
+    unit: session
+    default_units_per_week: 2
+    how_to_apply_id: via_doctor_or_aic_link
+    source_id: moh_nonres_subsidy
+  - service_id: medical_escort
+    name: Escort to appointments
+    official_term: Medical Escort and Transport
+    description: Someone takes her to and from medical appointments.
+    setting: home
+    scheme: non_residential
+    unit: trip
+    default_units_per_week: 1
+    how_to_apply_id: via_doctor_or_aic_link
+    source_id: moh_nonres_subsidy
+  - service_id: meals_on_wheels
+    name: Meals delivered
+    official_term: Meals on Wheels
+    description: Hot meals brought to her home.
+    setting: home
+    scheme: non_residential
+    unit: meal
+    default_units_per_week: 5
+    how_to_apply_id: via_doctor_or_aic_link
+    source_id: moh_nonres_subsidy
+  - service_id: respite
+    name: A break for you
+    official_term: Respite care (nursing home respite)
+    description: Short-term care at a nursing home so you can rest.
+    setting: residential
+    scheme: residential
+    unit: day
+    default_units_per_week: null
+    how_to_apply_id: via_aic_link
+    source_id: moh_res_subsidy
+  - service_id: active_ageing_centre
+    name: Activities and company nearby
+    official_term: Active Ageing Centre
+    description: A neighbourhood centre for activities, exercise and befriending.
+    setting: centre
+    scheme: null
+    unit: null
+    default_units_per_week: null
+    how_to_apply_id: via_provider
+    source_id: aic_aac
+  - service_id: interim_caregiver_service
+    name: Short-term carer after discharge
+    official_term: Interim Caregiver Service
+    description: A carer at home for the first weeks after discharge. Only the ward team can request it.
+    setting: ward
+    scheme: null
+    unit: null
+    default_units_per_week: null
+    ward_only: true
+    how_to_apply_id: via_ward_msw
+    source_id: thk_ics
+  - service_id: nursing_home
+    name: Nursing home
+    official_term: Nursing Home
+    description: Full-time care in a home, for when care at home isn't enough.
+    setting: residential
+    scheme: residential
+    unit: month
+    default_units_per_week: null
+    how_to_apply_id: via_ward_msw_or_aic
+    source_id: aic_nursing_home

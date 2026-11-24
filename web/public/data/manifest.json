@@ -1,0 +1,265 @@
+{
+ "dataVersion": "2026.11.25-1",
+ "builtAt": "2026-11-24T17:40:26+00:00",
+ "curatedHash": "44fb4c745c1b01afcdd5590bb9f8ccb8fad889f5ed0fd6989cb18707dafb2a47",
+ "sources": [
+  {
+   "sourceId": "moh_nonres_subsidy",
+   "title": "Subsidy framework for non-residential long-term care services",
+   "url": "https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/subsidy-framework-for-non-residential-long-term-care-services/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "moh_res_subsidy",
+   "title": "Subsidies for residential long-term care services",
+   "url": "https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/subsidies-for-residential-long-term-care-services/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "moh_gst_absorbed",
+   "title": "MOH absorbs GST for subsidised intermediate and long-term care patients",
+   "url": "https://www.moh.gov.sg/news-highlights/details/more-affordable-intermediate-and-long-term-care-services-to-help-singaporeans-age-in-place",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "moh_ltc_financing_2026",
+   "title": "Long-term care financing support enhanced (MediSave Care up to $200)",
+   "url": "https://www.moh.gov.sg/newsroom/long-term-care-financing-support-enhanced-to-improve-care-affordability/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "moh_nh_wait",
+   "title": "Nursing home wait time (parliamentary reply, Aug 2024)",
+   "url": "https://www.moh.gov.sg/newsroom/nursing-home-wait-time/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-05-31"
+  },
+  {
+   "sourceId": "agewellsg_care_plan",
+   "title": "Age Well SG care support (single assessment and care plan)",
+   "url": "https://www.agewellsg.gov.sg/care-support/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_day_care",
+   "title": "AIC Day Care (fees from $55 / $63 a session, how to apply)",
+   "url": "https://www.aic.sg/care-services/day-care",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "aic_home_personal_care",
+   "title": "AIC Home Personal Care (from $25 an hour)",
+   "url": "https://www.aic.sg/care-services/home-personal-care",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "aic_home_nursing",
+   "title": "AIC Home Nursing (from $62 a visit)",
+   "url": "https://aic.sg/care-services/home-nursing",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "aic_nursing_home",
+   "title": "AIC Nursing Home (basic cost from $4,900 a month)",
+   "url": "https://www.aic.sg/care-services/nursing-home",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "aic_aac",
+   "title": "AIC Active Ageing Centres",
+   "url": "https://aic.sg/care-services/active-ageing-centres",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_contact_links",
+   "title": "AIC Contact Us and AIC Link locations (map data)",
+   "url": "https://www.aic.sg/Contact-Us",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "aic_csr",
+   "title": "AIC Care Services Recommender (incl. discharge tips)",
+   "url": "https://www.aic.sg/care-services-recommender",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_medisave_care",
+   "title": "AIC MediSave Care",
+   "url": "https://www.aic.sg/MediSaveCare",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "tfb_caregivers",
+   "title": "Together for Better, caregivers (Home Caregiving Grant, Caregivers Training Grant)",
+   "url": "https://www.togetherforbetter.gov.sg/lifestage/caregivers/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "ntuc_hcg_howto",
+   "title": "How to apply for the Home Caregiving Grant (FAR, then eFASS)",
+   "url": "https://ntuchealth.sg/elderly-care/resources/home-care/how-to-apply-for-the-home-caregiving-grant-for-care-at-home",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "cpf_careshield",
+   "title": "CareShield Life monthly payout ($689 in 2026)",
+   "url": "https://www.cpf.gov.sg/service/article/what-is-the-monthly-payout-amount-for-careshield-life",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-01-31"
+  },
+  {
+   "sourceId": "healthhub_elderfund",
+   "title": "ElderFund (up to $250 a month)",
+   "url": "https://www.healthhub.sg/a-z/costs-and-financing/elderfund",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "mom_levy",
+   "title": "Paying the migrant domestic worker levy ($300 / $450 / $60)",
+   "url": "https://www.mom.gov.sg/passes-and-permits/work-permit-for-foreign-domestic-worker/foreign-domestic-worker-levy/paying-levy",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "mom_levy_concession",
+   "title": "Levy concession for families with an elderly member or person with disability",
+   "url": "https://mom.gov.sg/passes-and-permits/work-permit-for-foreign-domestic-worker/foreign-domestic-worker-levy/levy-concession",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "ntuc_fees",
+   "title": "NTUC Health elderly care FAQ (published fee ranges)",
+   "url": "https://ntuchealth.sg/elderly-care/elderly-care-faq",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "renci_fees",
+   "title": "Ren Ci financial charges (nursing home bills, rates from 1 Jul 2026)",
+   "url": "https://www.renci.org.sg/financial-charges/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "thk_ics",
+   "title": "THK Interim Caregiver Service (ward referral only)",
+   "url": "https://www.thkmc.org.sg/for-the-seniors/thk-home-care-services/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "sgh_h2h",
+   "title": "SGH Hospital-to-Home programme",
+   "url": "https://www.sgh.com.sg/community-care/community-health-services/for-patients-recovering-in-the-community/hospital-to-home",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "agg_thebestsingapore",
+   "title": "Aggregator, eldercare service prices citing AIC (May 2026)",
+   "url": "https://thebestsingapore.com/?p=34309",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "agg_misslobang",
+   "title": "Aggregator, home care provider rate cards (re-checked Nov 2026)",
+   "url": "https://www.misslobang.com/article/best-home-care-eldercare-services-singapore-2026",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-24",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "shp_polyclinics",
+   "title": "SingHealth Polyclinics locations (10)",
+   "url": "https://polyclinic.singhealth.com.sg/content/singhealth-web/shp/en/our-polyclinics",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "nup_polyclinics",
+   "title": "National University Polyclinics locations (8)",
+   "url": "https://www.nup.com.sg/our-clinics/all-nup-polyclinics",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "nhg_polyclinics",
+   "title": "NHG Polyclinics locations (10)",
+   "url": "https://www.nhghealth.com.sg/nhg-polyclinics",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2026-12-31"
+  }
+ ],
+ "files": {
+  "rules.json": "68d2c2ab8bb4c1c8ea10d37eb80efd63f21e3fa1f948ada0d66e7e5825298b68",
+  "contacts.json": "44edb74ca6d3d816693ff23e69ef97144f57e1720cb7936de8df95eded769d35",
+  "places.json": "e821416ed315e09b0cd3e69e03a8ffdcfd6d3218550c79d09b1a0f238d7f9bca",
+  "sectors.json": "27500e57c4319c56b96939968ad183e2ef538af68b47351893fe6b4b99a207c3"
+ },
+ "sizes": {
+  "rules.json": 5386,
+  "contacts.json": 2122,
+  "places.json": 6709,
+  "sectors.json": 965
+ },
+ "warnings": [
+  "price dementia_day_care (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price home_personal_care (high) comes from an aggregator (agg_misslobang); check the provider's page",
+  "price home_therapy (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price centre_rehab (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price centre_rehab (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price medical_escort (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price medical_escort (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price meals_on_wheels (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price meals_on_wheels (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price respite (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "price respite (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
+  "78 open-data places were last edited over 24 months ago"
+ ]
+}
