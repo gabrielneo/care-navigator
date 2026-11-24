@@ -1,30 +1,47 @@
-"""Write the JSON Schema for every file the site reads (docs/specs/10-data-contract.md).
+"""Write one JSON Schema covering every file the site reads (docs/specs/10-data-contract.md).
 
     python -m pipeline.export_schema
 
-Stage 3 generates TypeScript types from this file, and CI fails if the committed copy differs from a fresh export.
+`npm run gen:types` in web/ turns it into web/src/lib/data/types.ts. CI fails if the committed copy differs
+from a fresh export.
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-from pydantic import TypeAdapter
+from pydantic import RootModel
+from pydantic.json_schema import models_json_schema
 
 from .schemas import ContactsBundle, Manifest, Place, RulesBundle, Sectors
 
 TARGET = Path(__file__).resolve().parent.parent / "web" / "src" / "lib" / "data" / "schema.json"
 
 
+class PlacesFile(RootModel[list[Place]]):
+    pass
+
+
+FILES = {
+    "rules": RulesBundle,
+    "contacts": ContactsBundle,
+    "places": PlacesFile,
+    "sectors": Sectors,
+    "manifest": Manifest,
+}
+
+
 def schema() -> dict:
-    files = {
-        "rules.json": RulesBundle,
-        "contacts.json": ContactsBundle,
-        "places.json": list[Place],
-        "sectors.json": Sectors,
-        "manifest.json": Manifest,
+    """A single schema with shared $defs, so the TypeScript generator emits each type once."""
+    refs, top = models_json_schema([(m, "serialization") for m in FILES.values()], by_alias=True)
+    return {
+        "title": "DataFiles",
+        "type": "object",
+        "properties": {name: refs[(m, "serialization")] for name, m in FILES.items()},
+        "required": list(FILES),
+        "additionalProperties": False,
+        "$defs": top["$defs"],
     }
-    return {name: TypeAdapter(t).json_schema(by_alias=True, mode="serialization") for name, t in files.items()}
 
 
 def main() -> None:

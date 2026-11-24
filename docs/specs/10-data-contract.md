@@ -38,7 +38,7 @@ The Pydantic models in `pipeline/schemas.py` define every JSON file the site rea
 ```jsonc
 {
   "v": "2026.11.25-1",          // dataVersion the plan was made with
-  "w": "in_hospital",           // where (branch id)
+  "w": "in_hospital",           // where: a branch id, or "unsure" (treated as changed_at_home + confirm with a professional)
   "d": false,                   // recently discharged (true drops ward-only services)
   "adl": ["bath", "dress"],     // subset of: bath, dress, eat, toilet, move, transfer; or ["unsure"]
   "med": false,                 // "Medical care at home" card on 2b (not an ADL)
@@ -47,7 +47,7 @@ The Pydantic models in `pipeline/schemas.py` define every JSON file the site rea
   "hlp": "no",                  // helper: yes | considering | no | unsure
   "lim": "tired",               // limits: ok | tired | cant | unsure
   "loc": { "sec": "56" },       // OR { "reg": "northeast" } — never the full postal code
-  "plan": [{ "s": "day_care", "n": 5 }, { "s": "home_personal_care", "n": 2 }],
+  "plan": [{ "s": "day_care", "n": 5 }, { "s": "home_personal_care", "n": 2 }],   // day-care transport is added automatically; { "s": "day_care_transport", "n": 0 } removes it
   "t": "T1",                    // income range
   "r": "sc",                    // residency: sc | pr | none
   "b": "le1969",                // birth year: le1969 | gt1969

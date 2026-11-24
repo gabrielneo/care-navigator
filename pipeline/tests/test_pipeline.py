@@ -207,5 +207,5 @@ def test_blocking_error_writes_nothing(tmp_path: Path, raw_dir: Path):
 def test_schema_export_covers_every_file():
     from pipeline.export_schema import schema
     s = schema()
-    assert set(s) == {"rules.json", "contacts.json", "places.json", "sectors.json", "manifest.json"}
-    assert "dataVersion" in json.dumps(s["manifest.json"])
+    assert set(s["properties"]) == {"rules", "contacts", "places", "sectors", "manifest"}
+    assert "dataVersion" in json.dumps(s["$defs"]["Manifest"])
