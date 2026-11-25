@@ -97,6 +97,7 @@ export interface PotentialGrant {
   amount: number;
   period: GrantRule["period"];
   isMaximum: boolean;
+  amountMeaning: string | null; // e.g. "$400 to start, then $200 a year, for approved caregiver courses."
   needsAgeCheck: boolean;      // e.g. levy concession: met by age 67+, which the planner doesn't ask
   conditions: string;
   officialUrl: string;
@@ -117,6 +118,7 @@ export function potentialGrants(rules: RulesBundle, s: Session, adlCount: number
     if (!adlMet && g.altMinAge == null) return [];
     return [{
       grantId: g.grantId, name: g.name, amount, period: g.period, isMaximum: g.amountIsMaximum ?? false,
+      amountMeaning: g.amountMeaning ?? null,
       needsAgeCheck: !adlMet, conditions: g.otherConditions, officialUrl: g.officialUrl, sourceId: g.sourceId,
     }];
   });

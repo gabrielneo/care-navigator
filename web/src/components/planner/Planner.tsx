@@ -1,0 +1,228 @@
+"use client";
+// The /plan wizard. State lives only in the URL hash (docs/specs/06 and 10): each step is one history entry,
+// small edits replace the entry, refresh keeps your place, Back goes to the previous step.
+import { useCallback, useEffect, useState } from "react";
+import { dataDate, manifest } from "@/lib/data";
+import { loadGeo } from "@/lib/data/geo";
+import { decodeHash, encodeHash, type Session, type Step } from "@/lib/engine/urlCodec";
+import { locate, type Region } from "@/lib/geo/postal";
+import { Action, ContactsScreen, CostScreen, Matches, Week } from "./Screens";
+import { Check, Radio } from "./ui";
+
+const QUESTIONS: Step[] = ["where", "adl", "alone", "memory", "helper", "limits", "postal"];
+const ALL: Step[] = [...QUESTIONS, "matches", "week", "cost", "contacts", "action"];
+const flow = (s: Session): Step[] => (s.w === "in_nursing_home" ? ["where", "cost", "action"] : ALL);
+
+const ANSWERED: Partial<Record<Step, (s: Session) => boolean>> = {
+  where: (s) => s.w != null, adl: (s) => s.adl != null, alone: (s) => s.al != null,
+  memory: (s) => s.mem != null, helper: (s) => s.hlp != null, limits: (s) => s.lim != null,
+};
+/** The furthest step a session's answers allow (a link can't jump past an unanswered question). */
+function allowed(s: Session, step: Step): Step {
+  const f = flow(s);
+  const firstGap = f.find((x) => ANSWERED[x] && !ANSWERED[x]!(s));
+  if (!firstGap) return f.includes(step) ? step : f[0]!;
+  return f.indexOf(step) > f.indexOf(firstGap) || !f.includes(step) ? firstGap : step;
+}
+
+export function Planner() {
+  const fresh: Session = { v: manifest.dataVersion };
+  const [ready, setReady] = useState(false);
+  const [step, setStep] = useState<Step>("where");
+  const [s, setS] = useState<Session>(fresh);
+  const [banner, setBanner] = useState<"damaged" | "updated" | null>(null);
+
+  const load = useCallback((hash: string) => {
+    const got = hash.length > 1 ? decodeHash(hash) : null;
+    if (hash.length > 1 && !got) { setBanner("damaged"); setS(fresh); setStep("where"); return; }
+    if (!got) { setS(fresh); setStep("where"); return; }
+    // In-app steps always carry today's version, so a mismatch means an older link was opened (option A: recalculate).
+    if (got.session.v !== manifest.dataVersion) setBanner("updated");
+    const session = { ...got.session, v: manifest.dataVersion };
+    setS(session);
+    setStep(allowed(session, got.step));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    load(window.location.hash);
+    setReady(true);
+    const onPop = () => load(window.location.hash);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [load]);
+
+  const update = (patch: Partial<Session>) => setS((prev) => {
+    const next = { ...prev, ...patch };
+    history.replaceState(null, "", encodeHash(step, next));
+    return next;
+  });
+  const go = (to: Step, session: Session = s) => {
+    history.pushState(null, "", encodeHash(to, session));
+    setS(session);   // a step can hand over answers (the postal area) that aren't in state yet
+    setStep(to);
+    window.scrollTo(0, 0);
+  };
+  const f = flow(s);
+  const next = (session: Session = s) => go(f[f.indexOf(step) + 1] ?? "action", session);
+  // The on-screen Back goes to the previous step even on a shared link, where there's no history to go back to.
+  const back = () => { const i = f.indexOf(step); if (i > 0) go(f[i - 1]!); else window.location.href = "/"; };
+
+  if (!ready) return <div className="scr" aria-busy="true" />;
+
+  const qIndex = QUESTIONS.indexOf(step);
+  const screen = { s, update, next, restart: () => go("where") };
+  return (
+    <>
+      {banner === "damaged" && <p className="notice warn" role="status">We couldn't open that plan. Start again below.</p>}
+      {banner === "updated" && (
+        <p className="notice" role="status">Figures updated on {dataDate}. They may differ from when this plan was made.</p>
+      )}
+      <div className="scr">
+        {step !== "action" && <div className="top no-print">
+          <button type="button" className="link" onClick={back}>Back</button>
+          <span>{qIndex >= 0 && s.w !== "in_nursing_home" ? `Question ${qIndex + 1} of 7` : ""}</span>
+        </div>}
+        {qIndex >= 0 && s.w !== "in_nursing_home" && (
+          <div className="progress" role="presentation"><i style={{ width: `${((qIndex + 1) / 7) * 100}%` }} /></div>
+        )}
+        {qIndex >= 0 ? <Question step={step} s={s} update={update} next={next} />
+          : step === "matches" ? <Matches {...screen} />
+          : step === "week" ? <Week {...screen} />
+          : step === "cost" ? <CostScreen {...screen} />
+          : step === "contacts" ? <ContactsScreen {...screen} />
+          : <Action {...screen} />}
+      </div>
+    </>
+  );
+}
+
+type Q = { step: Step; s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void };
+
+/** Screens 2a–2g: one question each. Next is always clickable; a missing answer shows an inline message. */
+function Question({ step, s, update, next }: Q) {
+  const [missing, setMissing] = useState(false);
+  const proceed = (ok: boolean, session?: Session) => (ok ? (setMissing(false), next(session)) : setMissing(true));
+  const ask = <span className="errtxt" role="alert">{missing ? "Choose an answer to go on." : ""}</span>;
+
+  if (step === "where") {
+    const opts: [string, Session["w"], boolean | undefined][] = [
+      ["Soon to be discharged from hospital", "in_hospital", false],
+      ["Recently discharged from hospital (within 2 weeks)", "in_hospital", true],
+      ["Living at home, and something has just changed", "changed_at_home", undefined],
+      ["Living at home, and we're struggling to cope", "struggling", undefined],
+      ["In a nursing home", "in_nursing_home", undefined],
+      ["Not sure", "unsure", undefined],
+    ];
+    const key = s.w === "in_hospital" ? `in_hospital-${s.d ? 1 : 0}` : s.w;
+    return (
+      <fieldset>
+        <legend><h1>Where is Mum right now?</h1></legend>
+        <p className="help">The person you care for. We use "Mum" in examples.</p>
+        {opts.map(([label, w, d]) => {
+          const id = w === "in_hospital" ? `in_hospital-${d ? 1 : 0}` : w!;
+          return <Radio key={id} name="where" value={id} checked={key === id}
+            onChange={() => update({ w, d: w === "in_hospital" ? d : undefined })}>{label}</Radio>;
+        })}
+        {ask}
+        <button type="button" className="btn" onClick={() => proceed(s.w != null)}>Next</button>
+      </fieldset>
+    );
+  }
+
+  if (step === "adl") {
+    const ADL: [string, string][] = [["bath", "Washing or bathing"], ["dress", "Dressing"], ["eat", "Eating"],
+      ["toilet", "Using the toilet"], ["move", "Walking or moving around"], ["transfer", "Getting in and out of bed or a chair"]];
+    const chosen = s.adl && s.adl[0] !== "unsure" ? (s.adl as string[]) : [];
+    const toggle = (a: string, on: boolean) => {
+      const list = on ? [...chosen, a] : chosen.filter((x) => x !== a);
+      update({ adl: list as Session["adl"] });
+    };
+    return (
+      <fieldset>
+        <legend><h1>Which of these does she need help with?</h1></legend>
+        <p className="help">Pick all that apply. "Help" means someone has to assist or watch.</p>
+        <div className="grid2">
+          {ADL.map(([k, label]) => <Check key={k} checked={chosen.includes(k)} onChange={(on) => toggle(k, on)}>{label}</Check>)}
+        </div>
+        <Check checked={s.med ?? false} onChange={(on) => update({ med: on })}>
+          <b>Medical care at home</b><br /><span className="help">Wounds, tubes, injections or many medicines</span>
+        </Check>
+        <div className="row">
+          <Check checked={s.adl != null && s.adl.length === 0} onChange={(on) => update({ adl: on ? [] : undefined })}>None of these</Check>
+          <Check checked={s.adl?.[0] === "unsure"} onChange={(on) => update({ adl: on ? ["unsure"] : undefined })}>Not sure</Check>
+        </div>
+        {ask}
+        <button type="button" className="btn" onClick={() => proceed(s.adl != null)}>Next</button>
+      </fieldset>
+    );
+  }
+
+  const SIMPLE: Partial<Record<Step, { field: "al" | "mem" | "hlp" | "lim"; title: string; help?: string; opts: [string, string][] }>> = {
+    alone: { field: "al", title: "Is she alone for most of the day?",
+      opts: [["weekdays", "Yes, on weekdays"], ["most", "Yes, most days"], ["no", "No, someone is usually with her"], ["unsure", "Not sure"]] },
+    memory: { field: "mem", title: "Does she have memory problems?", help: "For example, getting lost, forgetting to eat, or repeating questions.",
+      opts: [["dx", "Yes, diagnosed with dementia"], ["undx", "Yes, but not diagnosed"], ["no", "No"], ["unsure", "Not sure"]] },
+    helper: { field: "hlp", title: "Is there a live-in helper?", help: "A migrant domestic worker who lives with her.",
+      opts: [["yes", "Yes"], ["considering", "No, but we're thinking about one"], ["no", "No"], ["unsure", "Not sure"]] },
+    limits: { field: "lim", title: "How are you coping?", help: "Your own limits matter too.",
+      opts: [["ok", "I'm managing"], ["tired", "I'm tired and need a break"], ["cant", "I can't keep going like this"], ["unsure", "Not sure"]] },
+  };
+  const q = SIMPLE[step];
+  if (q) {
+    return (
+      <fieldset>
+        <legend><h1>{q.title}</h1></legend>
+        {q.help && <p className="help">{q.help}</p>}
+        {q.opts.map(([v, label]) => (
+          <Radio key={v} name={q.field} value={v} checked={s[q.field] === v}
+            onChange={() => update({ [q.field]: v } as Partial<Session>)}>{label}</Radio>
+        ))}
+        {ask}
+        <button type="button" className="btn" onClick={() => proceed(s[q.field] != null)}>Next</button>
+      </fieldset>
+    );
+  }
+
+  return <Postal s={s} next={next} />;
+}
+
+/** 2g: the postal code is matched to its 2-digit area on this device; only the area is kept. */
+function Postal({ s, next }: Pick<Q, "s" | "next">) {
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [picker, setPicker] = useState(false);
+  const check = () => { if (code && !/^\d{6}$/.test(code)) setError("Enter 6 digits, e.g. 560123."); };
+  useEffect(() => { loadGeo(); }, []);   // start fetching the area centres while she types
+  const submit = async () => {
+    const r = locate((await loadGeo()).sectors, code);
+    if (r.kind === "invalid") { setError("Enter 6 digits, e.g. 560123."); return; }
+    if (r.kind === "unavailable") { setPicker(true); setError(null); return; }
+    next({ ...s, loc: { sec: r.sector } });
+  };
+  const pick = (reg: Region) => next({ ...s, loc: { reg } });
+  const REGIONS: [Region, string][] = [["central", "Central"], ["north", "North"], ["northeast", "North-East"], ["east", "East"], ["west", "West"]];
+  return (
+    <>
+      <h1>Where does she live?</h1>
+      <div className="field">
+        <label htmlFor="postal">Postal code</label>
+        <input id="postal" className="input" inputMode="numeric" autoComplete="postal-code" maxLength={6}
+          value={code} aria-invalid={error ? true : undefined} aria-describedby="postal-help postal-err"
+          onChange={(e) => { setCode(e.target.value.replace(/\D/g, "")); setError(null); }} onBlur={check} />
+        <p id="postal-err" className="errtxt" role="alert">{error ?? ""}</p>
+        <p id="postal-help" className="help">6 digits, e.g. 560123. Only the first 2 digits are used, and they stay on your phone.</p>
+      </div>
+      <button type="button" className="btn" onClick={submit}>Next</button>
+      <button type="button" className="link" onClick={() => setPicker(true)}>Skip and pick a region</button>
+      {picker && (
+        <fieldset className="panel">
+          <legend><h3>{code ? "We can't place that area. Pick yours:" : "Pick her area:"}</h3></legend>
+          <div className="grid2">
+            {REGIONS.map(([r, label]) => <button key={r} type="button" className="chip" onClick={() => pick(r)}>{label}</button>)}
+          </div>
+        </fieldset>
+      )}
+    </>
+  );
+}

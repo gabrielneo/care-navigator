@@ -154,6 +154,11 @@ Link: "AIC's discharge tips" → aic.sg Care Services Recommender discharge tips
 
 ---
 
+## Who to call (screen 6): distances
+
+- Show "About {km} km", rounded to one decimal place.
+- If a contact is placed at its area's centre (`precision: sector`, the polyclinics) and is under 1 km away, show "In your area" instead. "0 km" would look broken.
+
 ## Action plan headings (screen 7)
 
 "Your plan for {date}" · "Step 1: Call {first contact}" · "What to ask" · "What to bring" · "Estimated monthly cost" · "You may qualify for" · "Split between {n} people" · footer disclaimer (short version from spec 07)

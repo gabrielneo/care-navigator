@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Prototype: pages carry noindex (spec 11). Before a public launch, point robots.txt here. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://care-pacity-planner.vercel.app/</loc></url>
+  <url><loc>https://care-pacity-planner.vercel.app/plan/</loc></url>
+  <url><loc>https://care-pacity-planner.vercel.app/about/</loc></url>
+  <url><loc>https://care-pacity-planner.vercel.app/privacy/</loc></url>
+  <url><loc>https://care-pacity-planner.vercel.app/data-sources/</loc></url>
+</urlset>

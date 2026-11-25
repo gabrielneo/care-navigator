@@ -1,0 +1,69 @@
+// axe on every screen (both viewports come from the projects), and the action plan on one A4 page.
+import AxeBuilder from "@axe-core/playwright";
+import { encodeHash, type Session, type Step } from "../../src/lib/engine/urlCodec";
+import { expect, MEI, test } from "./helpers";
+
+const STEPS: Step[] = ["where", "adl", "alone", "memory", "helper", "limits", "postal", "matches", "week", "cost", "contacts", "action"];
+const PAGES = ["/", "/about/", "/privacy/", "/data-sources/", "/does-not-exist/"];
+
+async function axe(page: import("@playwright/test").Page) {
+  const { violations } = await new AxeBuilder({ page }).analyze();
+  const bad = violations.filter((v) => v.impact === "serious" || v.impact === "critical");
+  expect(bad.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
+}
+
+for (const step of STEPS) {
+  test(`axe: plan step ${step}`, async ({ page }) => {
+    await page.goto(`/plan/${encodeHash(step, MEI)}`);
+    await expect(page.locator("h1")).toBeVisible();
+    if (step === "cost") {   // open everything that can be opened
+      await page.getByText("How is this worked out").click();
+      await page.getByRole("button", { name: "See what a nursing home may cost" }).click();
+      await page.getByRole("button", { name: /Not sure which range/ }).click();
+    }
+    if (step === "contacts") await expect(page.locator(".contact").first()).toBeVisible();
+    await axe(page);
+  });
+}
+
+// States a journey passes through but the screens above don't show: errors, banners, empty and fallback screens.
+const BASE: Session = { v: MEI.v, w: "changed_at_home", adl: [], al: "no", mem: "no", hlp: "no", lim: "ok" };
+const STATES: [string, string, ((p: import("@playwright/test").Page) => Promise<void>)?][] = [
+  ["question with no answer", "", (p) => p.getByRole("button", { name: "Next", exact: true }).click()],
+  ["postal code error", encodeHash("postal", BASE), async (p) => { await p.getByLabel("Postal code").fill("12"); await p.getByLabel("Postal code").blur(); }],
+  ["region picker", encodeHash("postal", BASE), (p) => p.getByRole("button", { name: "Skip and pick a region" }).click()],
+  ["damaged link", "#s=cost&p=xxxx"],
+  ["figures updated banner", encodeHash("where", { ...BASE, v: "2020.01.01-1" })],
+  ["nursing home cost", encodeHash("cost", { v: MEI.v, w: "in_nursing_home", t: "T1", r: "sc" })],
+  ["empty plan", encodeHash("week", { ...BASE, plan: [] })],
+  ["contacts with no area", encodeHash("contacts", { ...BASE, plan: [] })],
+  ["quote error", encodeHash("cost", MEI), async (p) => {
+    await p.getByRole("button", { name: "Enter a quote" }).first().click();
+    await p.getByLabel(/Quoted fee/).first().fill("0"); await p.getByLabel(/Quoted fee/).first().blur();
+  }],
+];
+for (const [name, hash, act] of STATES) {
+  test(`axe: ${name}`, async ({ page }) => {
+    await page.goto(`/plan/${hash}`);
+    await expect(page.locator("h1").first()).toBeVisible();
+    if (act) await act(page);
+    await axe(page);
+  });
+}
+
+for (const path of PAGES) {
+  test(`axe: ${path}`, async ({ page }) => {
+    await page.goto(path);
+    await expect(page.locator("h1")).toBeVisible();
+    await axe(page);
+  });
+}
+
+test("print: the action plan fits on one A4 page", async ({ page, browserName }, info) => {
+  test.skip(info.project.name !== "desktop" || browserName !== "chromium", "page.pdf runs once, in Chromium");
+  await page.goto(`/plan/${encodeHash("action", MEI)}`);
+  await expect(page.getByText(/^About|In your area|AIC Link/).first()).toBeVisible();
+  await page.emulateMedia({ media: "print" });
+  const pdf = (await page.pdf({ format: "A4", printBackground: true })).toString("latin1");
+  expect(pdf.match(/\/Type\s*\/Page[^s]/g)?.length).toBe(1);
+});

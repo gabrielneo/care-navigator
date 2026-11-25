@@ -20,3 +20,7 @@ web/out/
 
 # OS
 .DS_Store
+next-env.d.ts
+
+web/test-results
+web/playwright-report

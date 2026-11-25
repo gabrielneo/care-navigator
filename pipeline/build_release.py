@@ -45,6 +45,9 @@ LAYERS = {
 }
 SG_BOX = (1.15, 1.48, 103.6, 104.1)
 GZIP_BUDGET = 100_000          # bytes, all data files together (checklist item 14)
+# The "Community Club / PAssion WaVe" layer also holds sea-sports clubs and clubs still under construction.
+# Neither is somewhere to send a family; "(Temp Office)" entries stay, since that's where those clubs operate now.
+NOT_A_CC = re.compile(r"PAssion WaVe|\(U/C\)", re.IGNORECASE)
 GROWTH_LIMIT = 1.5             # a file may not grow >50% between builds unless the curated YAML changed
 
 
@@ -140,7 +143,7 @@ def build_places(layers: dict[str, list]) -> list[Place]:
     for kind in ("fsc", "cc"):
         for pc, lat, lng, p in layers.get(kind, []):
             name = _clean(p.get("NAME"))
-            if not name:
+            if not name or NOT_A_CC.search(name):
                 continue
             places.append(Place(place_id=f"{kind}_{_clean(p.get('OBJECTID')) or pc}", kind=kind, name=name,
                                 address=_address(p) or pc, postal_code=pc, lat=round(lat, 6), lng=round(lng, 6),

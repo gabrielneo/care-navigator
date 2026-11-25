@@ -1,5 +1,5 @@
 # Runs on every push and pull request: pipeline tests, the data contract (schema and types up to date),
-# the TypeScript typecheck and the engine tests.
+# the TypeScript typecheck, the engine tests, the static build and the end-to-end checks.
 name: ci
 
 on:
@@ -36,4 +36,12 @@ jobs:
       - run: npm run typecheck
         working-directory: web
       - run: npm test
+        working-directory: web
+      - name: Static build
+        run: npm run build
+        working-directory: web
+      - name: End-to-end, accessibility and privacy checks (Stage 6)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
         working-directory: web

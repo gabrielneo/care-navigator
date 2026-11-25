@@ -87,6 +87,12 @@ function breakFirst(rule: RulesBundle["needRules"][number], s: Session): Session
 const allServices = (s: Session) => { const m = matchServices(rules, s); return [...m.matches, ...m.more].map((x) => x.serviceId); };
 
 describe("matching rules", () => {
+  it("struggling branch leads with respite; other branches keep priority order", () => {
+    const tan: Session = { v: V, w: "struggling", adl: ["bath"], al: "most", mem: "dx", hlp: "no", lim: "cant" };
+    expect(matchServices(rules, tan).matches.map((m) => m.serviceId)).toEqual(["respite", "dementia_day_care", "home_personal_care"]);
+    const home = matchServices(rules, { ...tan, w: "changed_at_home" }).matches.map((m) => m.serviceId);
+    expect(home.at(-1)).toBe("respite");
+  });
   for (const rule of rules.needRules.filter((r) => r.enabled !== false)) {
     it(`${rule.ruleId} suggests ${rule.serviceId} when its answers hold, and not otherwise`, () => {
       const yes = satisfy(rule);

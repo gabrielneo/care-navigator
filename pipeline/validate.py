@@ -19,6 +19,7 @@ ANSWER_VALUES = {
     "limits": {"ok", "tired", "cant", "unsure"},
 }
 MIN_SECTORS = 70
+REGIONS = {"central", "north", "northeast", "east", "west"}
 
 
 def _source_refs(obj: Any, path: str = "") -> Iterable[tuple[str, str]]:
@@ -110,6 +111,9 @@ def blocking(c: Curated) -> list[str]:
         if gs.grant_id not in grant_ids:
             errors.append(f"grant step for unknown grant '{gs.grant_id}'")
     contact_ids = {x.contact_id for x in c.contacts.contacts}
+    missing_regions = REGIONS - {r.region_id for r in c.contacts.regions}
+    if missing_regions:
+        errors.append(f"contacts.yaml regions: missing {sorted(missing_regions)} (the region picker needs all five)")
     for reg in c.contacts.regions:
         for cid in reg.contact_ids:
             if cid not in contact_ids:

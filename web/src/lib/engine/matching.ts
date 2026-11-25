@@ -64,6 +64,8 @@ export function matchServices(rules: RulesBundle, s: Session): MatchResult {
     .sort((a, b) => a.r.priority - b.r.priority || a.i - b.i)
     .map(({ r }) => ({ serviceId: r.serviceId, reasonText: r.reasonText, priority: r.priority, sourceId: r.sourceId }))
     .filter((m, i, arr) => arr.findIndex((x) => x.serviceId === m.serviceId) === i);
+  // "We're struggling to cope": a break for the carer comes first (branch_rules.yaml flag).
+  if (branch.flags.includes("lead_with_respite")) all.sort((a, b) => Number(b.serviceId === "respite") - Number(a.serviceId === "respite"));
 
   const unsure = [s.al, s.mem, s.hlp, s.lim, s.w].includes("unsure") || s.adl?.[0] === "unsure";
   const conditions = branch.askListConditions ?? {};

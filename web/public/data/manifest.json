@@ -1,6 +1,6 @@
 {
- "dataVersion": "2026.11.25-1",
- "builtAt": "2026-11-24T17:40:26+00:00",
+ "dataVersion": "2026.11.25-2",
+ "builtAt": "2026-11-25T03:44:01+00:00",
  "curatedHash": "44fb4c745c1b01afcdd5590bb9f8ccb8fad889f5ed0fd6989cb18707dafb2a47",
  "sources": [
   {
@@ -239,13 +239,13 @@
  "files": {
   "rules.json": "68d2c2ab8bb4c1c8ea10d37eb80efd63f21e3fa1f948ada0d66e7e5825298b68",
   "contacts.json": "44edb74ca6d3d816693ff23e69ef97144f57e1720cb7936de8df95eded769d35",
-  "places.json": "e821416ed315e09b0cd3e69e03a8ffdcfd6d3218550c79d09b1a0f238d7f9bca",
+  "places.json": "2d789de5cf2255d2eb275285efcb3108b51b6e0191bd9dde0b38014203bed8d0",
   "sectors.json": "27500e57c4319c56b96939968ad183e2ef538af68b47351893fe6b4b99a207c3"
  },
  "sizes": {
   "rules.json": 5386,
   "contacts.json": 2122,
-  "places.json": 6709,
+  "places.json": 6343,
   "sectors.json": 965
  },
  "warnings": [

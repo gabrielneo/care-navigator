@@ -209,3 +209,22 @@ def test_schema_export_covers_every_file():
     s = schema()
     assert set(s["properties"]) == {"rules", "contacts", "places", "sectors", "manifest"}
     assert "dataVersion" in json.dumps(s["$defs"]["Manifest"])
+
+
+def test_all_five_regions_are_required():
+    t = tables()
+    t["contacts"]["regions"] = [r for r in t["contacts"]["regions"] if r["region_id"] != "east"]
+    assert any("missing ['east']" in e for e in blocking_for(t))
+
+
+def test_sea_sports_clubs_and_unfinished_ccs_are_not_places(raw_dir: Path, tmp_path: Path):
+    cc = json.loads((raw_dir / "cc.geojson").read_text())
+    for oid, name in [("10", "PAssion WaVe @ Bedok Reservoir (Sea Sports Club)"), ("11", "Kim Seng CC (U/C)"),
+                      ("12", "Marsiling CC (Temp Office)")]:
+        cc["features"].append(_feature("ADDRESSPOSTALCODE", "560999", 1.37, 103.85, OBJECTID=oid, NAME=name))
+    (raw_dir / "cc.geojson").write_text(json.dumps(cc))
+    out = tmp_path / "out"
+    br.build(offline=True, today=date(2026, 11, 25), raw_dir=raw_dir, out_dir=out)
+    names = {p["name"] for p in json.loads((out / "places.json").read_text())}
+    assert "Marsiling CC (Temp Office)" in names
+    assert not any("WaVe" in n or "(U/C)" in n for n in names)
