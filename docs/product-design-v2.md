@@ -288,11 +288,11 @@ RUN TIME (browser)
 | Open layers | Weekly pull of FSC and CC GeoJSON from data.gov.sg | Open licence, current; 2 downloads stays under the 2-per-10-seconds limit |
 | Pipeline | Python 3.12, PyYAML, Pydantic, data checks | Ten small files need no database |
 | Release | JSON plus a manifest with version and hashes, committed to the repo | Site always ships a known, verified version; Git history is the release log |
-| Frontend | Next.js static export, TypeScript, Tailwind with the warm palette in `docs/brand/tokens.css` | Fast on phones, free to host, shares the Care-pacity name with its own warm look |
+| Frontend | Next.js static export, TypeScript, one global stylesheet on the warm palette in `docs/brand/tokens.css` (Tailwind dropped at Stage 5) | Fast on phones, free to host, shares the Care-pacity name with its own warm look |
 | Calculation | Pure TypeScript module (matching + cost), unit-tested | Same inputs, same outputs; no data leaves the device |
 | Postal lookup | On the phone: first 2 digits → `sectors.json` area centre; region picker if unknown | OneMap requires a token; this needs no server and keeps the postal code on the device. A token-holding serverless proxy is the upgrade if street-level distance is ever needed |
 | Plan sharing | Plan encoded in the URL (compressed; band only, no names or income figures) | Shareable on WhatsApp without storing anything |
-| Analytics | Umami Cloud free tier: cookie-free, hosted, custom events | Measure the funnel without tracking people or running a server |
+| Analytics | Umami Cloud free tier: cookie-free, hosted, custom events. Public launch only; the prototype has none, so the metrics below can't be measured until then | Measure the funnel without tracking people or running a server |
 | Feedback | Footer link to a free hosted form (e.g. Tally), no personal fields | Learn why people drop off without a form backend |
 | Testing and CI | Vitest (matching, cost), Playwright + axe (flows, accessibility); Lighthouse run once by hand before launch | Same quality bar as sg-care-capacity |
 
@@ -594,17 +594,17 @@ From the pre-development review on 25 Nov 2026. Items are ranked by risk to laun
 
 ### Engineering setup
 
-- [ ] **12. Environments.**
-  - Vercel preview builds act as staging; `main` is production.
-  - Turn on branch protection for `main`.
-  - Give the data workflow `contents: write` permission, and nothing more.
+- [ ] **12. Environments.** *Partly done (25 Nov 2026); the rest waits on the owner's Vercel setup.*
+  - Vercel preview builds act as staging; `main` is production. *Open: connect the repo on Vercel with Root Directory `web`.*
+  - Turn on branch protection for `main`. *Changed: block force pushes and deletions only. The data workflow pushes straight to `main`, so requiring pull requests or status checks would make it fail. Before a public launch, switch the bot to opening a pull request, then require them.*
+  - Give the data workflow `contents: write` permission, and nothing more. *Done (`.github/workflows/data.yml`).*
   - Rollback: use Vercel's instant rollback for the site, or `git revert` the JSON commit for data.
-- [ ] **13. Versions and browsers.**
-  - Pin Node (LTS), Next.js and Python 3.12.
-  - Browser support: the last 2 versions of Chrome, Safari, Firefox and Edge; iOS Safari 16+; Android WebView from the last 3 years.
-- [ ] **14. Budgets and headers.**
-  - Performance budget: JavaScript under 150 KB gzipped on first load; all data files under 100 KB gzipped.
-  - Headers: a Content-Security-Policy allowing only self plus the Umami origin, `Referrer-Policy: no-referrer`, and `X-Content-Type-Options: nosniff`.
+- [x] **13. Versions and browsers.** *Done (25 Nov 2026), except testing on real browsers.*
+  - Pin Node (LTS), Next.js and Python 3.12. *Node 26 (`.nvmrc`), Python 3.12 (`.python-version`, CI), exact versions in `web/package.json` (Next.js 16.4.6, React 19.3.1).*
+  - Browser support: the last 2 versions of Chrome, Safari, Firefox and Edge; iOS Safari 16+; Android WebView from the last 3 years. *The automated tests run in Chromium only; Safari, Firefox and WhatsApp's in-app browser are checked by hand on real phones.*
+- [x] **14. Budgets and headers.** *Done (25 Nov 2026), with one accepted change to the budget.*
+  - Performance budget: JavaScript under 150 KB gzipped on first load; all data files under 100 KB gzipped. *Data: enforced by the pipeline. JavaScript: 208 KB, of which about 173 KB is the Next.js and React framework; the owner accepted a budget of the framework plus 50 KB (architecture decisions, Stage 5).*
+  - Headers: a Content-Security-Policy allowing only self plus the Umami origin, `Referrer-Policy: no-referrer`, and `X-Content-Type-Options: nosniff`. *In `web/vercel.json` and tested. The Umami origin is added only when analytics are. Scripts and styles need `'unsafe-inline'` (architecture decisions).*
 - [ ] **15. Error visibility.** The site has no server logs, so send a cookie-free Umami event `client_error` with no personal data when the app catches an error.
 
 ## Verification status (25 Nov 2026)

@@ -20,8 +20,23 @@ Helps a family get from "something has happened to Mum" to "we know roughly what
 | `docs/wireframes/index.html` | Lo-fi wireframes of every screen |
 | `data/curated/` | Hand-curated rules, prices, grants and contacts (YAML; every row has a source) |
 | `pipeline/` | Python 3.12 pipeline that validates the YAML and builds the JSON the site reads (Stage 2) |
-| `web/` | Next.js static site (Stages 3–5). `web/public/data/` holds the built JSON |
+| `web/` | Next.js static site (Stages 3–5). `web/public/data/` holds the built JSON; `web/vercel.json` the security headers |
+| `web/tests/e2e/` | End-to-end, accessibility, print and privacy checks (Stage 6) |
+| `.github/workflows/` | `ci` (every push), `data` (weekly data rebuild), `review` (monthly source-review issue) |
 | `reports/`, `research_notes/` | The research behind the design |
+
+## Running it
+
+From `web/` (Node 26):
+
+```bash
+npm ci
+npm test            # engine unit tests
+npm run build       # static site into web/out
+npm run e2e         # end-to-end checks against web/out (needs the build; first time: npx playwright install chromium)
+```
+
+From the repo root (Python 3.12): `python -m pytest pipeline -q` runs the pipeline tests, and `python -m pipeline.build_release` rebuilds `web/public/data/`.
 
 ## Ground rules
 
