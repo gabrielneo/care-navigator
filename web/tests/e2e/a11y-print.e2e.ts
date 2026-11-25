@@ -7,6 +7,8 @@ const STEPS: Step[] = ["where", "adl", "alone", "memory", "helper", "limits", "p
 const PAGES = ["/", "/about/", "/privacy/", "/data-sources/", "/does-not-exist/"];
 
 async function axe(page: import("@playwright/test").Page) {
+  // Check the screen people read: after the 260 ms slide-in, not halfway through the fade.
+  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
   const { violations } = await new AxeBuilder({ page }).analyze();
   const bad = violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(bad.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
@@ -68,4 +70,16 @@ test("print: the action plan fits on one A4 page", async ({ page, browserName },
   await page.emulateMedia({ media: "print" });
   const pdf = (await page.pdf({ format: "A4", printBackground: true })).toString("latin1");
   expect(pdf.match(/\/Type\s*\/Page[^s]/g)?.length).toBe(1);
+});
+
+test("Start: the 3D home appears, and reduced motion keeps the still mark", async ({ page, browser }) => {
+  await page.goto("/");
+  await expect(page.locator(".hero-3d > .scene.shown canvas")).toBeVisible({ timeout: 10_000 });
+  const calm = await browser.newContext({ reducedMotion: "reduce" });
+  const still = await calm.newPage();
+  await still.goto(test.info().project.use.baseURL + "/");
+  await expect(still.locator(".hero-3d .mark")).toBeVisible();
+  await still.waitForTimeout(2500);                                   // past the idle load
+  await expect(still.locator(".hero-3d canvas")).toHaveCount(0);
+  await calm.close();
 });

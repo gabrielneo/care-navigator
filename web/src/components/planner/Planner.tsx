@@ -75,7 +75,7 @@ export function Planner() {
       {banner === "updated" && (
         <p className="notice" role="status">Figures updated on {dataDate}. They may differ from when this plan was made.</p>
       )}
-      <div className="scr">
+      <div className="scr enter" key={step}>
         {step !== "action" && <div className="top no-print">
           <button type="button" className="link" onClick={back}>Back</button>
           <span>{qIndex >= 0 && s.w !== "in_nursing_home" ? `Question ${qIndex + 1} of 7` : ""}</span>

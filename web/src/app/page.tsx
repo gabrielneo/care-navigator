@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Hero3D } from "@/components/start/Hero3D";
 
 export default function Start() {
   return (
@@ -10,6 +11,7 @@ export default function Start() {
           Nothing you enter is saved.
         </p>
         <Link className="btn" href="/plan/">Start planning</Link>
+        <Hero3D />
       </section>
       <div className="scr">
         <p className="help">Planning for two people? Make one plan for each, then share both links.</p>

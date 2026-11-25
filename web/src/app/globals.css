@@ -120,6 +120,13 @@ table.calc th, table.calc td { text-align: left; padding: 6px 4px; border-bottom
 .hero p { color: var(--on-hero-muted); }
 .hero .btn { background: var(--on-hero); color: var(--hero-bg); }
 .hero .btn:hover { background: var(--sel-fill); }
+/* 3D picture: the space is reserved, so nothing shifts when it loads. The mark shows until the canvas fades in. */
+.hero-3d { position: relative; height: 230px; margin: 4px -16px -24px; display: grid; place-items: center; color: var(--on-hero-muted); }
+.hero-3d .mark { width: 72px; height: 72px; opacity: 0.35; }
+.hero-3d > .scene { position: absolute !important; inset: 0; opacity: 0; }  /* React Three Fiber's wrapper around the canvas */
+.hero-3d > .scene.shown { opacity: 1; }
+.hero-3d:has(> .scene.shown) .mark { opacity: 0; }
+@media (min-width: 600px) { .hero-3d { height: 280px; } }
 
 ol.steps { padding-left: 1.4em; display: flex; flex-direction: column; gap: 14px; }
 ol.steps li::marker { font-weight: 600; color: var(--primary); }
@@ -134,7 +141,20 @@ footer.ft nav { display: flex; flex-wrap: wrap; gap: 0 16px; }
 footer.ft nav a { min-height: 44px; display: inline-flex; align-items: center; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .btn, .opt, .sq, .chip { transition: background-color 120ms ease-out, border-color 120ms ease-out; }
+  .btn, .opt, .sq, .chip { transition: background-color 120ms ease-out, border-color 120ms ease-out, transform 120ms ease-out; }
+  .btn:active, .chip:active, .sq:active { transform: scale(0.97); }
+  .hero-3d > .scene, .hero-3d .mark { transition: opacity 600ms ease-out; }
+  /* Each step slides in; a new question feels like the next page, not a flicker. */
+  .enter { animation: enter 260ms ease-out both; }
+  @keyframes enter { from { opacity: 0; transform: translateY(10px); } }
+  .progress i { transition: width 320ms ease-out; }
+  .opt:has(input:checked) { animation: pick 200ms ease-out; }
+  @keyframes pick { 50% { transform: scale(1.015); } }
+}
+/* Cards tilt toward the pointer on a mouse or trackpad (set by Tilt in ui.tsx). Never on touch or with reduced motion. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 160ms ease-out, box-shadow 160ms ease-out; will-change: transform; }
+  .tilt:hover { box-shadow: 0 10px 24px rgba(43, 29, 20, 0.12); }
 }
 
 /* Print: the action plan on one A4 page; no chrome. */

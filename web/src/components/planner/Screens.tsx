@@ -9,7 +9,7 @@ import { incomeOptions, type TierId } from "@/lib/engine/tiers";
 import type { Session } from "@/lib/engine/urlCodec";
 import { nearbyContacts } from "@/lib/geo/nearby";
 import { pointForSession, type Region } from "@/lib/geo/postal";
-import { money, NO_PRICE, range, Radio, Seg, Stepper, UNIT_ONE, UNIT_WEEK } from "./ui";
+import { CountRange, money, NO_PRICE, range, Radio, Seg, Stepper, tilt, UNIT_ONE, UNIT_WEEK } from "./ui";
 
 type P = { s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void; restart: () => void };
 const services = new Map(rules.serviceTypes.map((x) => [x.serviceId, x]));
@@ -48,7 +48,7 @@ export function Matches({ s, update, next, restart }: P) {
   const card = (x: (typeof m.matches)[number]) => {
     const svc = services.get(x.serviceId)!;
     return (
-      <div className="svc" key={x.serviceId}>
+      <div className="svc tilt" key={x.serviceId} {...tilt}>
         <h3>{svc.name} <span className="meta">({svc.officialTerm})</span></h3>
         <p>{svc.description}</p>
         <p className="why"><b>Why this fits:</b> {x.reasonText}</p>
@@ -228,15 +228,15 @@ export function CostScreen({ s, update, next }: P) {
           {c.total.withSubsidy && !c.total.sameAsFullPrice ? (
             <>
               <div><p className="lbl">At a government-funded provider, with subsidy</p>
-                <p className="big">{range(c.total.withSubsidy)}</p><p className="sub">a month · estimate</p></div>
+                <p className="big"><CountRange r={c.total.withSubsidy} /></p><p className="sub">a month · estimate</p></div>
               <hr />
               <div><p className="lbl">Full price, at a private provider</p>
-                <p className="mid">{range(c.total.fullPrice)} a month</p><p className="sub">may add 9% GST</p></div>
+                <p className="mid"><CountRange r={c.total.fullPrice} /> a month</p><p className="sub">may add 9% GST</p></div>
             </>
           ) : (
             <div>
               <p className="lbl">{!s.t || !s.r ? "Full price (pick her income range to see the subsidy)" : "Full price"}</p>
-              <p className="big">{range(c.total.fullPrice)}</p><p className="sub">a month · estimate · may add 9% GST</p>
+              <p className="big"><CountRange r={c.total.fullPrice} /></p><p className="sub">a month · estimate · may add 9% GST</p>
             </div>
           )}
         </div>
@@ -428,7 +428,7 @@ export function ContactsScreen({ s, update, next }: P) {
     <>
       <h1>Who to call first</h1>
       {near.items.map((i, k) => (
-        <div className={`contact${i.kind === "ward_msw" ? " first" : ""}`} key={`${i.kind}-${i.id ?? k}`}>
+        <div className={`contact tilt${i.kind === "ward_msw" ? " first" : ""}`} key={`${i.kind}-${i.id ?? k}`} {...tilt}>
           <h3>{i.name}</h3>
           {i.kind === "ward_msw" && <p>Ask before she's discharged. Some help can only be requested through them.</p>}
           {i.address && <p className="meta">{[dist(i.km, i.precision), i.address].filter(Boolean).join(" · ")}</p>}
@@ -497,7 +497,7 @@ export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart
             <span>Split between</span>
             <Stepper value={s.x ?? 1} min={1} max={10} onChange={(x) => update({ x })} label="People sharing the cost" less="Fewer people" more="More people" />
           </div>
-          {c.split && <p><b>{range(c.split.each)} each</b> a month{c.total.withSubsidy ? ", with subsidy" : ""}</p>}
+          {c.split && <p><b><CountRange r={c.split.each} /> each</b> a month{c.total.withSubsidy ? ", with subsidy" : ""}</p>}
           <Sources ids={c.lines.flatMap((l) => l.sourceIds)} />
         </div>
       )}

@@ -1,9 +1,48 @@
 "use client";
 // Small shared pieces for the planner screens. Wording: docs/specs/08-onscreen-wording.md.
+import { useEffect, useRef, useState } from "react";
 import type { Range } from "@/lib/engine/cost";
 
 export const money = (n: number) => `$${n.toLocaleString("en-SG")}`;
 export const range = (r: Range) => (r.low === r.high ? money(r.low) : `${money(r.low)} – ${money(r.high)}`);
+
+/** A money range that counts to its new value when the answers change it. It shows the final value at once on first
+ *  show and with reduced motion, so the figure is never wrong for long. */
+export function CountRange({ r }: { r: Range }) {
+  const [shown, setShown] = useState(r);
+  const now = useRef(r);
+  useEffect(() => {
+    const from = now.current;
+    if (from.low === r.low && from.high === r.high) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { now.current = r; setShown(r); return; }
+    const t0 = performance.now();
+    let raf = 0;
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / 450), e = 1 - (1 - k) ** 3;
+      const at = (a: number, b: number) => (k === 1 ? b : Math.round((a + (b - a) * e) / 5) * 5);
+      now.current = { low: at(from.low, r.low), high: at(from.high, r.high) };
+      setShown(now.current);
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [r.low, r.high]);
+  return <>{range(shown)}</>;
+}
+
+/** Pointer handlers that tilt a `.tilt` card toward a mouse (the CSS applies it only on mouse or trackpad devices). */
+export const tilt = {
+  onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType !== "mouse") return;
+    const b = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--ry", `${((e.clientX - b.left) / b.width - 0.5) * 6}deg`);
+    e.currentTarget.style.setProperty("--rx", `${(0.5 - (e.clientY - b.top) / b.height) * 6}deg`);
+  },
+  onPointerLeave: (e: React.PointerEvent<HTMLElement>) => {
+    e.currentTarget.style.removeProperty("--rx");
+    e.currentTarget.style.removeProperty("--ry");
+  },
+};
 
 /** "a session (a day)", "an hour" … for "From $55 a session (a day) before subsidy". */
 export const UNIT_ONE: Record<string, string> = {

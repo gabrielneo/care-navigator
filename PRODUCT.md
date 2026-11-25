@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Next.js (static export, `output: 'export'`), TypeScript and one global stylesheet on the warm palette (no Tailwind), hosted free on Vercel (`care-navigator-xi.vercel.app`) with security headers from `web/vercel.json`. No server code, no database, and no outside service at run time. The data pipeline is Python 3.12 + Pydantic in GitHub Actions. The source is `docs/product-design-v2.md` and `docs/architecture-prompts-v2.md`.
+Next.js (static export, `output: 'export'`), TypeScript and one global stylesheet on the warm palette (no Tailwind), hosted free on Vercel (`care-navigator-xi.vercel.app`) with security headers from `web/vercel.json`. The Start page has a small 3D scene (three.js, loaded after the page shows, off with reduced motion). No server code, no database, and no outside service at run time. The data pipeline is Python 3.12 + Pydantic in GitHub Actions. The source is `docs/product-design-v2.md` and `docs/architecture-prompts-v2.md`.
 
 ## Users
 
