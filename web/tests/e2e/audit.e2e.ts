@@ -84,3 +84,13 @@ test("every page: noindex, OG image and the prototype banner", async ({ page }) 
     await expect(page.getByText(/prototype/i).first()).toBeVisible();
   }
 });
+
+test("headers: CSP allows only this site, no referrer, no type sniffing", async ({ request }) => {
+  for (const path of ["/", "/plan/", "/data/manifest.json", "/does-not-exist/"]) {
+    const h = (await request.get(path)).headers();
+    expect(h["content-security-policy"], path).toMatch(/default-src 'self'.*frame-ancestors 'none'/);
+    expect(h["content-security-policy"]).not.toMatch(/https?:|\*/);   // no outside origin is allowed anywhere
+    expect(h["referrer-policy"], path).toBe("no-referrer");
+    expect(h["x-content-type-options"], path).toBe("nosniff");
+  }
+});

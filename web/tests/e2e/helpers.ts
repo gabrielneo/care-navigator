@@ -23,12 +23,16 @@ export async function startPlan(page: Page) {
 /** Every postal code the tests type. None may appear in any request. */
 export const POSTAL_CODES = ["560123", "701234"];
 
-/** `test` with a check after every test: each request from every page stayed on this site and carried no postal code. */
+/** `test` with checks after every test: each request from every page stayed on this site and carried no postal code,
+ *  and the security headers (vercel.json) blocked nothing the site itself needs. */
 export const test = base.extend<{ privateRequests: void }>({
   privateRequests: [async ({ context, baseURL }, use) => {
     const seen: Request[] = [];
+    const blocked: string[] = [];
     context.on("request", (r) => seen.push(r));
+    context.on("console", (m) => { if (/Content Security Policy|Refused to/i.test(m.text())) blocked.push(m.text()); });
     await use();
+    expect(blocked, "blocked by the Content-Security-Policy").toEqual([]);
     const origin = new URL(baseURL!).origin;
     for (const r of seen) {
       expect(new URL(r.url()).origin, `off-site request: ${r.url()}`).toBe(origin);
