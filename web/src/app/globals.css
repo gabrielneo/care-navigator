@@ -25,6 +25,7 @@ main { flex: 1; }
 .notice { background: var(--sage-fill); color: var(--sage); font-size: var(--fs-small); padding: 10px 16px; line-height: 1.45; }
 .notice.warn { background: var(--danger-fill); color: var(--danger); }
 .scr { padding: 20px 16px 28px; display: flex; flex-direction: column; gap: 16px; }
+.plan-loading .scr { visibility: hidden; }
 .top { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-meta); color: var(--text-secondary); }
 .progress { height: 6px; background: var(--border-subtle); border-radius: 3px; overflow: hidden; }
 .progress i { display: block; height: 100%; background: var(--primary); border-radius: 3px; }

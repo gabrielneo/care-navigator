@@ -15,7 +15,7 @@ services:
   - service_id: dementia_day_care
     name: Day care for dementia
     official_term: Dementia Day Care
-    description: Day care with staff and activities for people living with dementia.
+    description: Day care for people living with dementia, at selected centres.
     setting: centre
     scheme: non_residential
     unit: session
@@ -35,7 +35,7 @@ services:
   - service_id: home_personal_care
     name: Help with washing and dressing at home
     official_term: Home Personal Care
-    description: A trained care worker comes home to help with daily care.
+    description: A trained care worker comes home to help with washing, dressing, eating and toileting.
     setting: home
     scheme: non_residential
     unit: hour
@@ -56,53 +56,43 @@ services:
   - service_id: home_therapy
     name: Therapy at home
     official_term: Home Therapy
-    description: A therapist helps her regain movement and do daily tasks safely at home.
+    description: Physiotherapy, occupational or speech therapy at home, to help her regain everyday abilities.
     setting: home
     scheme: non_residential
     unit: visit
     default_units_per_week: 1
     how_to_apply_id: via_doctor_or_aic_link
-    source_id: moh_nonres_subsidy
-  - service_id: centre_rehab
-    name: Therapy at a centre
-    official_term: Centre-based Rehabilitation
-    description: Exercise and therapy sessions at a nearby centre to rebuild strength.
-    setting: centre
-    scheme: non_residential
-    unit: session
-    default_units_per_week: 2
-    how_to_apply_id: via_doctor_or_aic_link
-    source_id: moh_nonres_subsidy
+    source_id: aic_home_therapy
   - service_id: medical_escort
     name: Escort to appointments
     official_term: Medical Escort and Transport
-    description: Someone takes her to and from medical appointments.
+    description: Transport to medical appointments, with someone to go with her.
     setting: home
     scheme: non_residential
     unit: trip
     default_units_per_week: 1
     how_to_apply_id: via_doctor_or_aic_link
-    source_id: moh_nonres_subsidy
+    source_id: aic_met
   - service_id: meals_on_wheels
     name: Meals delivered
     official_term: Meals on Wheels
-    description: Hot meals brought to her home.
+    description: Meals delivered to her home when she can't buy or prepare her own.
     setting: home
     scheme: non_residential
     unit: meal
     default_units_per_week: 5
     how_to_apply_id: via_doctor_or_aic_link
-    source_id: moh_nonres_subsidy
+    source_id: aic_mow
   - service_id: respite
     name: A break for you
-    official_term: Respite care (nursing home respite)
-    description: Short-term care at a nursing home so you can rest.
+    official_term: Nursing Home Respite Care
+    description: Full-time care at a nursing home for at least 7 days, so you can rest.
     setting: residential
     scheme: residential
     unit: day
     default_units_per_week: null
     how_to_apply_id: via_aic_link
-    source_id: moh_res_subsidy
+    source_id: aic_nh_respite
   - service_id: active_ageing_centre
     name: Activities and company nearby
     official_term: Active Ageing Centre
@@ -116,7 +106,7 @@ services:
   - service_id: interim_caregiver_service
     name: Short-term carer after discharge
     official_term: Interim Caregiver Service
-    description: A carer at home for the first weeks after discharge. Only the ward team can request it.
+    description: A carer at home for up to 2 weeks after discharge. Only the ward's medical social worker can refer her, while she is in hospital.
     setting: ward
     scheme: null
     unit: null

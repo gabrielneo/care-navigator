@@ -487,6 +487,8 @@ The main measure is action plans created and shared: the moment a family has wha
 | Who-to-call or official link clicked | Clicked a contact, AIC, SupportGoWhere or MOH link ÷ action plans | 40% |
 | Helpfulness | "Did this help?" yes ÷ answered | 75% |
 
+**Replaced (owner, 25 Nov 2026):** the prototype has no analytics, so the funnel targets above aren't measured. The usability test below and the launch plan are replaced by Stage 7's desk validation; its report is the evidence. Kept here for a future public launch.
+
 **Usability test (the before/after story):** five caregivers do the same task twice, in random order: once with official websites only, once with the tool. Task: "Your mother is in hospital after a fall, needs help washing, and is alone on weekdays. Find suitable services, an estimated monthly cost and your first step." Measure task success, time and confidence (1–5).
 
 **Launch plan:**
@@ -531,6 +533,7 @@ From the pre-development review on 25 Nov 2026. Items are ranked by risk to laun
   - Every page shows a prototype banner: "Prototype for testing. Figures and wording have not yet been checked by a care professional."
   - Every **[Gate 2]** item in spec 08 counts as unreviewed.
   - The site carries `noindex` (spec 11), so search engines don't list it.
+  - **Update (owner, 25 Nov 2026): no interviews, site visits or practitioner review.** The owner doesn't have capacity for them. Stage 7 (desk validation) replaces them with published sources: a source audit of every rule and wording (`docs/verified/source-audit-2026-11-25.md`), a readability test, a cognitive walkthrough, a heuristic review and a before/after task comparison. The banner and `noindex` stay permanently, and the link is shared directly as a portfolio project, not in caregiver groups.
 - [x] **3. Shared links after a rules change — option A (25 Nov 2026).** Old links recalculate with the current rules and show the banner "Figures updated on {date}. They may differ from when this plan was made." Every link carries `v` from day one (spec 10). No rules archive.
 - [x] **4. Privacy promise — no analytics or feedback tools in the prototype (25 Nov 2026).**
   - The prototype ships with no Umami, no Tally and no third-party scripts, so "no third-party trackers" stays true.

@@ -60,7 +60,7 @@ grants:
     min_adl: 1
     alt_min_age: 67
     requires_helper: true
-    other_conditions: For a household with a live-in migrant domestic worker and a Singapore Citizen aged 67 or over, or a person who needs help with at least 1 daily activity.
+    other_conditions: For a household with a live-in migrant domestic worker and a Singapore Citizen aged 67 or over, or a person a doctor certifies as needing help with at least 1 daily activity.
     official_url: https://mom.gov.sg/passes-and-permits/work-permit-for-foreign-domestic-worker/foreign-domestic-worker-levy/levy-concession
     effective_from: 2019-04-01
     source_id: mom_levy_concession
@@ -69,9 +69,9 @@ grants:
     kind: grant
     period: once_then_yearly
     amount_by_band: {T0: 400, T1: 400, T2: 400, T3: 400, T4: 400, T5: 400}
-    amount_meaning: $400 to start, then $200 a year, for approved caregiver courses.
+    amount_meaning: "$400, then $200 a year (up to $400 at a time) for approved courses. She must be 65 or older, or have a disability."
     min_adl: 0
-    other_conditions: For caregivers taking approved courses.
+    other_conditions: For caregivers of a Singapore Citizen or PR aged 65 or over, or with a disability, taking approved courses.
     official_url: https://www.togetherforbetter.gov.sg/lifestage/caregivers/
     effective_from: 2026-01-01
     source_id: tfb_caregivers

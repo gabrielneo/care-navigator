@@ -1,7 +1,7 @@
 {
- "dataVersion": "2026.11.25-2",
- "builtAt": "2026-11-25T03:44:01+00:00",
- "curatedHash": "44fb4c745c1b01afcdd5590bb9f8ccb8fad889f5ed0fd6989cb18707dafb2a47",
+ "dataVersion": "2026.11.25-5",
+ "builtAt": "2026-11-25T08:44:02+00:00",
+ "curatedHash": "37c6ba49cfdd5b910ba44545e8210d83e46692c177c87e3838de74a98a56f114",
  "sources": [
   {
    "sourceId": "moh_nonres_subsidy",
@@ -124,14 +124,6 @@
    "nextReview": "2027-02-28"
   },
   {
-   "sourceId": "ntuc_hcg_howto",
-   "title": "How to apply for the Home Caregiving Grant (FAR, then eFASS)",
-   "url": "https://ntuchealth.sg/elderly-care/resources/home-care/how-to-apply-for-the-home-caregiving-grant-for-care-at-home",
-   "licence": "site-terms",
-   "checkedOn": "2026-11-24",
-   "nextReview": "2027-02-28"
-  },
-  {
    "sourceId": "cpf_careshield",
    "title": "CareShield Life monthly payout ($689 in 2026)",
    "url": "https://www.cpf.gov.sg/service/article/what-is-the-monthly-payout-amount-for-careshield-life",
@@ -234,16 +226,64 @@
    "licence": "site-terms",
    "checkedOn": "2026-11-25",
    "nextReview": "2026-12-31"
+  },
+  {
+   "sourceId": "aic_hcg",
+   "title": "AIC Home Caregiving Grant (FAR by an approved assessor, apply on eFASS)",
+   "url": "https://www.aic.sg/financial-assistance/home-caregiving-grant-hcg/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_home_therapy",
+   "title": "AIC Home Therapy (from $125 a visit, doctor applies online)",
+   "url": "https://www.aic.sg/care-services/home-therapy",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_met",
+   "title": "AIC Medical Escort and Transport (from $40 a round trip)",
+   "url": "https://www.aic.sg/care-services/medical-escort-and-transport",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_mow",
+   "title": "AIC Meals on Wheels (from $4 a meal)",
+   "url": "https://www.aic.sg/care-services/meals-on-wheels",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_nh_respite",
+   "title": "AIC Nursing Home Respite Care (from $131 a day; referral by a doctor)",
+   "url": "https://www.aic.sg/Care-Services/Nursing-Home-Respite-Care",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_take_a_break",
+   "title": "AIC Take a Break (respite, apply 4 weeks ahead, 7 to 30 days a year)",
+   "url": "https://www.aic.sg/Caregiving-Support/Take-a-Break",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-25",
+   "nextReview": "2027-02-28"
   }
  ],
  "files": {
-  "rules.json": "68d2c2ab8bb4c1c8ea10d37eb80efd63f21e3fa1f948ada0d66e7e5825298b68",
+  "rules.json": "1292d451785f2c8b89f603ef48e9cf4fa3282e2af7143d6fa7597c5cd84982a1",
   "contacts.json": "44edb74ca6d3d816693ff23e69ef97144f57e1720cb7936de8df95eded769d35",
   "places.json": "2d789de5cf2255d2eb275285efcb3108b51b6e0191bd9dde0b38014203bed8d0",
   "sectors.json": "27500e57c4319c56b96939968ad183e2ef538af68b47351893fe6b4b99a207c3"
  },
  "sizes": {
-  "rules.json": 5386,
+  "rules.json": 5505,
   "contacts.json": 2122,
   "places.json": 6343,
   "sectors.json": 965
@@ -251,14 +291,8 @@
  "warnings": [
   "price dementia_day_care (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price home_personal_care (high) comes from an aggregator (agg_misslobang); check the provider's page",
-  "price home_therapy (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
-  "price centre_rehab (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
-  "price centre_rehab (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
-  "price medical_escort (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price medical_escort (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
-  "price meals_on_wheels (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price meals_on_wheels (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
-  "price respite (low) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price respite (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "78 open-data places were last edited over 24 months ago"
  ]

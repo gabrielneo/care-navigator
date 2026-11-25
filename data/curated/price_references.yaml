@@ -56,48 +56,39 @@ prices:
   - service_id: home_therapy
     unit: visit
     price_low_sgd: 125
-    low_source_id: agg_thebestsingapore
-    low_confidence: aggregator
+    low_source_id: aic_home_therapy
+    low_confidence: official
     price_high_sgd: 160
     high_source_id: ntuc_fees
     high_confidence: provider
-    checked_on: 2026-11-24
-  - service_id: centre_rehab
-    unit: session
-    price_low_sgd: 52
-    low_source_id: agg_thebestsingapore
-    low_confidence: aggregator
-    price_high_sgd: 102
-    high_source_id: agg_thebestsingapore
-    high_confidence: aggregator
-    checked_on: 2026-11-24
+    checked_on: 2026-11-25
   - service_id: medical_escort
     unit: trip
     price_low_sgd: 40
-    low_source_id: agg_thebestsingapore
-    low_confidence: aggregator
+    low_source_id: aic_met
+    low_confidence: official
     price_high_sgd: 150
     high_source_id: agg_thebestsingapore
     high_confidence: aggregator
-    checked_on: 2026-11-24
+    checked_on: 2026-11-25
   - service_id: meals_on_wheels
     unit: meal
-    price_low_sgd: 4.9
-    low_source_id: agg_thebestsingapore
-    low_confidence: aggregator
+    price_low_sgd: 4
+    low_source_id: aic_mow
+    low_confidence: official
     price_high_sgd: 7
     high_source_id: agg_thebestsingapore
     high_confidence: aggregator
-    checked_on: 2026-11-24
+    checked_on: 2026-11-25
   - service_id: respite
     unit: day
-    price_low_sgd: 100
-    low_source_id: agg_thebestsingapore
-    low_confidence: aggregator
+    price_low_sgd: 131
+    low_source_id: aic_nh_respite
+    low_confidence: official
     price_high_sgd: 150
     high_source_id: agg_thebestsingapore
     high_confidence: aggregator
-    checked_on: 2026-11-24
+    checked_on: 2026-11-25
   - service_id: nursing_home
     unit: month
     price_low_sgd: 4900

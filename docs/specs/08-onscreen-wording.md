@@ -114,7 +114,7 @@ The badges always add "before subsidy". "About" marks ranges built from non-AIC 
 5. "Can she be assessed for the Home Caregiving Grant?" (Only if she needs help with 3 or more daily activities.)
 6. "Who do I call if things go wrong in the first week at home?"
 
-Link: "AIC's discharge tips" → aic.sg Care Services Recommender discharge tips.
+Link: "AIC's Care Services Recommender" → aic.sg Care Services Recommender (the page has no discharge tips; source audit, 25 Nov 2026).
 
 **Something just changed at home (ask her GP, a polyclinic doctor or an AIC Link):**
 1. "Can you assess what care she needs now?"

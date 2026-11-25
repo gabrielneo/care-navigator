@@ -87,6 +87,11 @@ function breakFirst(rule: RulesBundle["needRules"][number], s: Session): Session
 const allServices = (s: Session) => { const m = matchServices(rules, s); return [...m.matches, ...m.more].map((x) => x.serviceId); };
 
 describe("matching rules", () => {
+  it("movement trouble at home matches home therapy, not the retired centre rehab (source audit)", () => {
+    const ids = matchServices(rules, { v: V, w: "changed_at_home", adl: ["move"], al: "no", mem: "no", hlp: "no", lim: "ok" }).matches.map((m) => m.serviceId);
+    expect(ids).toContain("home_therapy");
+    expect(ids).not.toContain("centre_rehab");
+  });
   it("struggling branch leads with respite; other branches keep priority order", () => {
     const tan: Session = { v: V, w: "struggling", adl: ["bath"], al: "most", mem: "dx", hlp: "no", lim: "cant" };
     expect(matchServices(rules, tan).matches.map((m) => m.serviceId)).toEqual(["respite", "dementia_day_care", "home_personal_care"]);
@@ -140,7 +145,7 @@ describe("matching rules", () => {
   });
 
   it("memory problems raise the dementia note", () => {
-    expect(matchServices(rules, { ...NEUTRAL, mem: "dx" }).dementiaNote).toMatch(/longer waits/);
+    expect(matchServices(rules, { ...NEUTRAL, mem: "dx" }).dementiaNote).toMatch(/psychiatric care needs take longer/);
     expect(matchServices(rules, NEUTRAL).dementiaNote).toBeNull();
   });
 });

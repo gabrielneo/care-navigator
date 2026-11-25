@@ -243,6 +243,17 @@ Act as a QA Automation Lead and Singapore data-compliance reviewer.
 - No cookies, no personal data in localStorage, no third-party trackers in the production bundle.
 - The postal code appears in no network request, no analytics payload and no shared link.
 
+## Stage 7: Desk validation (replaces interviews, usability tests and Gate 2)
+
+Owner's decision (25 Nov 2026): no interviews, site visits or practitioner review. Validate with published sources and structured reviews instead, and say plainly what that can't show.
+
+1. **Source audit:** check every matching rule, first contact, ask-list question, application step, timing note, document and grant condition against the official page. Fix or soften anything that isn't supported, and mark the rest as our judgement. Output: `docs/verified/source-audit-2026-11-25.md`.
+2. **Readability:** an automatic test that on-screen sentences stay under 20 words, with a reading-grade ceiling (spec 08: reading age about 12). One Lighthouse run on mobile (quality gates: accessibility 100, performance 90+).
+3. **Cognitive walkthrough** (Wharton et al.'s four questions) of every screen for three scenarios: Mei, Mr Tan and the nursing home. **Heuristic review** against Nielsen's 10 heuristics. **Before/after comparison:** the Gate 1 task on the official sites against the tool, counted in steps and pages, with time estimated by the Keystroke-Level Model.
+4. Fix what this finds, and write the evaluation report in `docs/verified/`.
+
+Not covered: real users' understanding and trust, and a professional's judgement of the advice. The prototype banner says so.
+
 ---
 
 ## Execution sequence and gates

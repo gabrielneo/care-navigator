@@ -27,7 +27,6 @@ function allowed(s: Session, step: Step): Step {
 
 export function Planner() {
   const fresh: Session = { v: manifest.dataVersion };
-  const [ready, setReady] = useState(false);
   const [step, setStep] = useState<Step>("where");
   const [s, setS] = useState<Session>(fresh);
   const [banner, setBanner] = useState<"damaged" | "updated" | null>(null);
@@ -46,7 +45,7 @@ export function Planner() {
 
   useEffect(() => {
     load(window.location.hash);
-    setReady(true);
+    document.documentElement.classList.remove("plan-loading");   // set by plan/page.tsx for links with a saved plan
     const onPop = () => load(window.location.hash);
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -67,8 +66,6 @@ export function Planner() {
   const next = (session: Session = s) => go(f[f.indexOf(step) + 1] ?? "action", session);
   // The on-screen Back goes to the previous step even on a shared link, where there's no history to go back to.
   const back = () => { const i = f.indexOf(step); if (i > 0) go(f[i - 1]!); else window.location.href = "/"; };
-
-  if (!ready) return <div className="scr" aria-busy="true" />;
 
   const qIndex = QUESTIONS.indexOf(step);
   const screen = { s, update, next, restart: () => go("where") };

@@ -17,7 +17,7 @@ rules:
     when:
       - {q: where, in: [in_hospital]}
       - {q: discharged, is: false}
-    reason_text: Ask the ward team before she leaves. Some help can only be requested from there.
+    reason_text: Ask the ward's medical social worker before she leaves. This help can only be requested while she is in hospital.
     priority: 1
     source_id: thk_ics
   - rule_id: R02
@@ -47,40 +47,32 @@ rules:
   - rule_id: R05
     service_id: home_therapy
     when:
-      - {q: where, in: [in_hospital]}
+      - {q: where, in: [in_hospital, changed_at_home]}
       - {q: adl, any: [move, transfer]}
     reason_text: Therapy helps her get back her strength and movement.
     priority: 4
-    source_id: moh_nonres_subsidy
-  - rule_id: R06
-    service_id: centre_rehab
-    when:
-      - {q: where, in: [changed_at_home]}
-      - {q: adl, any: [move, transfer]}
-    reason_text: Therapy helps her get back her strength and movement.
-    priority: 4
-    source_id: moh_nonres_subsidy
+    source_id: aic_home_therapy
   - rule_id: R07
     service_id: medical_escort
     when:
       - {q: adl, any: [move]}
     reason_text: Someone gets her safely to clinic visits.
     priority: 6
-    source_id: moh_nonres_subsidy
+    source_id: aic_met
   - rule_id: R08
     service_id: meals_on_wheels
     when:
       - {q: adl, any: [eat]}
     reason_text: Regular meals arrive at her door.
     priority: 6
-    source_id: moh_nonres_subsidy
+    source_id: aic_mow
   - rule_id: R09
     service_id: respite
     when:
       - {q: limits, in: [tired, cant]}
     reason_text: You need a break too. This gives you one.
     priority: 5
-    source_id: moh_res_subsidy
+    source_id: aic_nh_respite
   - rule_id: R10
     service_id: active_ageing_centre
     when:

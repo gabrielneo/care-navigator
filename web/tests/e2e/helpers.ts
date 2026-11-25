@@ -30,9 +30,9 @@ export const test = base.extend<{ privateRequests: void }>({
     const seen: Request[] = [];
     const blocked: string[] = [];
     context.on("request", (r) => seen.push(r));
-    context.on("console", (m) => { if (/Content Security Policy|Refused to/i.test(m.text())) blocked.push(m.text()); });
+    context.on("console", (m) => { if (/Content Security Policy|Refused to|Hydration|did not match/i.test(m.text())) blocked.push(m.text()); });
     await use();
-    expect(blocked, "blocked by the Content-Security-Policy").toEqual([]);
+    expect(blocked, "blocked by the Content-Security-Policy, or a hydration error").toEqual([]);
     const origin = new URL(baseURL!).origin;
     for (const r of seen) {
       expect(new URL(r.url()).origin, `off-site request: ${r.url()}`).toBe(origin);

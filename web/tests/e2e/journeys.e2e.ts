@@ -92,10 +92,11 @@ test("Mr Tan: wife with memory problems, skips the postal code", async ({ page }
   await page.getByRole("button", { name: "Skip and pick a region" }).click();
   await page.getByRole("button", { name: "North", exact: true }).click();
 
-  await expect(page.getByText(/Dementia day care and psychiatric nursing home beds usually have longer waits/)).toBeVisible();
+  await expect(page.getByText(/Nursing home beds for psychiatric care needs take longer to get/)).toBeVisible();
   await expect(page.getByRole("heading", { name: /^Day care for dementia/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: /^A break for you/ })).toBeVisible();
   await page.getByRole("button", { name: "Build her week" }).click();
+  await expect(page.getByText(/respite is booked as a stay of at least 7 days/)).toBeVisible();
   await page.getByRole("button", { name: "See the cost" }).click();
   await page.getByRole("button", { name: "See who to call" }).click();
 
@@ -111,6 +112,9 @@ test("Nursing home: a 'from' figure next to real bills, nothing subtracted", asy
   await startPlan(page);
   await answer(page, "In a nursing home");
   await expect(page.getByRole("heading", { name: "What a nursing home may cost" })).toBeVisible();
+  // Before her income range and residency are picked, no subsidy is claimed.
+  await expect(page.getByText("from $4,900 a month before subsidy", { exact: true })).toBeVisible();
+  await expect(page.getByText(/0% residential subsidy/)).toHaveCount(0);
   await page.getByLabel("Household income per person (PCHI)").selectOption("T1");
   await page.locator("label", { hasText: "Singapore Citizen" }).click();
   await expect(page.getByLabel("Singapore Citizen")).toBeChecked();

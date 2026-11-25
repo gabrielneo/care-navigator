@@ -1,40 +1,42 @@
-# How each service is reached, and what to bring. Documents come from docs/specs/08 (not yet practitioner-reviewed).
+# How each service is reached, and what to bring. Checked against official pages in docs/verified/source-audit-2026-11-25.md;
+# the documents to bring are our judgement (no official list exists) and are not practitioner-reviewed.
 always_bring:
   - Her NRIC
   - Your NRIC (as the person arranging care)
   - The hospital discharge summary or doctor's memo, if any
   - A list of her current medicines
-  - A rough idea of household income (details come from government records; payslips only if asked)
+  - A rough idea of the monthly income of everyone living at her NRIC address (subsidies are means-tested on it)
 routes:
   - apply_id: via_doctor_or_aic_link
     first_contact: Her doctor at the hospital or polyclinic, or an AIC Link
     steps:
       - Ask the doctor to submit an online application for the service.
       - Or visit an AIC Link and they will help you apply.
-      - The provider assesses her and confirms the fee after the means test.
+      - Subsidies are means-tested on household income per person.
     extra_documents:
       - The doctor's referral or the application made by the hospital or polyclinic
     source_id: aic_day_care
   - apply_id: via_ward_msw
     first_contact: The medical social worker on her ward
     steps:
-      - Ask before she is discharged. Only the ward team can refer her.
+      - Ask before she is discharged. Only the ward's medical social worker can refer her.
     extra_documents: []
     source_id: thk_ics
   - apply_id: via_ward_msw_or_aic
-    first_contact: The ward's medical social worker, or AIC
+    first_contact: The ward's medical social worker, or her polyclinic doctor
     steps:
-      - The hospital or AIC refers her to nursing homes after an assessment finds care at home can't meet her needs.
+      - A hospital, polyclinic or medical social worker refers her after an assessment finds she can't be cared for at home.
     extra_documents:
-      - The referral from the hospital or AIC
+      - The referral from the hospital or polyclinic
       - Any recent medical reports
     source_id: aic_nursing_home
   - apply_id: via_aic_link
-    first_contact: An AIC Link or the AIC hotline
+    first_contact: Her doctor, with help from an AIC Link
     steps:
-      - Ask for respite care and how much notice is needed.
+      - A hospital, polyclinic or GP doctor refers her. An AIC Link can help with the application.
+      - Apply about 4 weeks before. Each stay is at least 7 days, up to 30 days a year.
     extra_documents: []
-    source_id: aic_contact_links
+    source_id: aic_take_a_break
   - apply_id: via_provider
     first_contact: The centre or provider directly
     steps:
@@ -44,10 +46,10 @@ routes:
 grant_steps:
   - grant_id: home_caregiving_grant
     steps:
-      - Get a Functional Assessment Report from an approved assessor.
-      - Apply online on AIC's eFASS.
-    source_id: ntuc_hcg_howto
+      - Get a Functional Assessment Report from an approved doctor, nurse or therapist.
+      - Apply online on AIC's eFASS with Singpass.
+    source_id: aic_hcg
   - grant_id: levy_concession
     extra_documents:
-      - Details of the helper's work permit
+      - A doctor's certification of the help she needs and AIC's recommendation letter (if applying because of daily activities)
     source_id: mom_levy_concession

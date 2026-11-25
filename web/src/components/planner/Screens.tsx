@@ -107,6 +107,7 @@ export function Week({ s, update, next }: P) {
     && !plan.some((e) => e.s === x.serviceId));
   const hasDayCare = plan.some((e) => e.s === "day_care" || e.s === "dementia_day_care");
   const transportOn = (s.plan ?? []).find((e) => e.s === "day_care_transport")?.n !== 0;
+  const respiteMatched = matchServices(rules, s).matches.some((m) => m.serviceId === "respite");
 
   // Lay services out on the week in order: each takes its next n days (display only).
   const days: string[][] = DAYS.map(() => []);
@@ -157,6 +158,9 @@ export function Week({ s, update, next }: P) {
           </div>
         ))}
       </div>
+      {respiteMatched && !plan.some((e) => e.s === "respite") && (
+        <p className="note">A break for you isn't in the week: respite is booked as a stay of at least 7 days. Ask about it when you call.</p>
+      )}
       <AddService options={addable} onAdd={(id) => set(id, services.get(id)?.defaultUnitsPerWeek ?? 1)} />
       <button type="button" className="btn" onClick={() => next()}>See the cost</button>
     </>
@@ -164,7 +168,7 @@ export function Week({ s, update, next }: P) {
 }
 function shortName(id: string) {
   return ({ day_care: "Day care", dementia_day_care: "Dementia day care", home_personal_care: "Home care", home_nursing: "Nurse",
-    home_therapy: "Therapy", centre_rehab: "Rehab", medical_escort: "Escort", meals_on_wheels: "Meals", respite: "Respite" } as Record<string, string>)[id] ?? svcName(id);
+    home_therapy: "Therapy", medical_escort: "Escort", meals_on_wheels: "Meals", respite: "Respite" } as Record<string, string>)[id] ?? svcName(id);
 }
 function AddService({ options, onAdd }: { options: typeof rules.serviceTypes; onAdd: (id: string) => void }) {
   const [pick, setPick] = useState("");
@@ -266,8 +270,10 @@ export function CostScreen({ s, update, next }: P) {
       {(showNh || nursing) ? (
         <div className="panel">
           <h3>Nursing home</h3>
-          <p className="big" style={{ fontFamily: "var(--font-serif)", fontSize: "1.75rem" }}>from {money(nh.from)} a month</p>
-          <p className="meta">{nh.label}. {nh.subsidyPct}% residential subsidy on AIC's "from" fee of $4,900. Estimate.</p>
+          <p className="big" style={{ fontFamily: "var(--font-serif)", fontSize: "1.75rem" }}>from {money(nh.from)} a month{s.t && s.r ? "" : " before subsidy"}</p>
+          <p className="meta">{s.t && s.r
+            ? `${nh.label}. ${nh.subsidyPct}% residential subsidy on AIC's "from" fee of $4,900. Estimate.`
+            : `AIC's "from" fee before subsidy. Pick her income range and residency to see the subsidised figure.`}</p>
           {nh.realBills && <p>What families actually pay at one home: {money(nh.realBills.low)} – {money(nh.realBills.high)} a month for subsidised residents (Ren Ci, Jul 2026).</p>}
           <p className="note">Bills vary with the ward and the care needed. Private homes set their own fees and get no subsidy.</p>
           <Sources ids={[...nh.sourceIds, nh.realBills?.sourceId]} />
@@ -421,7 +427,7 @@ export function ContactsScreen({ s, update, next }: P) {
       {near.items.map((i, k) => (
         <div className={`contact${i.kind === "ward_msw" ? " first" : ""}`} key={`${i.kind}-${i.id ?? k}`}>
           <h3>{i.name}</h3>
-          {i.kind === "ward_msw" && <p>Ask before she's discharged. Some help can only be requested from the ward.</p>}
+          {i.kind === "ward_msw" && <p>Ask before she's discharged. Some help can only be requested through them.</p>}
           {i.address && <p className="meta">{[dist(i.km, i.precision), i.address].filter(Boolean).join(" · ")}</p>}
           {i.hours && <p className="meta">{i.hours}</p>}
           {(i.checkedOn || i.updatedOn) && <p className="meta">{i.checkedOn ? `checked ${longDate(i.checkedOn)}` : `record updated ${longDate(i.updatedOn!)}`}</p>}
@@ -472,7 +478,7 @@ export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart
         </li>
         <li>
           <h3>If you need help later</h3>
-          <p className="meta">{aicLink ? `${aicLink.name}, or ` : ""}the AIC hotline on 1800-650-6060.</p>
+          <p className="meta">{aicLink ? `${aicLink.name}, or the` : "The"} AIC hotline on 1800-650-6060.</p>
         </li>
       </ol>
 

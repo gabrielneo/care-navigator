@@ -1,5 +1,6 @@
 # One branch per answer to "Where is Mum right now?". Answer labels reuse AIC's Care Services Recommender wording
-# (docs/verified/gate1-recommender-walkthrough-2026-11-25.md). Ask lists come from docs/specs/08 (not yet practitioner-reviewed).
+# (docs/verified/gate1-recommender-walkthrough-2026-11-25.md). Ask lists come from docs/specs/08, checked against official pages in
+# docs/verified/source-audit-2026-11-25.md (no practitioner review).
 answers:
   - label: Soon to be discharged from hospital
     branch_id: in_hospital
@@ -22,21 +23,21 @@ branches:
     flags: [show_ward_only_services]
     ask_list:
       - When is she likely to be discharged?
-      - Can you refer her for short-term help at home, like the Interim Caregiver Service or Hospital-to-Home?
-      - Can you start the single assessment and care plan before she leaves?
+      - Can you refer her for short-term help at home, like the Interim Caregiver Service or a Hospital-to-Home programme?
+      - Will she get the single care assessment, and who arranges it?
       - Which services can you refer her to from here?
       - Can she be assessed for the Home Caregiving Grant?
       - Who do I call if things go wrong in the first week at home?
     ask_list_conditions:
       "Can she be assessed for the Home Caregiving Grant?": {adl_min: 3}
     timeline_notes:
-      - Short-term help after discharge usually lasts about 2 weeks to 2 months.
-      - Ward-only services drop off once she has been discharged.
+      - The Interim Caregiver Service gives up to 2 weeks of help at home. Hospital-to-Home programmes can support her for up to 2 months.
+      - The Interim Caregiver Service can only be requested while she is still in hospital.
     links:
-      - {label: "AIC's discharge tips", source_id: aic_csr}
+      - {label: "AIC's Care Services Recommender", source_id: aic_csr}
     source_ids: [thk_ics, sgh_h2h, agewellsg_care_plan, aic_csr]
   - branch_id: changed_at_home
-    first_contact: Her GP, a polyclinic doctor or an AIC Link
+    first_contact: A polyclinic doctor or an AIC Link
     flags: []
     ask_list:
       - Can you assess what care she needs now?
@@ -49,12 +50,12 @@ branches:
     first_contact: An AIC Link, or the AIC hotline on 1800-650-6060
     flags: [lead_with_respite]
     ask_list:
-      - What respite care can we get soon?
+      - Can you help us arrange respite care? A doctor's referral is needed about 4 weeks before.
       - Can she go to day care while I work or rest?
       - What caregiver support or training is there near us?
       - Am I likely to qualify for the Home Caregiving Grant or the Caregivers Training Grant?
     timeline_notes: []
-    source_ids: [aic_contact_links, tfb_caregivers]
+    source_ids: [aic_contact_links, tfb_caregivers, aic_take_a_break]
   - branch_id: in_nursing_home
     first_contact: The nursing home's office
     flags: [skip_matching, show_nursing_home_cost]
@@ -63,9 +64,9 @@ branches:
       - Can CareShield Life, MediSave Care or ElderFund payouts go straight to you?
       - What isn't included in the monthly fee?
     timeline_notes:
-      - "Median wait for a subsidised nursing home bed: about 1 month (general), 2–4 months (psychiatric). MOH, Aug 2024."
+      - "Median wait for a nursing home bed: about 1 month for general care needs, about 2–4 months for psychiatric care needs. MOH, Aug 2024."
     source_ids: [aic_nursing_home, moh_nh_wait, renci_fees]
 dementia_flag:
   when: {q: memory, in: [dx, undx]}
-  note: "Dementia day care and psychiatric nursing home beds usually have longer waits. Psychiatric nursing home median: 2–4 months (MOH, Aug 2024)."
+  note: "Nursing home beds for psychiatric care needs take longer to get. The median wait is about 2–4 months, against about 1 month for general care (MOH, Aug 2024)."
   source_id: moh_nh_wait

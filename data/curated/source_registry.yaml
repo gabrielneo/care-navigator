@@ -107,13 +107,6 @@ sources:
     licence: site-terms
     checked_on: 2026-11-24
     next_review: 2027-02-28
-  - source_id: ntuc_hcg_howto
-    title: How to apply for the Home Caregiving Grant (FAR, then eFASS)
-    owner: NTUC Health
-    url: https://ntuchealth.sg/elderly-care/resources/home-care/how-to-apply-for-the-home-caregiving-grant-for-care-at-home
-    licence: site-terms
-    checked_on: 2026-11-24
-    next_review: 2027-02-28
   - source_id: cpf_careshield
     title: CareShield Life monthly payout ($689 in 2026)
     owner: CPF Board
@@ -205,3 +198,45 @@ sources:
     licence: site-terms
     checked_on: 2026-11-25
     next_review: 2026-12-31
+  - source_id: aic_hcg
+    title: AIC Home Caregiving Grant (FAR by an approved assessor, apply on eFASS)
+    owner: AIC
+    url: https://www.aic.sg/financial-assistance/home-caregiving-grant-hcg/
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: aic_home_therapy
+    title: AIC Home Therapy (from $125 a visit, doctor applies online)
+    owner: AIC
+    url: https://www.aic.sg/care-services/home-therapy
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: aic_met
+    title: AIC Medical Escort and Transport (from $40 a round trip)
+    owner: AIC
+    url: https://www.aic.sg/care-services/medical-escort-and-transport
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: aic_mow
+    title: AIC Meals on Wheels (from $4 a meal)
+    owner: AIC
+    url: https://www.aic.sg/care-services/meals-on-wheels
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: aic_nh_respite
+    title: AIC Nursing Home Respite Care (from $131 a day; referral by a doctor)
+    owner: AIC
+    url: https://www.aic.sg/Care-Services/Nursing-Home-Respite-Care
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: aic_take_a_break
+    title: "AIC Take a Break (respite, apply 4 weeks ahead, 7 to 30 days a year)"
+    owner: AIC
+    url: https://www.aic.sg/Caregiving-Support/Take-a-Break
+    licence: site-terms
+    checked_on: 2026-11-25
+    next_review: 2027-02-28
