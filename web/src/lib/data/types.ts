@@ -83,6 +83,8 @@ export type Period = "month" | "once_then_yearly";
 export type Amountismaximum = boolean;
 export type Amountmeaning = string | null;
 export type Minadl = number;
+export type Disability = "some" | "severe";
+export type Askif = string | null;
 export type Altminage = number | null;
 export type Requireshelper = boolean;
 export type Citizensonly = boolean;
@@ -90,7 +92,7 @@ export type Otherconditions = string;
 export type Officialurl = string;
 export type Officialsourceid = string | null;
 export type Standardlevysourceid = string | null;
-export type Effectivefrom1 = string;
+export type Effectivefrom1 = string | null;
 export type Sourceid6 = string;
 export type Grantrules = GrantRule[];
 export type Alwaysbring = string[];
@@ -286,6 +288,8 @@ export interface GrantRule {
   amountIsMaximum?: Amountismaximum;
   amountMeaning?: Amountmeaning;
   minAdl: Minadl;
+  disability: Disability;
+  askIf?: Askif;
   altMinAge?: Altminage;
   requiresHelper?: Requireshelper;
   citizensOnly?: Citizensonly;
@@ -293,7 +297,7 @@ export interface GrantRule {
   officialUrl: Officialurl;
   officialSourceId?: Officialsourceid;
   standardLevySourceId?: Standardlevysourceid;
-  effectiveFrom: Effectivefrom1;
+  effectiveFrom?: Effectivefrom1;
   sourceId: Sourceid6;
 }
 export interface Amountbyband {

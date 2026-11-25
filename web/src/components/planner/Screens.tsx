@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { dataDate, longDate, rules, source } from "@/lib/data";
 import { useGeo } from "@/lib/data/geo";
-import { costPlan, nursingHome, potentialGrants, planEntries } from "@/lib/engine/cost";
+import { costPlan, nursingHome, potentialGrants, planEntries, severeOnlyHidden } from "@/lib/engine/cost";
 import { matchServices } from "@/lib/engine/matching";
 import { incomeOptions, type TierId } from "@/lib/engine/tiers";
 import type { Session } from "@/lib/engine/urlCodec";
@@ -198,6 +198,8 @@ export function CostScreen({ s, update, next }: P) {
   const nh = nursingHome(rules, s);
   const [showNh, setShowNh] = useState(nursing);
   const hcgHidden = s.t && s.r !== "none" && m.adlCount < 3 && !nursing;
+  const severeHidden = severeOnlyHidden(rules, s, m.adlCount);
+  const andList = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`);
 
   return (
     <>
@@ -292,10 +294,11 @@ export function CostScreen({ s, update, next }: P) {
             {grants.map((g) => (
               <li key={g.grantId}><b>{g.name}</b>: {g.period === "once_then_yearly" && g.amountMeaning ? g.amountMeaning.replace(/\.$/, "")
                 : <>{g.isMaximum ? "up to " : ""}{money(g.amount)}{g.period === "month" ? " a month" : ""}</>}
-                {g.needsAgeCheck ? " (if she is 67 or older)" : ""}. <a href={g.officialUrl}>Check the official page</a></li>
+                {g.needsAgeCheck ? " (if she is 67 or older)" : ""}{g.askIf ? ` (${g.askIf})` : ""}. <a href={g.officialUrl}>Check the official page</a></li>
             ))}
           </ul>
         ) : <p className="meta">{!s.t || !s.r ? "Pick her income range and residency to see what she may qualify for." : "None found from her answers."}</p>}
+        {severeHidden.length > 0 && <p className="note">Not shown: {andList(severeHidden)}. They need her to be unable to do 3 or more daily activities at all.</p>}
         {hcgHidden && <p className="note">Not shown: the Home Caregiving Grant. It needs help with 3 or more daily activities. Ask about it if her needs grow.</p>}
         <p className="note">Grants are never taken off the totals above.</p>
         <Sources ids={grants.map((g) => g.sourceId)} />

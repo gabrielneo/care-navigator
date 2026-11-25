@@ -228,3 +228,21 @@ def test_sea_sports_clubs_and_unfinished_ccs_are_not_places(raw_dir: Path, tmp_p
     names = {p["name"] for p in json.loads((out / "places.json").read_text())}
     assert "Marsiling CC (Temp Office)" in names
     assert not any("WaVe" in n or "(U/C)" in n for n in names)
+
+
+# ---------- 8.1: every grant says which disability level it needs ----------
+def test_grant_without_disability_level_is_rejected():
+    import pytest
+    from pydantic import ValidationError
+    from pipeline.schemas import GrantRule
+    rule = dict(grant_id="x", name="X", kind="payout", period="month",
+                amount_by_band={t: 1 for t in ["T0", "T1", "T2", "T3", "T4", "T5"]}, min_adl=3,
+                other_conditions="-", official_url="https://example.org", source_id="s")
+    with pytest.raises(ValidationError):
+        GrantRule.model_validate(rule)
+    assert GrantRule.model_validate({**rule, "disability": "severe"}).disability == "severe"
+
+
+def test_severe_payouts_are_marked_severe():
+    severe = {g.grant_id for g in br.load_curated().grant_rules.grants if g.disability == "severe"}
+    assert severe == {"careshield_life", "medisave_care", "elderfund"}   # CPF, AIC, HealthHub (26 Nov 2026)

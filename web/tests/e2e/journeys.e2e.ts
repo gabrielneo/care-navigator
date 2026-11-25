@@ -3,7 +3,7 @@ import rulesJson from "../../public/data/rules.json" with { type: "json" };
 import { range } from "../../src/components/planner/ui";
 import type { RulesBundle } from "../../src/lib/data/types";
 import { costPlan } from "../../src/lib/engine/cost";
-import { decodeHash } from "../../src/lib/engine/urlCodec";
+import { decodeHash, encodeHash } from "../../src/lib/engine/urlCodec";
 import { answer, expect, startPlan, test } from "./helpers";
 
 const rules = rulesJson as unknown as RulesBundle;
@@ -155,4 +155,28 @@ test("Unknown area: the region picker, all the way to the action plan", async ({
 
   expect(page.url()).not.toContain("701234");
   expect(decodeHash(new URL(page.url()).hash)!.session.loc).toEqual({ reg: "east" });
+});
+
+test("8.1: severe-only payouts appear only when she can't do 3 activities at all", async ({ page }) => {
+  await startPlan(page);
+  await answer(page, "Living at home, and something has just changed");
+  for (const a of ["Washing or bathing", "Dressing", "Using the toilet"]) await page.getByLabel(a, { exact: true }).check();
+  await expect(page.getByRole("heading", { name: "Which of these can't she do at all?" })).toBeVisible();
+  const base = decodeHash(new URL(page.url()).hash)!.session;
+  const cost = (sev: string[]) => `/plan/${encodeHash("cost", { ...base, sev: sev as never, al: "no", mem: "no", hlp: "no", lim: "ok",
+    loc: { reg: "central" }, plan: [{ s: "home_personal_care", n: 2 }], t: "T0", r: "sc", b: "le1969" })}`;
+
+  // Needs help with 3, can't do none of them: some-help grants listed, severe payouts named as not shown.
+  await page.goto(cost([]));
+  const grants = page.locator(".panel", { hasText: "You may qualify for" });
+  await expect(grants).toContainText("Home Caregiving Grant");
+  await expect(grants).toContainText("(if she is a Pioneer Generation member)");
+  await expect(grants.getByText(/^CareShield Life payout:/)).toHaveCount(0);
+  await expect(grants).toContainText("Not shown: MediSave Care, CareShield Life payout and ElderFund. They need her to be unable to do 3 or more daily activities at all.");
+
+  // Can't do all 3: the severe payouts are listed and the note goes.
+  await page.goto(cost(["bath", "dress", "toilet"]));
+  await expect(grants).toContainText("CareShield Life payout: $689 a month");
+  await expect(grants).toContainText("MediSave Care: up to $200 a month");
+  await expect(grants).not.toContainText("Not shown: MediSave Care");
 });

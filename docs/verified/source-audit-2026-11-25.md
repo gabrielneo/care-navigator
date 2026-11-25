@@ -53,6 +53,18 @@ Verdicts: **Supported**, the page says it. **Partly**, the page says something c
 | Levy concession: SC aged 67+, or needs help with 1+ daily activity | Supported; the activity route needs a doctor's certification and AIC's recommendation letter | MOM | Conditions updated |
 | Levy concession document: "the helper's work permit details" | **Not found** | MOM | Replaced with the certification and AIC letter |
 
+## Disability level for payouts (to-do 8.1, checked 26 Nov 2026)
+
+| Claim | Verdict | Source | Action |
+|---|---|---|---|
+| CareShield Life pays out at "help with 3 or more daily activities" | **Partly**: an MOH-accredited assessor must find her *unable to carry out* 3 of the 6 | CPF CareShield Life pages | Severe-only: shown only when 3 activities are "can't do at all" |
+| MediSave Care at "help with 3" | **Partly**: needs *full assistance* with 3 of the 6 and a severe disability assessment; withdrawal is $50 to $200 a month by MediSave balance ($5,000 to $20,000) | AIC MediSave Care | Severe-only; balance tiers in the conditions |
+| ElderFund at "help with 3" | **Partly**: *full assistance* with 3 or more, lower-income citizens with low MediSave | HealthHub ElderFund | Severe-only |
+| Home Caregiving Grant at "help with 3" | Supported: "some assistance" with 3 of the 6; $600, $400 or $200 by income, up to $4,800 per person | AIC Home Caregiving Grant | None (marked "some") |
+| Pioneer Generation Disability Assistance Scheme | Supported: $100 a month, "some assistance" with 3 of the 6 | AIC PioneerDAS page | Added, shown "(if she is a Pioneer Generation member)" |
+
+Before this fix, the site listed CareShield Life, MediSave Care and ElderFund for anyone who needed help with 3 activities. It now asks which activities she can't do at all. Older shared links without that answer read as "some help" and show no severe-only payouts.
+
 ## Still open
 
 - **Centre-based rehabilitation** was removed. If AIC publishes a page for it, add it back with that page as the source.

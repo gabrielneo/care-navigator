@@ -98,7 +98,7 @@ sources:
     owner: AIC
     url: https://www.aic.sg/MediSaveCare
     licence: site-terms
-    checked_on: 2026-11-24
+    checked_on: 2026-11-26
     next_review: 2027-02-28
   - source_id: tfb_caregivers
     title: Together for Better, caregivers (Home Caregiving Grant, Caregivers Training Grant)
@@ -112,14 +112,14 @@ sources:
     owner: CPF Board
     url: https://www.cpf.gov.sg/service/article/what-is-the-monthly-payout-amount-for-careshield-life
     licence: site-terms
-    checked_on: 2026-11-25
+    checked_on: 2026-11-26
     next_review: 2027-01-31
   - source_id: healthhub_elderfund
     title: ElderFund (up to $250 a month)
     owner: HealthHub (MOH)
     url: https://www.healthhub.sg/a-z/costs-and-financing/elderfund
     licence: site-terms
-    checked_on: 2026-11-25
+    checked_on: 2026-11-26
     next_review: 2027-02-28
   - source_id: mom_levy
     title: Paying the migrant domestic worker levy ($300 / $450 / $60)
@@ -203,7 +203,7 @@ sources:
     owner: AIC
     url: https://www.aic.sg/financial-assistance/home-caregiving-grant-hcg/
     licence: site-terms
-    checked_on: 2026-11-25
+    checked_on: 2026-11-26
     next_review: 2027-02-28
   - source_id: aic_home_therapy
     title: AIC Home Therapy (from $125 a visit, doctor applies online)
@@ -239,4 +239,11 @@ sources:
     url: https://www.aic.sg/Caregiving-Support/Take-a-Break
     licence: site-terms
     checked_on: 2026-11-25
+    next_review: 2027-02-28
+  - source_id: aic_pioneerdas
+    title: AIC Pioneer Generation Disability Assistance Scheme ($100 a month)
+    owner: AIC
+    url: https://www.aic.sg/financial-assistance/pioneer-generation-disability-assistance-scheme/
+    licence: site-terms
+    checked_on: 2026-11-26
     next_review: 2027-02-28

@@ -474,6 +474,26 @@
      "title": "Minadl",
      "type": "integer"
     },
+    "disability": {
+     "enum": [
+      "some",
+      "severe"
+     ],
+     "title": "Disability",
+     "type": "string"
+    },
+    "askIf": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Askif"
+    },
     "altMinAge": {
      "anyOf": [
       {
@@ -529,9 +549,17 @@
      "title": "Standardlevysourceid"
     },
     "effectiveFrom": {
-     "format": "date",
-     "title": "Effectivefrom",
-     "type": "string"
+     "anyOf": [
+      {
+       "format": "date",
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Effectivefrom"
     },
     "sourceId": {
      "title": "Sourceid",
@@ -545,9 +573,9 @@
     "period",
     "amountByBand",
     "minAdl",
+    "disability",
     "otherConditions",
     "officialUrl",
-    "effectiveFrom",
     "sourceId"
    ],
    "title": "GrantRule",

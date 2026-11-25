@@ -1,7 +1,7 @@
 {
- "dataVersion": "2026.11.25-5",
- "builtAt": "2026-11-25T08:44:02+00:00",
- "curatedHash": "37c6ba49cfdd5b910ba44545e8210d83e46692c177c87e3838de74a98a56f114",
+ "dataVersion": "2026.11.26-1",
+ "builtAt": "2026-11-25T17:01:35+00:00",
+ "curatedHash": "a1e020e3affc58a35565df190d90487f95b442f769bea8e49d7fff55bf58f02e",
  "sources": [
   {
    "sourceId": "moh_nonres_subsidy",
@@ -112,7 +112,7 @@
    "title": "AIC MediSave Care",
    "url": "https://www.aic.sg/MediSaveCare",
    "licence": "site-terms",
-   "checkedOn": "2026-11-24",
+   "checkedOn": "2026-11-26",
    "nextReview": "2027-02-28"
   },
   {
@@ -128,7 +128,7 @@
    "title": "CareShield Life monthly payout ($689 in 2026)",
    "url": "https://www.cpf.gov.sg/service/article/what-is-the-monthly-payout-amount-for-careshield-life",
    "licence": "site-terms",
-   "checkedOn": "2026-11-25",
+   "checkedOn": "2026-11-26",
    "nextReview": "2027-01-31"
   },
   {
@@ -136,7 +136,7 @@
    "title": "ElderFund (up to $250 a month)",
    "url": "https://www.healthhub.sg/a-z/costs-and-financing/elderfund",
    "licence": "site-terms",
-   "checkedOn": "2026-11-25",
+   "checkedOn": "2026-11-26",
    "nextReview": "2027-02-28"
   },
   {
@@ -232,7 +232,7 @@
    "title": "AIC Home Caregiving Grant (FAR by an approved assessor, apply on eFASS)",
    "url": "https://www.aic.sg/financial-assistance/home-caregiving-grant-hcg/",
    "licence": "site-terms",
-   "checkedOn": "2026-11-25",
+   "checkedOn": "2026-11-26",
    "nextReview": "2027-02-28"
   },
   {
@@ -274,16 +274,24 @@
    "licence": "site-terms",
    "checkedOn": "2026-11-25",
    "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_pioneerdas",
+   "title": "AIC Pioneer Generation Disability Assistance Scheme ($100 a month)",
+   "url": "https://www.aic.sg/financial-assistance/pioneer-generation-disability-assistance-scheme/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
   }
  ],
  "files": {
-  "rules.json": "1292d451785f2c8b89f603ef48e9cf4fa3282e2af7143d6fa7597c5cd84982a1",
+  "rules.json": "92b1b3f76948ba268b2a2f885e6cb777dc7261a27fdb0111a69c88a3dab32f08",
   "contacts.json": "44edb74ca6d3d816693ff23e69ef97144f57e1720cb7936de8df95eded769d35",
   "places.json": "2d789de5cf2255d2eb275285efcb3108b51b6e0191bd9dde0b38014203bed8d0",
   "sectors.json": "27500e57c4319c56b96939968ad183e2ef538af68b47351893fe6b4b99a207c3"
  },
  "sizes": {
-  "rules.json": 5505,
+  "rules.json": 5785,
   "contacts.json": 2122,
   "places.json": 6343,
   "sectors.json": 965

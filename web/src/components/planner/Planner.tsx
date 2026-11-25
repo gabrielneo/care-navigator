@@ -133,8 +133,13 @@ function Question({ step, s, update, next }: Q) {
     const chosen = s.adl && s.adl[0] !== "unsure" ? (s.adl as string[]) : [];
     const toggle = (a: string, on: boolean) => {
       const list = on ? [...chosen, a] : chosen.filter((x) => x !== a);
-      update({ adl: list as Session["adl"] });
+      update({ adl: list as Session["adl"], sev: s.sev?.filter((x) => list.includes(x)) });
     };
+    // Which of the chosen activities she can't do at all. Worded apart from the list above so the two never read as repeats.
+    const SEVERE: Record<string, string> = { bath: "Washing", dress: "Getting dressed", eat: "Feeding herself", toilet: "Toileting",
+      move: "Moving around", transfer: "Getting in and out of bed" };
+    const sev = s.sev ?? [];
+    const setSev = (a: string, on: boolean) => update({ sev: (on ? [...sev, a] : sev.filter((x) => x !== a)) as Session["sev"] });
     return (
       <fieldset>
         <legend><h1>Which of these does she need help with?</h1></legend>
@@ -142,12 +147,19 @@ function Question({ step, s, update, next }: Q) {
         <div className="grid2">
           {ADL.map(([k, label]) => <Check key={k} checked={chosen.includes(k)} onChange={(on) => toggle(k, on)}>{label}</Check>)}
         </div>
+        {chosen.length > 0 && (
+          <fieldset className="panel">
+            <legend><h3>Which of these can&apos;t she do at all?</h3></legend>
+            <p className="help">Someone has to do it for her. Some payouts depend on this. Leave blank if none.</p>
+            {chosen.map((a) => <Check key={a} checked={(sev as string[]).includes(a)} onChange={(on) => setSev(a, on)}>{SEVERE[a]}</Check>)}
+          </fieldset>
+        )}
         <Check checked={s.med ?? false} onChange={(on) => update({ med: on })}>
           <b>Medical care at home</b><br /><span className="help">Wounds, tubes, injections or many medicines</span>
         </Check>
         <div className="row">
-          <Check checked={s.adl != null && s.adl.length === 0} onChange={(on) => update({ adl: on ? [] : undefined })}>None of these</Check>
-          <Check checked={s.adl?.[0] === "unsure"} onChange={(on) => update({ adl: on ? ["unsure"] : undefined })}>Not sure</Check>
+          <Check checked={s.adl != null && s.adl.length === 0} onChange={(on) => update({ adl: on ? [] : undefined, sev: undefined })}>None of these</Check>
+          <Check checked={s.adl?.[0] === "unsure"} onChange={(on) => update({ adl: on ? ["unsure"] : undefined, sev: undefined })}>Not sure</Check>
         </div>
         {ask}
         <button type="button" className="btn" onClick={() => proceed(s.adl != null)}>Next</button>

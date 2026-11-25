@@ -254,6 +254,130 @@ Owner's decision (25 Nov 2026): no interviews, site visits or practitioner revie
 
 Not covered: real users' understanding and trust, and a professional's judgement of the advice. The prototype banner says so.
 
+## Stage 8 onward: to do (owner, 26 Nov 2026)
+
+Owner's direction: fill the gaps AIC's Care Services Recommender leaves, especially unclear next steps, and go further than sharing a plan. The comparison with other tools and the ideas borrowed from them are in `docs/competitive-landscape.md`. The usual rules hold:
+- one stage at a time
+- every fact from an official source with a checked date
+- nothing stored, no outside services
+- no interviews: evidence is desk-based, as in Stage 7
+
+Priority: **P0** fix now (the site says something wrong), **Must**, **Should**, **Could**. Nothing here has been built yet.
+
+### P0: correctness
+
+**8.1 Severe disability vs "some assistance"** · P0 · **Done 26 Nov 2026** (see `docs/verified/source-audit-2026-11-25.md`)
+- **Evidence (26 Nov 2026):**
+  - CareShield Life (CPF), MediSave Care (AIC) and ElderFund (HealthHub) pay out only when the person is *unable to do*, or needs *full assistance* with, 3 of the 6 daily activities.
+  - The Home Caregiving Grant and the Pioneer Generation Disability Assistance Scheme ($100 a month) need *some assistance* with 3.
+  - The site counts "needs help" for all of them, so it overstates who may qualify for the first three.
+- **Do:**
+  - Add a level of help to each daily activity ("needs some help" or "can't do it at all").
+  - Give each grant rule a `disability: some | severe` field, and show severe-only payouts only when 3 activities are "can't do it at all".
+  - Record MediSave Care's balance tiers ($50 at $5,000 up to $200 at $20,000) and ElderFund's low-income and low-MediSave conditions as conditions text.
+  - Add the Pioneer Generation scheme.
+- **Done when:** engine tests cover both tiers. The data pipeline rejects a payout rule without a disability level. The source audit gains these rows.
+
+### Must: next steps that don't get lost
+
+**8.2 Ordered timeline with dependencies** · Must
+- The action plan becomes "Today / this week / before discharge / in a month". Each step says what it unlocks, for example:
+  - the means test before the subsidy
+  - the Functional Assessment Report before the Home Caregiving Grant
+  - a respite referral 4 weeks ahead (AIC Take a Break)
+- **Done when:** every step and dependency cites an official page, and the order is tested per branch.
+
+**8.3 Questions for providers** · Must
+- When the family calls a day care centre or home care provider, the plan gives what to ask: fee after subsidy, waiting list, transport, trial day, weekend care.
+- Borrowed from Legal & General's "questions to ask".
+- **Done when:** the questions are worded per spec 08 and pass the readability test.
+
+**8.4 Handover summary for the professional** · Must
+- An "About Mum" page for the ward medical social worker or an AIC Link officer:
+  - her situation
+  - each daily activity and the level of help
+  - medical care at home
+  - the services being considered
+  - the income range
+  - the family's questions
+- It extends "Her plan so far". It is printed or shown on the phone, never sent anywhere.
+- **Done when:** it fits one A4 page and contains no free text or exact income.
+
+**8.5 Grant criteria up front, with the official application** · Must
+- For each grant: the key criteria as a short ticked list, and one link to the official application (e.g. AIC's eFASS).
+- Borrowed from AIC's own scheme pages.
+- **Done when:** each criterion and link cites its page.
+
+**8.6 Tickable checklist kept in the link** · Must
+- Ticks such as "Called the ward social worker" live in the plan's link (spec 10 codec), so a sibling who opens it sees the same progress. No server, no account.
+- **Done when:** the codec allowlist has the new field, and old links still open.
+
+### Should: what AIC asks, done better
+
+**8.7 Medical conditions, with mobility** · Should
+- One optional question: fall, stroke, hip fracture, dementia, end of life.
+- Mobility (walking, wheelchair, bedbound) is folded into the activities question.
+- Each answer changes the matches with a sourced reason, e.g. stroke points to therapy at home.
+- CREST dementia outreach joins the contacts for memory problems, once sourced.
+- **Done when:** each new rule has a source and a golden test.
+
+**8.8 "For you": the caregiver's own needs** · Should
+- Built on "How are you coping?": respite timing (book 4 weeks ahead), the Caregivers Training Grant, and official caregiver support groups.
+- No scored questionnaire, because validated scales are licensed.
+- **Done when:** every item is sourced and appears only for "tired" or "can't keep going".
+
+**8.9 "Also worth doing"** · Should
+- Will, Lasting Power of Attorney and advance care plan, with official links, ordered by urgency.
+- Borrowed from AIC's future-planning section.
+- **Done when:** each link is official and dated.
+
+**8.10 Lighter first screens** · Should
+- Show the top 3 matches first, with the rest under "More that may help" (borrowed from CareCompass).
+- Add an "On this page" list on the cost screen.
+- Add a trust note: "We never ask for your NRIC, bank details or Singpass."
+- **Done when:** axe and readability pass, and Lighthouse stays at 90+.
+
+### Could
+
+**8.11 Calendar reminders made on the phone** · Could
+- A calendar file (.ics) generated in the browser, e.g. "book respite by …" or "review her plan in 3 months". Nothing is sent.
+
+**8.12 Pioneer and Merdeka Generation extras on the cost screen** · Could
+- Each benefit is shown only once sourced.
+
+**8.13 Translations** · Could
+- Chinese, Malay and Tamil. The wording would need a qualified reviewer first.
+
+### Working with AIC (beyond sharing a plan)
+
+| Tier | What | Owner effort | Status |
+|---|---|---|---|
+| 0. Aligned | AIC's wording, links back to AIC, official sources only, independence stated | None | Done |
+| 1. Handover-ready | 8.4, designed around what AIC Link intake needs | One email to AIC's feedback channel asking for comment | To do after 8.4 |
+| 2. Open-data ask | Ask AIC or MOH to publish provider fee ranges, or AIC Link services, as open data on data.gov.sg | One written request | To do |
+| 3. Channel pilot | One Active Ageing Centre or ward social worker uses it with families | A person's time | Later, if capacity allows |
+| 4. Outcome loop | An anonymous "did the call go as planned?" | Needs analytics | Public launch only |
+
+**Out of scope:** applying or booking on a family's behalf, live vacancies or wait times, accounts, an AI chatbot, provider ratings.
+
+### Requirements process (no interviews)
+
+**8.14 Traceability table** · Must
+- In `docs/requirements-traceability.md`: each business requirement, its evidence (a source, the Gate 1 walkthrough, the desk evaluation or the pain-points report), the feature, and the test that proves it.
+
+**8.15 Assumption register** · Must
+- Each belief, e.g. "families lose track after the first call", marked *sourced*, *partly sourced* or *untested*, with its evidence.
+
+**8.16 Official-process rule** · Must
+- Every next step must cite the official page that describes the process, as every figure already does.
+- Add it to CLAUDE.md and the source audit when 8.2 lands.
+
+**8.17 Desk measures of success** · Should
+- Extend the desk evaluation's output table to the new outputs.
+- Re-run the before/after comparison (time and steps) after Stage 8.
+
+**Suggested order:** 8.1, then 8.2, 8.6 and 8.4 together (the timeline, its ticks and the handover), then 8.3, 8.5, 8.14 to 8.16, then the Should items.
+
 ---
 
 ## Execution sequence and gates

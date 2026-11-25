@@ -22,6 +22,9 @@ export const SessionSchema = z.strictObject({
     z.array(ADL).check(z.maxLength(6), z.refine(unique, "repeated activity")),
     z.tuple([z.literal("unsure")]),
   ])),
+  // Of those, the ones she can't do at all (severe disability: CareShield Life, MediSave Care, ElderFund). Absent on
+  // older links, which then read as "some help" and show no severe-only payouts.
+  sev: z.optional(z.array(ADL).check(z.maxLength(6), z.refine(unique, "repeated activity"))),
   al: z.optional(z.enum(["weekdays", "most", "no", "unsure"])),
   mem: z.optional(z.enum(["dx", "undx", "no", "unsure"])),
   hlp: z.optional(z.enum(["yes", "considering", "no", "unsure"])),

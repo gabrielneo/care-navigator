@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import rulesJson from "../../../../public/data/rules.json";
 import type { RulesBundle } from "../../data/types";
-import { costPlan, nursingHome, planEntries, potentialGrants, round5, WEEKS_PER_MONTH } from "../cost";
+import { costPlan, nursingHome, planEntries, potentialGrants, round5, severeCount, severeOnlyHidden, WEEKS_PER_MONTH } from "../cost";
 import { clauseHolds, matchServices, MAX_MATCHES } from "../matching";
 import { incomeOptions, subsidyRate, tierForAnnualValue, tierForPchi, type TierId } from "../tiers";
 import { decodeHash, decodeSession, encodeHash, encodeSession, type Session } from "../urlCodec";
@@ -217,6 +217,27 @@ describe("cost", () => {
     expect(potentialGrants(rules, { ...MEI, hlp: "yes" }, 1).find((x) => x.grantId === "levy_concession")?.needsAgeCheck).toBe(false);
   });
 
+  it("8.1: severe-only payouts need 3 activities she can't do at all; some-help grants need only help", () => {
+    const three: Session = { ...MEI, adl: ["bath", "dress", "toilet"], t: "T0", r: "sc" };
+    const ids = (s: Session) => potentialGrants(rules, s, 3).map((g) => g.grantId);
+    // Needs help with 3, can't do none: Home Caregiving Grant and Pioneer scheme yes; CareShield, MediSave Care, ElderFund no.
+    expect(ids(three)).toEqual(expect.arrayContaining(["home_caregiving_grant", "pioneer_das"]));
+    expect(ids(three)).not.toEqual(expect.arrayContaining(["careshield_life"]));
+    for (const severe of ["careshield_life", "medisave_care", "elderfund"]) expect(ids(three)).not.toContain(severe);
+    expect(severeOnlyHidden(rules, three, 3)).toEqual(["MediSave Care", "CareShield Life payout", "ElderFund"]);
+    // Can't do 2 of them: still not severe enough.
+    expect(ids({ ...three, sev: ["bath", "dress"] })).not.toContain("careshield_life");
+    // Can't do all 3: the severe payouts appear, and nothing is left out.
+    const severe = { ...three, sev: ["bath", "dress", "toilet"] } as Session;
+    expect(ids(severe)).toEqual(expect.arrayContaining(["careshield_life", "medisave_care", "elderfund"]));
+    expect(severeOnlyHidden(rules, severe, 3)).toEqual([]);
+    // "Can't do" only counts activities also marked as needing help.
+    expect(severeCount({ ...three, sev: ["eat", "move", "transfer"] } as Session)).toBe(0);
+    // A PR: ElderFund is citizens only, so it isn't listed or mentioned.
+    expect(severeOnlyHidden(rules, { ...three, r: "pr" }, 3)).not.toContain("ElderFund");
+    expect(potentialGrants(rules, three, 3).find((g) => g.grantId === "pioneer_das")?.askIf).toBe("if she is a Pioneer Generation member");
+  });
+
   it("not a citizen or PR: full prices only, no grants (case 1)", () => {
     const c = costPlan(rules, { ...MEI, r: "none" });
     expect(c.total!.withSubsidy).toBeNull();
@@ -283,6 +304,15 @@ describe("URL codec", () => {
     expect(() => encodeSession({ ...MEI, q: { day_care: 0 } })).toThrow();
     expect(() => encodeSession({ ...MEI, q: { day_care: 10_001 } })).toThrow();
     expect(() => encodeSession({ ...MEI, x: 11 })).toThrow();
+  });
+
+  it("8.1: links carry which activities she can't do at all; older links without it still open", () => {
+    const s: Session = { v: V, adl: ["bath", "dress"], sev: ["bath"] };
+    expect(decodeSession(encodeSession(s))).toEqual(s);
+    expect(decodeSession(encodeSession({ v: V, adl: ["bath"] }))).toEqual({ v: V, adl: ["bath"] });
+    const repeated = { v: V, sev: ["bath", "bath"] } as Session;
+    expect(() => encodeSession(repeated)).toThrow();                                          // never written
+    expect(decodeSession(Buffer.from(JSON.stringify(repeated)).toString("base64url"))).toBeNull();   // never read
   });
 
   it("rejects repeated daily activities and repeated services (they would inflate grants and costs)", () => {

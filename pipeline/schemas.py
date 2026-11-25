@@ -119,6 +119,10 @@ class GrantRule(Model):
     amount_is_maximum: bool = False
     amount_meaning: Optional[str] = None
     min_adl: int = Field(ge=0, le=6)
+    # "some": needs some help with min_adl activities (Home Caregiving Grant). "severe": can't do them at all, or needs
+    # full assistance (CareShield Life, MediSave Care, ElderFund). Required, so a payout can't be listed without it.
+    disability: Literal["some", "severe"]
+    ask_if: Optional[str] = None            # a condition the planner doesn't ask, shown as "(if ...)"
     alt_min_age: Optional[int] = None
     requires_helper: bool = False
     citizens_only: bool = False
@@ -126,7 +130,7 @@ class GrantRule(Model):
     official_url: str
     official_source_id: Optional[str] = None
     standard_levy_source_id: Optional[str] = None
-    effective_from: date
+    effective_from: Optional[date] = None   # None when the official page doesn't give a start date
     source_id: str
 
 

@@ -99,9 +99,24 @@ export interface PotentialGrant {
   isMaximum: boolean;
   amountMeaning: string | null; // e.g. "$400 to start, then $200 a year, for approved caregiver courses."
   needsAgeCheck: boolean;      // e.g. levy concession: met by age 67+, which the planner doesn't ask
+  askIf: string | null;        // a condition the planner doesn't ask, e.g. "if she is a Pioneer Generation member"
   conditions: string;
   officialUrl: string;
   sourceId: string;
+}
+
+/** How many daily activities she can't do at all: only ones she was also marked as needing help with count. */
+export function severeCount(s: Session): number {
+  const adl = s.adl && s.adl[0] !== "unsure" ? (s.adl as string[]) : [];
+  return (s.sev ?? []).filter((a) => adl.includes(a)).length;
+}
+
+/** Payouts left out only because they need severe disability (unable to do 3+ activities), for an explanatory note. */
+export function severeOnlyHidden(rules: RulesBundle, s: Session, adlCount: number): string[] {
+  if (!s.t || !s.r || s.r === "none") return [];
+  const severe = severeCount(s);
+  return rules.grantRules.filter((g) => g.disability === "severe" && adlCount >= g.minAdl && severe < g.minAdl
+    && !(g.citizensOnly && s.r !== "sc")).map((g) => g.name);
 }
 
 /** Grants and payouts she may qualify for. Listed beside the total, never subtracted (ADR-004). */
@@ -114,11 +129,12 @@ export function potentialGrants(rules: RulesBundle, s: Session, adlCount: number
     if (g.citizensOnly && s.r !== "sc") return [];
     if (g.requiresHelper && !(s.hlp === "yes" || s.hlp === "considering")) return [];
     if (g.grantId === "home_caregiving_grant" && inHome) return [];       // not for residents of a nursing home
-    const adlMet = adlCount >= g.minAdl;
+    // "severe" payouts count only activities she can't do at all (CPF, AIC, HealthHub; source audit 26 Nov 2026).
+    const adlMet = (g.disability === "severe" ? severeCount(s) : adlCount) >= g.minAdl;
     if (!adlMet && g.altMinAge == null) return [];
     return [{
       grantId: g.grantId, name: g.name, amount, period: g.period, isMaximum: g.amountIsMaximum ?? false,
-      amountMeaning: g.amountMeaning ?? null,
+      amountMeaning: g.amountMeaning ?? null, askIf: g.askIf ?? null,
       needsAgeCheck: !adlMet, conditions: g.otherConditions, officialUrl: g.officialUrl, sourceId: g.sourceId,
     }];
   });

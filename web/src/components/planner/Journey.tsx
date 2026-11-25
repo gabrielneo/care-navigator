@@ -58,6 +58,8 @@ function chips(s: Session, reached: (x: Step) => boolean) {
   if (s.w) out.push(["where", s.w === "in_hospital" && s.d ? "Home from hospital" : WHERE[s.w]]);
   if (s.adl) out.push(["adl", s.adl[0] === "unsure" ? "Help needed: not sure" : s.adl.length
     ? `Help with ${(s.adl as string[]).map((a) => ADL[a]).join(", ")}` : "No help with daily tasks"]);
+  const cant = (s.sev ?? []).filter((a) => Array.isArray(s.adl) && (s.adl as string[]).includes(a));
+  if (cant.length) out.push(["sev", `Can't do at all: ${cant.map((a) => ADL[a]).join(", ")}`]);
   if (s.med) out.push(["med", "Medical care at home"]);
   for (const [k, v, map] of [["al", s.al, ALONE], ["mem", s.mem, MEMORY], ["hlp", s.hlp, HELPER], ["lim", s.lim, LIMITS]] as const) {
     if (v && map[v]) out.push([k, map[v]]);
