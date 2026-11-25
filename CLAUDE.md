@@ -1,4 +1,4 @@
-# Care-pacity Planner: notes for coding assistants
+# Care Navigator: notes for coding assistants
 
 - **Source of truth:**
   - `docs/product-design-v2.md` (design and pre-build checklist)

@@ -1,8 +1,8 @@
-# Care-pacity Planner
+# Care Navigator
 
 Helps a family get from "something has happened to Mum" to "we know roughly what care will cost us and exactly who to call", in one sitting, before they talk to the system. It's a static site, built for Singapore family caregivers of older parents.
 
-**Repository:** https://github.com/gabrielneo/care-navigator · **Planned site:** https://care-pacity-planner.vercel.app
+**Repository:** https://github.com/gabrielneo/care-navigator · **Site:** https://care-navigator-xi.vercel.app
 
 **Status:** an unpublicised prototype. Figures and wording have not yet been reviewed by a care professional. Working name: Caregiver Navigator.
 

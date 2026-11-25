@@ -2,19 +2,19 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
 
-const SITE = "https://care-pacity-planner.vercel.app";
+const SITE = "https://care-navigator-xi.vercel.app";
 const DESCRIPTION =
   "Work out which care services fit, what they may cost after the 2026 subsidies, and who to call first. About 5 minutes. Nothing is saved.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: { default: "Care-pacity Planner — plan care for an older parent", template: "%s — Care-pacity Planner" },
+  title: { default: "Care Navigator — plan care for an older parent", template: "%s — Care Navigator" },
   description: DESCRIPTION,
   robots: { index: false, follow: false },             // prototype (spec 11): remove before a public launch
   alternates: { canonical: "./" },
   openGraph: {
     type: "website",
-    siteName: "Care-pacity Planner",
+    siteName: "Care Navigator",
     title: "Plan care for an older parent in 5 minutes",
     description: "See what care may cost after 2026 subsidies, and who to call first. Nothing is saved.",
     url: SITE,

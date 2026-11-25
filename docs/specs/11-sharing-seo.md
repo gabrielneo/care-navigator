@@ -6,13 +6,13 @@ Status: **approved by owner, 25 Nov 2026** · Checklist item 11 · Blocks Stage 
 
 | Route | `<title>` | `description` |
 |---|---|---|
-| `/` | Care-pacity Planner — plan care for an older parent | Work out which care services fit, what they may cost after the 2026 subsidies, and who to call first. About 5 minutes. Nothing is saved. |
-| `/plan` | Your care plan — Care-pacity Planner | Same as above. |
-| `/about` | About — Care-pacity Planner | An independent student project. Not affiliated with MOH or AIC. |
-| `/privacy` | Privacy — Care-pacity Planner | What this site does and doesn't collect. |
-| `/data-sources` | Data sources — Care-pacity Planner | The open data and official pages behind every figure. |
+| `/` | Care Navigator — plan care for an older parent | Work out which care services fit, what they may cost after the 2026 subsidies, and who to call first. About 5 minutes. Nothing is saved. |
+| `/plan` | Your care plan — Care Navigator | Same as above. |
+| `/about` | About — Care Navigator | An independent student project. Not affiliated with MOH or AIC. |
+| `/privacy` | Privacy — Care Navigator | What this site does and doesn't collect. |
+| `/data-sources` | Data sources — Care Navigator | The open data and official pages behind every figure. |
 
-Name and domain are from decision 5. Fallback domain: `care-pacity-plan.vercel.app`.
+Name and domain are from decision 5 (renamed Care Navigator, 25 Nov 2026). The address is `care-navigator-xi.vercel.app`, the one Vercel gave because `care-navigator` was taken. If it changes, update `web/src/app/layout.tsx` and `web/public/sitemap.xml`.
 
 ## Link preview card (WhatsApp, Telegram, LinkedIn)
 
@@ -20,13 +20,13 @@ On every route:
 
 ```html
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Care-pacity Planner">
+<meta property="og:site_name" content="Care Navigator">
 <meta property="og:title" content="Plan care for an older parent in 5 minutes">
 <meta property="og:description" content="See what care may cost after 2026 subsidies, and who to call first. Nothing is saved.">
-<meta property="og:image" content="https://care-pacity-planner.vercel.app/og.png">
+<meta property="og:image" content="https://care-navigator-xi.vercel.app/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url" content="https://care-pacity-planner.vercel.app/">
+<meta property="og:url" content="https://care-navigator-xi.vercel.app/">
 <meta name="twitter:card" content="summary_large_image">
 ```
 

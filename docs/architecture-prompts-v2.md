@@ -19,7 +19,7 @@ A six-stage prompt suite for an AI coding assistant. Run the stages in order; ea
 
 ## Stage 1: Repository, ADRs and curated YAML
 
-Act as a Principal Solutions Architect. Set up the repository for Care-pacity Planner (working name Caregiver Navigator; repo `care-navigator`), a zero-database, static-first Singapore care-plan and cost estimator for family caregivers of seniors.
+Act as a Principal Solutions Architect. Set up the repository for Care Navigator (working name Caregiver Navigator; repo `care-navigator`), a zero-database, static-first Singapore care-plan and cost estimator for family caregivers of seniors.
 
 **1. Directory structure**
 - `docs/adr/` — Architecture Decision Records

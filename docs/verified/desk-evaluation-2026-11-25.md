@@ -1,6 +1,6 @@
 # Desk evaluation (Stage 7, 25 Nov 2026)
 
-Care-pacity Planner was evaluated without interviews, usability sessions or a practitioner review (owner's decision, 25 Nov 2026). Instead it was checked against published sources, measured, and reviewed with standard methods. This report is the evidence for the portfolio write-up.
+Care Navigator was evaluated without interviews, usability sessions or a practitioner review (owner's decision, 25 Nov 2026). Instead it was checked against published sources, measured, and reviewed with standard methods. This report is the evidence for the portfolio write-up.
 
 **Bottom line:** every figure and rule now has a published source or is marked as our judgement. The wording meets the plain-language rules on every screen, and the site scores 100 on accessibility. Compared with the official route, the planner isn't much faster to operate (about 1 minute of input against 1.5). Its value is in the output: it produces 7 of 7 things a family needs from this task, while the official route gives 1 fully and 2 only partly.
 

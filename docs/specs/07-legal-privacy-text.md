@@ -50,7 +50,7 @@ This site does not collect personal data. That includes names, NRIC numbers, pho
 
 **`/about`:**
 
-> Care-pacity Planner is an independent project by a student in Singapore. It is not run by, endorsed by or connected to the Ministry of Health, the Agency for Integrated Care or any government agency. It uses public information and open government data, credited on the Data sources page.
+> Care Navigator is an independent project by a student in Singapore. It is not run by, endorsed by or connected to the Ministry of Health, the Agency for Integrated Care or any government agency. It uses public information and open government data, credited on the Data sources page.
 >
 > It helps families do the planning before they speak to a doctor, a medical social worker or an AIC Link. It does not replace them.
 

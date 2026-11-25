@@ -468,7 +468,7 @@ export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart
         <span>{today}</span>
       </div>
       <h1>Mum's care plan</h1>
-      <p className="print-only meta">{today} · Care-pacity Planner</p>
+      <p className="print-only meta">{today} · Care Navigator</p>
       <ol className="steps">
         <li>
           <h3>Call {m.branch.firstContact.charAt(0).toLowerCase() + m.branch.firstContact.slice(1)}{m.branchId === "in_hospital" && !s.d ? ", before she's discharged" : ""}</h3>

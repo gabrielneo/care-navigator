@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Next.js (static export, `output: 'export'`), TypeScript and one global stylesheet on the warm palette (no Tailwind), hosted free on Vercel (`care-pacity-planner.vercel.app`) with security headers from `web/vercel.json`. No server code, no database, and no outside service at run time. The data pipeline is Python 3.12 + Pydantic in GitHub Actions. The source is `docs/product-design-v2.md` and `docs/architecture-prompts-v2.md`.
+Next.js (static export, `output: 'export'`), TypeScript and one global stylesheet on the warm palette (no Tailwind), hosted free on Vercel (`care-navigator-xi.vercel.app`) with security headers from `web/vercel.json`. No server code, no database, and no outside service at run time. The data pipeline is Python 3.12 + Pydantic in GitHub Actions. The source is `docs/product-design-v2.md` and `docs/architecture-prompts-v2.md`.
 
 ## Users
 
@@ -45,8 +45,8 @@ It is the step after AIC's Care Services Recommender. It turns suggested service
 
 ## Brand Commitments
 
-- **Name:** public name **Care-pacity Planner** (working name Caregiver Navigator), a sibling of the Care-pacity site.
-- **Visual identity:** its own the warm palette in `docs/brand/tokens.css` (cream paper, espresso text, terracotta actions, sage for reassurance; owner's choice, 25 Nov 2026). It deliberately does not use sg-care-capacity's purple and white, so the planner feels warm and inviting. It shares the Care-pacity name and the system-font plus Charter-serif type pairing. Icons and the preview image are in `docs/brand/`.
+- **Name:** public name **Care Navigator** (repo `care-navigator`; working name Caregiver Navigator). It is separate from the owner's Care-pacity project (renamed 25 Nov 2026).
+- **Visual identity:** its own the warm palette in `docs/brand/tokens.css` (cream paper, espresso text, terracotta actions, sage for reassurance; owner's choice, 25 Nov 2026). It deliberately does not use sg-care-capacity's purple and white, so the planner feels warm and inviting. It uses the system-font plus Charter-serif type pairing. Icons and the preview image are in `docs/brand/`.
 - **Independence:** an independent student project, not affiliated with MOH, AIC or the Government of Singapore. No government logos, colours or domains.
 
 ## Evidence on Hand

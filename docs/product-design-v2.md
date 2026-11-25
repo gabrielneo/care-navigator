@@ -288,7 +288,7 @@ RUN TIME (browser)
 | Open layers | Weekly pull of FSC and CC GeoJSON from data.gov.sg | Open licence, current; 2 downloads stays under the 2-per-10-seconds limit |
 | Pipeline | Python 3.12, PyYAML, Pydantic, data checks | Ten small files need no database |
 | Release | JSON plus a manifest with version and hashes, committed to the repo | Site always ships a known, verified version; Git history is the release log |
-| Frontend | Next.js static export, TypeScript, one global stylesheet on the warm palette in `docs/brand/tokens.css` (Tailwind dropped at Stage 5) | Fast on phones, free to host, shares the Care-pacity name with its own warm look |
+| Frontend | Next.js static export, TypeScript, one global stylesheet on the warm palette in `docs/brand/tokens.css` (Tailwind dropped at Stage 5) | Fast on phones, free to host, with its own warm look |
 | Calculation | Pure TypeScript module (matching + cost), unit-tested | Same inputs, same outputs; no data leaves the device |
 | Postal lookup | On the phone: first 2 digits → `sectors.json` area centre; region picker if unknown | OneMap requires a token; this needs no server and keeps the postal code on the device. A token-holding serverless proxy is the upgrade if street-level distance is ever needed |
 | Plan sharing | Plan encoded in the URL (compressed; band only, no names or income figures) | Shareable on WhatsApp without storing anything |
@@ -544,6 +544,7 @@ From the pre-development review on 25 Nov 2026. Items are ranked by risk to laun
 - [x] **5. URLs, domain and name (25 Nov 2026).**
   - **Name:** "Caregiver Navigator" is too close to SG Assist and C3A's **Caregiving Navigator** training programme ([registration page](https://form.jotform.com/241847851634464)). The public name becomes **Care-pacity Planner**, a sibling of the Care-pacity site so the two read as one portfolio. "Caregiver Navigator" stays as the internal working name; the repo stays `care-navigator`.
   - **Domain:** the free Vercel subdomain `care-pacity-planner.vercel.app` (Hobby plan, $0). Fallback if it's taken: `care-pacity-plan.vercel.app`. No bought domain.
+  - **Update (owner, 25 Nov 2026): renamed Care Navigator.** Vercel gave the address `care-navigator-xi.vercel.app`, because `care-navigator.vercel.app` was taken. Care-pacity is the owner's separate project, so this site no longer shares its name. If the address is taken, use the one Vercel offers and update `web/src/app/layout.tsx` and `web/public/sitemap.xml`. Note: "Care Navigator" is close to C3A's Caregiving Navigator programme (see above); the independence statement on every page covers that.
   - **Icons and preview:** a favicon, an Apple touch icon and a 1200×630 preview image are in `docs/brand/` (Stage 5 copies them into `web/public/`).
 
 ### Specs to write (Claude can draft; you approve)
