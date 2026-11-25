@@ -27,8 +27,6 @@ main { flex: 1; }
 .scr { padding: 20px 16px 28px; display: flex; flex-direction: column; gap: 16px; }
 .plan-loading .scr { visibility: hidden; }
 .top { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-meta); color: var(--text-secondary); }
-.progress { height: 6px; background: var(--border-subtle); border-radius: 3px; overflow: hidden; }
-.progress i { display: block; height: 100%; background: var(--primary); border-radius: 3px; }
 h1, h2 { font-family: var(--font-serif); font-size: var(--fs-h1); line-height: 1.2; text-wrap: balance; }
 h3 { font-size: var(--fs-body); line-height: 1.3; }
 .help { color: var(--text-secondary); font-size: var(--fs-small); }
@@ -121,7 +119,7 @@ table.calc th, table.calc td { text-align: left; padding: 6px 4px; border-bottom
 .hero .btn { background: var(--on-hero); color: var(--hero-bg); }
 .hero .btn:hover { background: var(--sel-fill); }
 /* 3D picture: the space is reserved, so nothing shifts when it loads. The mark shows until the canvas fades in. */
-.hero-3d { position: relative; height: 230px; margin: 4px -16px -24px; display: grid; place-items: center; color: var(--on-hero-muted); }
+.hero-3d { position: relative; height: 270px; margin: 4px -16px -24px; display: grid; place-items: center; color: var(--on-hero-muted); }
 .hero-3d .mark { width: 72px; height: 72px; opacity: 0.35; }
 .hero-3d > .scene { position: absolute !important; inset: 0; opacity: 0; }  /* React Three Fiber's wrapper around the canvas */
 .hero-3d > .scene.shown { opacity: 1; }
@@ -147,7 +145,6 @@ footer.ft nav a { min-height: 44px; display: inline-flex; align-items: center; }
   /* Each step slides in; a new question feels like the next page, not a flicker. */
   .enter { animation: enter 260ms ease-out both; }
   @keyframes enter { from { opacity: 0; transform: translateY(10px); } }
-  .progress i { transition: width 320ms ease-out; }
   .opt:has(input:checked) { animation: pick 200ms ease-out; }
   @keyframes pick { 50% { transform: scale(1.015); } }
 }
@@ -155,6 +152,107 @@ footer.ft nav a { min-height: 44px; display: inline-flex; align-items: center; }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 160ms ease-out, box-shadow 160ms ease-out; will-change: transform; }
   .tilt:hover { box-shadow: 0 10px 24px rgba(43, 29, 20, 0.12); }
+}
+
+
+/* ---------- Start page: wide on desktop, one column on phones ---------- */
+.page:has(.landing) { max-width: 1160px; }
+.landing { display: flex; flex-direction: column; }
+.hero { background: radial-gradient(60% 70% at 78% 62%, color-mix(in srgb, var(--on-hero-muted) 22%, transparent), transparent 70%), var(--hero-bg); }
+.hero-copy, .hero-cta { display: flex; flex-direction: column; gap: 14px; }
+.eyebrow { font-size: var(--fs-meta); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.hero-cta { gap: 10px; }
+.hero .hero-note { font-size: var(--fs-meta); }
+.two-people { padding: 14px 16px 0; }
+.band { padding: 32px 16px; display: flex; flex-direction: column; gap: 18px; }
+.band h2, .cta-band h2 { font-size: 1.75rem; }
+.how-steps { list-style: none; padding: 0; display: grid; gap: 14px; }
+.how-card, .example-card { position: relative; height: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.how-num { position: absolute; top: 12px; right: 18px; font-family: var(--font-serif); font-size: 2.75rem; line-height: 1; color: var(--sel-fill); }
+.how-icon { width: 44px; height: 44px; padding: 10px; border-radius: 12px; background: var(--sel-fill); fill: none; stroke: var(--primary);
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.how-card p, .example-copy p { color: var(--text-secondary); font-size: var(--fs-small); }
+.example-copy { display: flex; flex-direction: column; gap: 10px; }
+.example-card { box-shadow: 0 18px 40px rgba(43, 29, 20, 0.10); }
+.example-card ol.steps { gap: 10px; font-size: var(--fs-small); }
+.tag { align-self: flex-start; font-size: var(--fs-meta); font-weight: 600; color: var(--sage); background: var(--sage-fill); padding: 2px 10px; border-radius: 999px; }
+.trust { display: grid; gap: 18px; background: var(--bg-band); }
+.trust b { font-family: var(--font-serif); font-size: 1.25rem; color: var(--text-heading); }
+.trust p { font-size: var(--fs-small); color: var(--text-secondary); }
+.cta-band { margin: 8px 16px 32px; padding: 28px 20px; border-radius: var(--r-lg); background: var(--hero-bg); display: flex; flex-direction: column; gap: 16px; }
+.cta-band h2 { color: var(--on-hero); }
+.cta-band .btn { background: var(--on-hero); color: var(--hero-bg); }
+.cta-band .btn:hover { background: var(--sel-fill); }
+@media (min-width: 900px) {
+  .hero { display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: 24px; margin: 16px; padding: 56px 48px; border-radius: 24px; }
+  .hero h1 { font-size: 3.25rem; line-height: 1.08; }
+  .hero-copy > p:not(.eyebrow) { font-size: 1.25rem; }
+  .hero-cta { flex-direction: row; align-items: center; gap: 18px; }
+  .hero-cta .btn, .cta-band .btn { width: auto; flex: none; white-space: nowrap; padding: 0 32px; }
+  .hero-3d { height: 440px; margin: -24px -16px -24px 0; }
+  .two-people { padding: 0 64px; }
+  .band { padding: 56px 64px; gap: 24px; }
+  .band h2, .cta-band h2 { font-size: 2.25rem; }
+  .how-steps { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .example { display: grid; grid-template-columns: 1fr 1.15fr; align-items: center; gap: 56px; }
+  .trust { grid-template-columns: repeat(3, 1fr); margin: 0 64px; padding: 36px; border-radius: var(--r-lg); }
+  .cta-band { margin: 56px 64px 64px; padding: 40px 48px; flex-direction: row; justify-content: space-between; align-items: center; }
+}
+
+/* ---------- Planner: journey bar and "Her plan so far" ---------- */
+.page:has(.planner) { max-width: 1060px; }
+.planner { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "journey" "sofar" "main"; }
+.planner > .scr { grid-area: main; }
+.journey { grid-area: journey; padding: 14px 16px 0; }
+.journey ol { list-style: none; padding: 0; display: flex; gap: 6px; }
+.journey li { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.journey .jseg { height: 6px; border-radius: 3px; background: var(--border-subtle); overflow: hidden; }
+.journey .jseg i { display: block; height: 100%; background: var(--primary); transform-origin: left; }
+.journey li.done .jseg i { background: var(--sage); }
+.journey .lbl, .journey button { font-size: var(--fs-meta); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+.journey button { min-height: 24px; background: none; border: 0; padding: 0; cursor: pointer; color: var(--sage); text-decoration: underline; text-underline-offset: 3px; }
+.journey li.now .lbl { color: var(--text-primary); font-weight: 600; }
+.journey-now { display: none; }
+.sofar { grid-area: sofar; padding: 12px 16px 0; min-width: 0; }
+.sofar h2 { font-family: var(--font-sans); font-size: var(--fs-meta); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-heading); margin-bottom: 8px; }
+.sofar ul { list-style: none; padding: 0 0 4px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.sofar li { flex: none; font-size: var(--fs-meta); line-height: 1.4; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 999px; padding: 4px 12px; white-space: nowrap; }
+.sofar li:last-child { border-color: var(--primary); background: var(--sel-fill); }
+.ready { display: flex; align-items: center; gap: 10px; color: var(--sage); font-weight: 600; }
+.ready svg { width: 30px; height: 30px; fill: var(--sage-fill); stroke: var(--sage); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 699px) {
+  .journey .lbl, .journey button { display: none; }
+  .journey-now { display: block; font-size: var(--fs-meta); color: var(--text-secondary); margin-top: 8px; }
+}
+@media (min-width: 1024px) {
+  .planner { grid-template-columns: minmax(0, 1fr) 300px; grid-template-areas: "journey journey" "main sofar"; column-gap: 28px; align-items: start; padding: 0 16px; }
+  .journey { padding: 20px 0 0; }
+  .planner > .scr { padding-left: 0; padding-right: 0; }
+  .sofar { position: sticky; top: 16px; margin-top: 20px; padding: 20px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--r-lg); }
+  .sofar ul { flex-direction: column; overflow: visible; }
+  .sofar li { white-space: normal; border-radius: var(--r-md); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy > * { animation: enter 600ms ease-out both; }
+  .hero-copy > h1 { animation-name: lift; }               /* the h1 only moves, so it counts as painted at once */
+  .hero-copy > :nth-child(2) { animation-delay: 60ms; }
+  .hero-copy > :nth-child(3) { animation-delay: 140ms; }
+  .hero-copy > :nth-child(4) { animation-delay: 220ms; }
+  @keyframes lift { from { transform: translateY(12px); } }
+  .journey .jseg i { transition: transform 420ms ease-out; }
+  .sofar li { animation: chip 320ms ease-out both; }
+  @keyframes chip { from { opacity: 0; transform: translateY(6px) scale(0.96); } }
+  .ready path { stroke-dasharray: 20; animation: draw 600ms 200ms ease-out both; }
+  @keyframes draw { from { stroke-dashoffset: 20; } }
+}
+/* Sections rise in as they scroll into view (browsers with scroll-driven animations; others just show them). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+    @keyframes reveal { from { transform: translateY(36px) scale(0.98); } }   /* movement only: text keeps full contrast */
+  }
 }
 
 /* Print: the action plan on one A4 page; no chrome. */

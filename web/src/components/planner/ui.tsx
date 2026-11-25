@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { Range } from "@/lib/engine/cost";
 
-export const money = (n: number) => `$${n.toLocaleString("en-SG")}`;
-export const range = (r: Range) => (r.low === r.high ? money(r.low) : `${money(r.low)} – ${money(r.high)}`);
+import { money, range } from "@/lib/format";
+export { money, range };
 
 /** A money range that counts to its new value when the answers change it. It shows the final value at once on first
  *  show and with reduced motion, so the figure is never wrong for long. */
@@ -43,6 +43,11 @@ export const tilt = {
     e.currentTarget.style.removeProperty("--ry");
   },
 };
+
+/** A card that tilts toward the pointer; usable from server components (pages) as a plain wrapper. */
+export function Tilt({ className = "", children }: { className?: string; children: React.ReactNode }) {
+  return <div className={`tilt ${className}`} {...tilt}>{children}</div>;
+}
 
 /** "a session (a day)", "an hour" … for "From $55 a session (a day) before subsidy". */
 export const UNIT_ONE: Record<string, string> = {

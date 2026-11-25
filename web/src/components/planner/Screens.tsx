@@ -467,6 +467,7 @@ export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart
         <button type="button" className="link" onClick={restart}>Change answers</button>
         <span>{today}</span>
       </div>
+      <p className="ready no-print"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M7 12.5l3.2 3.2L17 9" /></svg>Your plan is ready</p>
       <h1>Mum's care plan</h1>
       <p className="print-only meta">{today} · Care Navigator</p>
       <ol className="steps">

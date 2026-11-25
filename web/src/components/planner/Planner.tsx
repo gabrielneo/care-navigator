@@ -6,10 +6,10 @@ import { dataDate, manifest } from "@/lib/data";
 import { loadGeo } from "@/lib/data/geo";
 import { decodeHash, encodeHash, type Session, type Step } from "@/lib/engine/urlCodec";
 import { locate, type Region } from "@/lib/geo/postal";
+import { JourneyBar, PlanSoFar, QUESTIONS } from "./Journey";
 import { Action, ContactsScreen, CostScreen, Matches, Week } from "./Screens";
 import { Check, Radio } from "./ui";
 
-const QUESTIONS: Step[] = ["where", "adl", "alone", "memory", "helper", "limits", "postal"];
 const ALL: Step[] = [...QUESTIONS, "matches", "week", "cost", "contacts", "action"];
 const flow = (s: Session): Step[] => (s.w === "in_nursing_home" ? ["where", "cost", "action"] : ALL);
 
@@ -75,20 +75,20 @@ export function Planner() {
       {banner === "updated" && (
         <p className="notice" role="status">Figures updated on {dataDate}. They may differ from when this plan was made.</p>
       )}
+      <div className="planner">
+      <JourneyBar step={step} flow={f} go={(to) => go(to)} />
+      <PlanSoFar s={s} step={step} flow={f} />
       <div className="scr enter" key={step}>
         {step !== "action" && <div className="top no-print">
           <button type="button" className="link" onClick={back}>Back</button>
-          <span>{qIndex >= 0 && s.w !== "in_nursing_home" ? `Question ${qIndex + 1} of 7` : ""}</span>
         </div>}
-        {qIndex >= 0 && s.w !== "in_nursing_home" && (
-          <div className="progress" role="presentation"><i style={{ width: `${((qIndex + 1) / 7) * 100}%` }} /></div>
-        )}
         {qIndex >= 0 ? <Question step={step} s={s} update={update} next={next} />
           : step === "matches" ? <Matches {...screen} />
           : step === "week" ? <Week {...screen} />
           : step === "cost" ? <CostScreen {...screen} />
           : step === "contacts" ? <ContactsScreen {...screen} />
           : <Action {...screen} />}
+      </div>
       </div>
     </>
   );

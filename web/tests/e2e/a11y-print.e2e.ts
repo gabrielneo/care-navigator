@@ -7,8 +7,13 @@ const STEPS: Step[] = ["where", "adl", "alone", "memory", "helper", "limits", "p
 const PAGES = ["/", "/about/", "/privacy/", "/data-sources/", "/does-not-exist/"];
 
 async function axe(page: import("@playwright/test").Page) {
-  // Check the screen people read: after the 260 ms slide-in, not halfway through the fade.
-  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+  // Check the screen people read: scrolled through, so scroll-revealed sections have risen in, and after the slide-ins
+  // finish (time-based animations only; scroll-driven ones follow the scroll position and never "finish").
+  await page.evaluate(async () => {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+    await new Promise(requestAnimationFrame);
+    await Promise.all(document.getAnimations().filter((a) => a.timeline === document.timeline && a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished));
+  });
   const { violations } = await new AxeBuilder({ page }).analyze();
   const bad = violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(bad.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
