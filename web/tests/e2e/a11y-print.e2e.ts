@@ -18,6 +18,7 @@ for (const step of STEPS) {
     await expect(page.locator("h1")).toBeVisible();
     if (step === "cost") {   // open everything that can be opened
       await page.getByText("How is this worked out").click();
+      await page.getByText("Cost of each service").click();
       await page.getByRole("button", { name: "See what a nursing home may cost" }).click();
       await page.getByRole("button", { name: /Not sure which range/ }).click();
     }
@@ -38,6 +39,7 @@ const STATES: [string, string, ((p: import("@playwright/test").Page) => Promise<
   ["empty plan", encodeHash("week", { ...BASE, plan: [] })],
   ["contacts with no area", encodeHash("contacts", { ...BASE, plan: [] })],
   ["quote error", encodeHash("cost", MEI), async (p) => {
+    await p.getByText("Cost of each service").click();
     await p.getByRole("button", { name: "Enter a quote" }).first().click();
     await p.getByLabel(/Quoted fee/).first().fill("0"); await p.getByLabel(/Quoted fee/).first().blur();
   }],

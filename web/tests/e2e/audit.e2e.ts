@@ -48,7 +48,7 @@ for (const [name, hash] of [
     await expect(page.locator("h1")).toBeVisible();
     const more = page.getByRole("button", { name: "See what a nursing home may cost" });
     if (await more.count()) await more.click();
-    const boxes = page.locator(".svc, .panel:not(.line), p.why");
+    const boxes = page.locator(".svc, .panel:not(.line):not(.lines), p.why");
     let figures = 0;
     for (const box of await boxes.all()) {
       const text = (await box.textContent()) ?? "";
@@ -61,7 +61,7 @@ for (const [name, hash] of [
     }
     expect(figures).toBeGreaterThan(0);
     // Each cost line's figures are explained in "How is this worked out", which lists the same sources.
-    if (await page.locator(".line").count()) await expect(page.locator("details.panel")).toContainText(CHECKED);
+    if (await page.locator(".line").count()) await expect(page.locator("details.panel", { has: page.locator("table") })).toContainText(CHECKED);
   });
 }
 

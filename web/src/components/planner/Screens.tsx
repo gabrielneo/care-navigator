@@ -95,6 +95,7 @@ export function Matches({ s, update, next, restart }: P) {
 
 // ---------- 4 · Week ----------
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const SLOTS: Record<number, number[]> = { 1: [2], 2: [1, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 2, 3, 4], 6: [0, 1, 2, 3, 4, 5], 7: [0, 1, 2, 3, 4, 5, 6] };
 export function Week({ s, update, next }: P) {
   const plan = (s.plan ?? []).filter((e) => e.s !== "day_care_transport");
   // Change one service's count in place (keeps the order); 0 removes it. Transport's n: 0 opt-out is kept.
@@ -109,13 +110,10 @@ export function Week({ s, update, next }: P) {
   const transportOn = (s.plan ?? []).find((e) => e.s === "day_care_transport")?.n !== 0;
   const respiteMatched = matchServices(rules, s).matches.some((m) => m.serviceId === "respite");
 
-  // Lay services out on the week in order: each takes its next n days (display only).
+  // Display only: each service goes on weekdays first, spread out (2 a week → Tue and Thu), so services share days
+  // as they usually do (a carer in the morning, day care after) instead of spilling onto the weekend.
   const days: string[][] = DAYS.map(() => []);
-  let d = 0;
-  for (const e of plan) {
-    for (let i = 0; i < e.n; i++) days[(d + i) % 7]!.push(shortName(e.s));
-    d = (d + e.n) % 7;
-  }
+  for (const e of plan) for (const i of SLOTS[e.n] ?? []) days[i]!.push(shortName(e.s));
 
   if (plan.length === 0) {
     return (
@@ -245,26 +243,31 @@ export function CostScreen({ s, update, next }: P) {
       )}
       {!nursing && !c.total && <p className="help">Her plan is empty, so there's nothing to cost yet.</p>}
 
-      {!nursing && c.lines.map((l) => {
-        const svc = services.get(l.serviceId)!;
-        const entry = planEntries(s).find((e) => e.s === l.serviceId);
-        const freq = svc.unit === "month" ? ""
-          : svc.unit === "hour" ? ` · ${entry?.n} ${entry?.n === 1 ? "visit" : "visits"} of ${svc.blockHours ?? 4} hours a week`
-          : ` · ${entry?.n} ${UNIT_WEEK[svc.unit ?? ""] ?? ""}`;
-        return (
-          <div className="line panel" key={l.serviceId}>
-            <h3>{svc.name}{freq}</h3>
-            <div className="two">
-              <span><small>With subsidy</small>{l.withSubsidy ? range(l.withSubsidy) : "—"}</span>
-              <span><small>Full price</small>{range(l.fullPrice)}</span>
+      {!nursing && c.lines.length > 0 && (
+        <details className="panel lines">
+          <summary>Cost of each service, and your own quotes</summary>
+          {c.lines.map((l) => {
+          const svc = services.get(l.serviceId)!;
+          const entry = planEntries(s).find((e) => e.s === l.serviceId);
+          const freq = svc.unit === "month" ? ""
+            : svc.unit === "hour" ? ` · ${entry?.n} ${entry?.n === 1 ? "visit" : "visits"} of ${svc.blockHours ?? 4} hours a week`
+            : ` · ${entry?.n} ${UNIT_WEEK[svc.unit ?? ""] ?? ""}`;
+          return (
+            <div className="line panel" key={l.serviceId}>
+              <h3>{svc.name}{freq}</h3>
+              <div className="two">
+                <span><small>With subsidy</small>{l.withSubsidy ? range(l.withSubsidy) : "—"}</span>
+                <span><small>Full price</small>{range(l.fullPrice)}</span>
+              </div>
+              {l.serviceId === "day_care_transport"
+                ? <p className="note">Full price in both columns: no source says transport is subsidised.</p>
+                : <Quote id={l.serviceId} value={s.q?.[l.serviceId]} unit={svc.unit ?? ""}
+                    onChange={(v) => { const q = { ...(s.q ?? {}) }; if (v == null) delete q[l.serviceId]; else q[l.serviceId] = v; update({ q }); }} />}
             </div>
-            {l.serviceId === "day_care_transport"
-              ? <p className="note">Full price in both columns: no source says transport is subsidised.</p>
-              : <Quote id={l.serviceId} value={s.q?.[l.serviceId]} unit={svc.unit ?? ""}
-                  onChange={(v) => { const q = { ...(s.q ?? {}) }; if (v == null) delete q[l.serviceId]; else q[l.serviceId] = v; update({ q }); }} />}
-          </div>
-        );
-      })}
+          );
+          })}
+        </details>
+      )}
       {!nursing && c.unpriced.length > 0 && <p className="note">No published price for: {c.unpriced.map(svcName).join(", ")}. Ask when you call.</p>}
 
       {(showNh || nursing) ? (
@@ -474,6 +477,7 @@ export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart
         </li>
         <li>
           <h3>Bring</h3>
+          <p className="meta">Our suggestion. There's no official list.</p>
           <ul className="plain">{[...rules.howToApply.alwaysBring, ...extraDocs].map((d) => <li key={d}>{d}</li>)}</ul>
         </li>
         <li>

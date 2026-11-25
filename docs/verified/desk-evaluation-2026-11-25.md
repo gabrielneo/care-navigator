@@ -64,8 +64,8 @@ Three scenarios:
 | Start, questions 1–6 | ✓ One question per screen, a progress count, Next always visible, an inline message if nothing is picked | ✓ | ✓ Skips to cost |
 | Postal code | ✓ It says only 2 digits are used | ✓ "Skip and pick a region" is visible | — |
 | Matches | ✓ Each card says why it fits | **Fixed:** "Respite care (nursing home respite)" sat inside brackets in the heading. Now AIC's name, "Nursing Home Respite Care" | — |
-| Week | ~ Home care is laid out on Sat and Sun because day care fills Mon–Fri; this could read as weekend visits (open) | **Fixed:** respite led his matches, then vanished from the week and cost unexplained. A note now says it's booked as a stay of 7+ days | — |
-| Cost | ~ About 3 phone screens long (open) | ✓ | **Fixed:** before income was picked, it said "0% residential subsidy" as if that were a fact. Now: "before subsidy, pick her income range…" |
+| Week | **Fixed:** home care was laid out on Sat and Sun because day care filled Mon–Fri. Each service now goes on weekdays first, spread out (home care on Tue and Thu) | **Fixed:** respite led his matches, then vanished from the week and cost unexplained. A note now says it's booked as a stay of 7+ days | — |
+| Cost | **Fixed:** about 3 phone screens long. The per-service lines are now under "Cost of each service, and your own quotes", so it's 2.4 screens and leads with the total | ✓ | **Fixed:** before income was picked, it said "0% residential subsidy" as if that were a fact. Now: "before subsidy, pick her income range…" |
 | Who to call | ✓ Ward social worker first, distances say they're approximate | ✓ Region-based | — |
 | Action plan | ✓ | ✓ | **Fixed:** "If you need help later: the AIC hotline…" started in lower case when there was no nearby AIC Link |
 
@@ -76,13 +76,13 @@ Severity uses Nielsen's scale: 0 none, 1 cosmetic, 2 minor, 3 major, 4 catastrop
 | Heuristic | Finding | Severity | Status |
 |---|---|---|---|
 | 1. Visibility of status | "Question n of 7", a loading message while places load, a banner for updated or damaged links | 0 | — |
-| 2. Match with the real world | Plain names with the official term in brackets. The week view puts home care on weekends because of layout order | 2 | Open |
+| 2. Match with the real world | Plain names with the official term in brackets. The week view put home care on weekends because of layout order | 2 | **Fixed** |
 | 3. User control | Back keeps answers, "Change answers" keeps the plan, every step has its own link | 0 | — |
 | 4. Consistency | "Print plan" and "Save as PDF" open the same print dialog | 1 | Kept: phone users look for "PDF" |
 | 5. Error prevention | A subsidy figure was shown before income was known (nursing home) | 3 | **Fixed** |
 | 6. Recognition over recall | Answers are restored; the income helper replaces recalling the household income per person | 0 | — |
 | 7. Flexibility | Skip the postal code, an income helper, your own quotes, add or remove services | 0 | — |
-| 8. Minimalist design | The cost screen is about 3 phone screens; source lines add length | 2 | Open: start per-service lines collapsed |
+| 8. Minimalist design | The cost screen was about 3 phone screens; source lines add length | 2 | **Fixed:** per-service lines collapsed (2.4 screens) |
 | 9. Error recovery | Inline messages don't blame the user, and every one says what to do | 0 | — |
 | 10. Help | "How is this worked out", sources and dates on every figure, the AIC hotline in every footer | 0 | — |
 
@@ -123,8 +123,12 @@ The planner's counts come from Mei's automated journey. The official counts are 
 
 ## 6. Still open
 
-1. **The cost screen is long** (about 3 phone screens). The next step is to collapse each service's lines by default. Testing with users should decide this; without them it's a judgement call.
-2. **Week layout:** home care appears on Sat and Sun after a full week of day care. One fix is to fill the week by service type, not in order.
-3. **Prices:** aggregators still set the upper end of the range for 5 services.
-4. **The documents to bring** are our judgement; no official list exists.
-5. **Untested:** real caregivers, a professional's review, WhatsApp's in-app browser, iPhone Safari printing and screen readers.
+1. **Prices:** aggregators still set the upper end of the range for 5 services: dementia day care, home personal care, medical escort, meals and respite. We searched NTUC Health, Lions Befrienders and St Luke's (25 Nov 2026), and none publishes a usable per-unit price for them:
+   - NTUC's home care range ($2.70–$26 an hour) doesn't say whether it's before subsidy.
+   - Its dementia figures are monthly, and for a different programme.
+   - Lions Befrienders sets fees after means testing.
+   - St Luke's site didn't load.
+2. **The documents to bring** are our judgement; no official list exists. The action plan now says so ("Our suggestion. There's no official list.").
+3. **Untested:** real caregivers, a professional's review, WhatsApp's in-app browser, iPhone Safari printing and screen readers.
+
+**Fixed after the first draft of this report:** the cost screen's length and the week layout (sections 3 and 4).

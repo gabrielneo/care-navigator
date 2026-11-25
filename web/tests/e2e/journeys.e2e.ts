@@ -29,6 +29,11 @@ test("Mei: mother in hospital after a fall", async ({ page }) => {
   await expect(page.getByRole("group", { name: "Day care centre" }).locator("output")).toHaveText("5");
   await page.getByRole("button", { name: "Remove one from Help with washing and dressing at home" }).click();
   await expect(page.getByRole("group", { name: "Help with washing and dressing at home" }).locator("output")).toHaveText("2");
+  // Weekdays first: day care Mon–Fri, home care Tue and Thu, nothing pushed onto the weekend.
+  const week = page.getByLabel("Her week");
+  await expect(week.locator(".day", { hasText: "Tue" })).toContainText("Home care");
+  await expect(week.locator(".day", { hasText: "Sat" })).toContainText("—");
+  await expect(week.locator(".day", { hasText: "Sun" })).toContainText("—");
   await page.getByRole("button", { name: "See the cost" }).click();
 
   await page.getByLabel("Household income per person (PCHI)").selectOption("T1");
