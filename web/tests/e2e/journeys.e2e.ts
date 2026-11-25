@@ -70,12 +70,14 @@ test("Mei: mother in hospital after a fall", async ({ page }) => {
   expect(got.session.plan).toEqual(expect.arrayContaining([{ s: "day_care", n: 5 }, { s: "home_personal_care", n: 2 }]));
   expect(shared).not.toContain("560123");
 
+  await expect(page.getByText(/^AIC Link .+, or the AIC hotline/)).toBeVisible();   // location data has loaded
   const before = await page.locator("main").innerText();
   const fresh = await page.context().newPage();
   await fresh.goto(shared);
   await expect(fresh.getByRole("heading", { name: "Mum's care plan" })).toBeVisible();
   await expect(fresh.getByText(/ each a month/)).toBeVisible();
-  expect(await fresh.locator("main").innerText()).toBe(before);
+  // The nearest AIC Link fills in once the location data loads, so retry until the page settles.
+  await expect.poll(() => fresh.locator("main").innerText()).toBe(before);
 
 });
 
