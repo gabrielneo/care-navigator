@@ -10,7 +10,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: process.env.CI ? "github" : "list",
-  use: { baseURL: LIVE ?? `http://127.0.0.1:${PORT}`, browserName: "chromium" },
+  use: {
+    baseURL: LIVE ?? `http://127.0.0.1:${PORT}`, browserName: "chromium",
+    // In CI, keep a trace and screenshot of each failure; the workflow uploads them (test-results/).
+    trace: process.env.CI ? "retain-on-failure" : "off", screenshot: process.env.CI ? "only-on-failure" : "off",
+  },
   projects: [
     { name: "phone", use: { viewport: { width: 375, height: 812 } } },
     { name: "desktop", use: { viewport: { width: 1280, height: 800 } } },

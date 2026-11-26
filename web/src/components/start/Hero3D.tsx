@@ -1,7 +1,7 @@
 "use client";
 // Holds the space for the 3D picture so nothing shifts, shows the brand mark until it's ready, and loads the 3D code
-// (three.js, about 200 KB) only when the browser is idle after the page has shown. With reduced motion, no WebGL, or
-// an error, the brand mark simply stays.
+// (three.js, about 200 KB) only when the browser is idle after the page has shown. With reduced motion, no hardware
+// WebGL, or an error, the brand mark simply stays.
 import { Component, useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
 
 class Fallback extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -10,7 +10,11 @@ class Fallback extends Component<{ children: ReactNode }, { failed: boolean }> {
   render() { return this.state.failed ? null : this.props.children; }
 }
 
-const webgl = () => { try { return !!document.createElement("canvas").getContext("webgl2"); } catch { return false; } };
+// Hardware WebGL only: drawn in software (old computers, no graphics card) the scene is slow and can crash the tab.
+const webgl = () => {
+  try { return !!document.createElement("canvas").getContext("webgl2", { failIfMajorPerformanceCaveat: true }); }
+  catch { return false; }
+};
 
 export function Hero3D() {
   const box = useRef<HTMLDivElement>(null);

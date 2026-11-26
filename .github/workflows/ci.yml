@@ -48,3 +48,10 @@ jobs:
           npx playwright install --with-deps chromium webkit firefox
           npm run e2e
         working-directory: web
+      - name: Keep the failing tests' screenshots and traces for a week
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: web/test-results/
+          retention-days: 7

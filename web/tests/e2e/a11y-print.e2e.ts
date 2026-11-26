@@ -12,7 +12,7 @@ async function axe(page: import("@playwright/test").Page) {
   await page.evaluate(async () => {
     window.scrollTo(0, document.documentElement.scrollHeight);
     await new Promise(requestAnimationFrame);
-    await Promise.all(document.getAnimations().filter((a) => a.timeline === document.timeline && a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished));
+    await Promise.all(document.getAnimations().filter((a) => a.timeline === document.timeline && a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished.catch(() => {})));
   });
   const { violations } = await new AxeBuilder({ page }).analyze();
   const bad = violations.filter((v) => v.impact === "serious" || v.impact === "critical");
@@ -93,12 +93,23 @@ test(`print: a rich plan fits the 1-page print, and the full plan stays within 2
   expect(await pages()).toBeLessThanOrEqual(2);                                // "Print full plan"
   await page.evaluate(() => document.documentElement.classList.add("print-compact"));
   expect(await pages()).toBe(1);                                               // "Print 1-page plan"
+  // With room to spare: it also fits a sheet 6% shorter, since phones' fonts and printers' margins vary.
+  const short = (await page.pdf({ width: "210mm", height: "279mm", printBackground: true })).toString("latin1");
+  expect(short.match(/\/Type\s*\/Page[^s]/g)?.length, "one-page plan has under 6% headroom").toBe(1);
   if (!l) await expect(page.getByText("Later steps, support for you and things worth doing ahead are in this plan's link.")).toBeVisible();
 });
 }
 
 test("Start: the 3D home appears, and reduced motion keeps the still mark", async ({ page, browser }) => {
   await page.goto("/");
+  // Without hardware graphics (CI's Linux machines) the 3D is skipped on purpose and the still mark stays.
+  const hardware = await page.evaluate(() => !!document.createElement("canvas").getContext("webgl2", { failIfMajorPerformanceCaveat: true }));
+  if (!hardware) {
+    await page.waitForTimeout(2500);
+    await expect(page.locator(".hero-3d .mark")).toBeVisible();
+    await expect(page.locator(".hero-3d canvas")).toHaveCount(0);
+    return;
+  }
   await expect(page.locator(".hero-3d > .scene.shown canvas")).toBeVisible({ timeout: 10_000 });
   const calm = await browser.newContext({ reducedMotion: "reduce" });
   const still = await calm.newPage();

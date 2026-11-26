@@ -12,7 +12,8 @@ export function Offline() {
     const keep = (urls: string[]) => {
       const fresh = urls.filter((u) => new URL(u, location.href).origin === location.origin && !kept.has(u));
       fresh.forEach((u) => kept.add(u));
-      return fresh.length ? caches.open("care-navigator-v1").then((c) => c.addAll(fresh)) : Promise.resolve();
+      // Files already saved on an earlier visit aren't fetched again.
+      return caches.open("care-navigator-v1").then((c) => Promise.all(fresh.map((u) => c.match(u).then((hit) => (hit ? undefined : c.add(u))))));
     };
     navigator.serviceWorker.register("/sw.js").then(() => navigator.serviceWorker.ready).then(() => {
       // Everything loaded so far, and anything loaded later (the places data arrives after the first screen).

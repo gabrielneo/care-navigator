@@ -356,9 +356,18 @@ ul.criteria li::before { content: "✓ "; color: var(--sage); font-weight: 600; 
 @media print {
   @page { size: A4; margin: 14mm; }
   body { background: #fff; font-size: 11pt; line-height: 1.4; }
-  /* 9.2: Malay and Tamil run about 5% and 11% longer than English, so their one-page print is a little smaller. */
-  html.print-compact:is(:lang(ms), :lang(ta)) { font-size: 12px; }
+  /* Paper uses fonts with the same widths everywhere (Liberation Sans and Serif match Arial and Times exactly), so a page
+     that fits on one machine fits on all; system fonts differ by up to 10% and pushed the one-page plan onto two. */
+  body { font-family: Arial, "Liberation Sans", Helvetica, var(--font-sans); }
+  h1, h2, h3, .total .big { font-family: Georgia, "Liberation Serif", "Times New Roman", var(--font-serif); }
+  /* The one-page plan is a little smaller, with headroom for longer wording. Malay and Tamil run about 5% and 11%
+     longer than English (9.2), so theirs is smaller still. */
+  html.print-compact { font-size: 12px; }
+  html.print-compact body { font-size: 10.5pt; line-height: 1.35; }
   html.print-compact:is(:lang(ms), :lang(ta)) body { font-size: 10pt; line-height: 1.3; }
+  /* Tamil keeps its own font (Arial has no Tamil letters), whose letters are large, so a step smaller reads the same. */
+  html.print-compact:lang(ta) { font-size: 11px; }
+  html.print-compact:lang(ta) body { font-size: 9.5pt; line-height: 1.28; }
   .page { max-width: none; min-height: 0; }
   .proto, .notice, footer.ft, .no-print, .top { display: none !important; }
   .scr { padding: 0; gap: 8px; }

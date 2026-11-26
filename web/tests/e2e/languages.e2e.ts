@@ -34,7 +34,7 @@ async function leftoverEnglish(page: Page, lang: Lang = "zh"): Promise<string[]>
 }
 async function checkScreen(page: Page, lang: Lang = "zh") {
   await page.evaluate(async () => {
-    await Promise.all(document.getAnimations().filter((a) => a.timeline === document.timeline && a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished));
+    await Promise.all(document.getAnimations().filter((a) => a.timeline === document.timeline && a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished.catch(() => {})));
   });
   await expect(page.getByText(LANGS.find((x) => x.id === lang)!.banner!)).toBeVisible();
   expect(await leftoverEnglish(page, lang)).toEqual([]);
