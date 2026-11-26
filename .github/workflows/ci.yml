@@ -40,6 +40,9 @@ jobs:
       - name: Static build
         run: npm run build
         working-directory: web
+      - name: JavaScript size budget (9.5, guards N2)
+        run: node scripts/size-budget.mjs
+        working-directory: web
       - name: End-to-end, accessibility and privacy checks in Chromium, WebKit and Firefox (Stage 6)
         run: |
           npx playwright install --with-deps chromium webkit firefox

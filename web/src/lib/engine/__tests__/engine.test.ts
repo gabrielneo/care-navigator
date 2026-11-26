@@ -340,10 +340,18 @@ describe("next steps (8.2)", () => {
     plan: [{ s: "day_care", n: 5 }, { s: "home_personal_care", n: 2 }], t: "T1", r: "sc", b: "le1969" };
 
   it("starts with the first call, then follows her services and grants in order", () => {
-    expect(ids(MEI_PLAN)).toEqual(["now:call_first", "week:apply_services", "week:means_test", "later:caregiver_training", "later:lpa", "later:acp"]);
+    expect(ids(MEI_PLAN)).toEqual(["now:call_first", "week:apply_services", "week:means_test", "later:medifund", "later:caregiver_training", "later:lpa", "later:acp"]);
     const groups = Object.fromEntries(nextSteps(rules, MEI_PLAN).map((x) => [x.id, x.group]));
     expect(groups).toMatchObject({ call_first: "plan", means_test: "plan", caregiver_training: "carer", lpa: "ahead", acp: "ahead" });
     expect(nextSteps(rules, MEI_PLAN)[0]!.text).toBe("Call the medical social worker on her ward, before she's discharged.");
+  });
+
+  it("9.10 and 9.11: ComCare when the carer is struggling, helper-leave respite when there's a helper", () => {
+    expect(ids(MEI_PLAN)).not.toContain("week:comcare");
+    expect(ids({ ...MEI_PLAN, lim: "tired" } as Session)).toContain("week:comcare");
+    expect(ids(MEI_PLAN)).not.toContain("later:helper_leave_respite");
+    expect(ids({ ...MEI_PLAN, hlp: "yes" } as Session)).toContain("later:helper_leave_respite");
+    expect(ids({ ...MEI_PLAN, plan: [] } as Session)).not.toContain("later:medifund");       // no services, no bill yet
   });
 
   it("adds the assessment report before the Home Caregiving Grant, and says which comes first", () => {
@@ -442,5 +450,24 @@ describe("Pioneer and Merdeka Generation (8.12)", () => {
     expect(pio("pg")?.askIf).toBeNull();
     expect(pio("mg")).toBeUndefined();
     expect(pio("no")).toBeUndefined();
+  });
+});
+
+describe("9.3 link length", () => {
+  it("the heaviest possible plan still makes a link under 2,000 characters", () => {
+    // Every field at its limit: all services at 7 a week with a 5-digit quote, every activity severe, the longest step
+    // ids ticked, Tamil, a split, the longest data version. 2,000 is the classic safe URL length for old browsers and apps.
+    const ids = rules.serviceTypes.map((x) => x.serviceId).slice(0, 13);
+    const steps = rules.nextSteps.map((x) => x.stepId).sort((a, b) => b.length - a.length).slice(0, 20);
+    const all = ["bath", "dress", "toilet", "move", "eat", "transfer"] as const;
+    const heavy: Session = {
+      v: "2026.11.26-999", w: "in_hospital", d: true, adl: [...all], sev: [...all], cond: ["fall", "stroke", "hip", "eol"],
+      al: "weekdays", mem: "undx", hlp: "considering", lim: "unsure", med: true, loc: { sec: "56" },
+      plan: ids.map((s) => ({ s, n: 7 })), t: "T5", r: "none", b: "gt1969", g: "unsure",
+      q: Object.fromEntries(ids.map((s) => [s, 10_000])), x: 10, l: "ta", done: steps,
+    };
+    const url = `https://care-navigator-xi.vercel.app/plan/${encodeHash("contacts", heavy)}`;
+    expect(decodeHash(new URL(url).hash)?.session).toEqual(heavy);
+    expect(url.length).toBeLessThan(2000);
   });
 });

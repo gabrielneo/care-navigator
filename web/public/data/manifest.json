@@ -1,7 +1,7 @@
 {
- "dataVersion": "2026.11.26-6",
- "builtAt": "2026-11-26T02:22:46+00:00",
- "curatedHash": "8a6e987d466e98631facd61ab7a5d9130541fd1616b30b3a3f02221c68a80ba4",
+ "dataVersion": "2026.11.26-8",
+ "builtAt": "2026-11-26T09:25:16+00:00",
+ "curatedHash": "2ae1b801e01aa81f7067f4c764122643b8901fc773992f6495dee9ae8be89e51",
  "sources": [
   {
    "sourceId": "moh_nonres_subsidy",
@@ -264,7 +264,7 @@
    "title": "AIC Nursing Home Respite Care (from $131 a day; referral by a doctor)",
    "url": "https://www.aic.sg/Care-Services/Nursing-Home-Respite-Care",
    "licence": "site-terms",
-   "checkedOn": "2026-11-25",
+   "checkedOn": "2026-11-26",
    "nextReview": "2027-02-28"
   },
   {
@@ -354,16 +354,32 @@
    "licence": "site-terms",
    "checkedOn": "2026-11-26",
    "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "moh_medifund",
+   "title": "MediFund (help with bills left after subsidies, insurance and MediSave)",
+   "url": "https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/medifund/",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-05-31"
+  },
+  {
+   "sourceId": "msf_comcare",
+   "title": "ComCare (temporary support when unable to work, including for caregiving)",
+   "url": "https://www.msf.gov.sg/what-we-do/comcare",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-05-31"
   }
  ],
  "files": {
-  "rules.json": "f756c1bc6a1dd5095bf1309d68af4768b816921cc982243485790e7d82f0774d",
+  "rules.json": "fc776bd6c677ae6408bde192f7cdffa4a77b5b753a92d3fdef9c5b100176902e",
   "contacts.json": "44edb74ca6d3d816693ff23e69ef97144f57e1720cb7936de8df95eded769d35",
   "places.json": "2d789de5cf2255d2eb275285efcb3108b51b6e0191bd9dde0b38014203bed8d0",
   "sectors.json": "27500e57c4319c56b96939968ad183e2ef538af68b47351893fe6b4b99a207c3"
  },
  "sizes": {
-  "rules.json": 7764,
+  "rules.json": 8062,
   "contacts.json": 2122,
   "places.json": 6343,
   "sectors.json": 965

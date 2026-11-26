@@ -37,6 +37,21 @@ steps:
     when:
       - {q: limits, in: [tired, cant]}
     source_id: aic_take_a_break
+  - step_id: helper_leave_respite                      # 9.11: AIC lists "the domestic helper is on home leave"
+    timing: later
+    label: When your helper goes on home leave
+    text: Nursing home respite care can cover while your helper is away. A hospital, polyclinic or GP refers. Apply 4 weeks before.
+    unlocks: A short stay in a nursing home, if one has a bed free.
+    when:
+      - {q: helper, in: ["yes"]}
+    source_id: aic_nh_respite
+  - step_id: medifund                                  # 9.10: MOH's MediFund page; you apply through the medical social worker
+    timing: later
+    label: If the bill is still too much
+    text: Still can't pay after subsidies? Ask the medical social worker at the hospital or care provider about MediFund.
+    unlocks: Help for Singapore Citizens on subsidised care with what's left of the bill, at approved care providers.
+    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, medical_escort, meals_on_wheels, respite]
+    source_id: moh_medifund
   - step_id: far
     timing: week
     label: Functional Assessment Report
@@ -92,6 +107,15 @@ steps:
     when:
       - {q: limits, in: [tired, cant]}
     source_id: aic_caregiver_support
+  - step_id: comcare                                   # 9.10: MSF names "caregiving responsibilities" as a reason
+    timing: week
+    group: carer
+    label: Money for daily needs
+    text: If caregiving means you can't work, ComCare may help with daily living costs. Call 1800-777-0000, any time.
+    unlocks: Temporary support with basic living needs.
+    when:
+      - {q: limits, in: [tired, cant]}
+    source_id: msf_comcare
   - step_id: lpa
     timing: later
     group: ahead

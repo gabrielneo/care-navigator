@@ -1,7 +1,8 @@
 "use client";
 // Screens 3–7. Wording: docs/specs/08; behaviour and edge cases: docs/specs/06 and 09; layouts: docs/wireframes.
 import { useRef, useState } from "react";
-import { dataDate, longDate, rules, source } from "@/lib/data";
+import { dataDate, longDate, manifest, rules, source } from "@/lib/data";
+import { mailto } from "@/lib/report";
 import { useGeo } from "@/lib/data/geo";
 import { costPlan, nursingHome, potentialGrants, planEntries, severeOnlyHidden } from "@/lib/engine/cost";
 import { matchServices } from "@/lib/engine/matching";
@@ -9,7 +10,7 @@ import { incomeOptions, type TierId } from "@/lib/engine/tiers";
 import type { Session } from "@/lib/engine/urlCodec";
 import { nearbyContacts } from "@/lib/geo/nearby";
 import { pointForSession, type Region } from "@/lib/geo/postal";
-import { Handover, TIER_LABEL } from "./Journey";
+import { Handover, TIER_LABEL, WHO } from "./Journey";
 import { nextSteps, TIMINGS, type PlanStep, type Timing } from "@/lib/engine/steps";
 import { reminders, remindersIcs } from "@/lib/engine/reminders";
 import { getLang, list as join, t } from "@/lib/i18n";
@@ -29,6 +30,13 @@ function priceBadge(id: string): string {
   return t(about === "From" ? "From {amount} {unit} before subsidy" : "About {amount} {unit} before subsidy", { amount, unit: t(UNIT_ONE[svc.unit] ?? "") });
 }
 
+/** 9.7: a prefilled email saying which figure looks wrong. It carries only the sources and the data version, never her
+ *  answers, postal code or the plan's link. */
+const reportHref = (srcs: { sourceId: string; url: string }[]) => mailto(
+  `Figure may be wrong: ${srcs.map((x) => x.sourceId).join(", ")}`,
+  `Data version: ${manifest.dataVersion}\nSources:\n${srcs.map((x) => `- ${x.url}`).join("\n")}\n\nWhat looks wrong, and where did you see the right figure?\n`,
+);
+
 /** "Sources: <title>, checked 25 Nov 2026" under any figure, so every number shows where it's from and when. */
 function Sources({ ids }: { ids: (string | null | undefined)[] }) {
   const list = [...new Set(ids)].flatMap((id) => { const src = id ? source(id) : undefined; return src ? [src] : []; });
@@ -36,7 +44,7 @@ function Sources({ ids }: { ids: (string | null | undefined)[] }) {
   return (
     <p className="note sources">{list.length > 1 ? t("Sources") : t("Source")}: {list.map((src, i) => (
       <span key={src.sourceId}>{i ? "; " : ""}<a href={src.url}>{src.title}</a>{t(", checked {date}", { date: longDate(src.checkedOn) })}</span>
-    ))}</p>
+    ))}<span className="no-print"> · <a href={reportHref(list)}>{t("Report a problem")}</a></span></p>
   );
 }
 
@@ -550,7 +558,7 @@ export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart
         <span>{today}</span>
       </div>
       <p className="ready no-print"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M7 12.5l3.2 3.2L17 9" /></svg>{t("Your plan is ready")}</p>
-      <h1>{t("Mum's care plan")}</h1>
+      <h1>{t(WHO[s.who ?? "mum"].plan)}</h1>
       <p className="print-only meta">{today} · Care Navigator</p>
       {stepSection("next-steps", t("Your next steps"), steps.filter((st) => st.group === "plan"), true)}
       {stepSection("for-you", t("For you"), steps.filter((st) => st.group === "carer"), false,
@@ -613,7 +621,7 @@ export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart
         <Handover s={s} />
         <button type="button" className="btn sec no-print" onClick={() => printAs("print-handover")}>{t("Print this summary")}</button>
       </details>
-      <a className="btn no-print" href={`https://wa.me/?text=${encodeURIComponent(t("Mum's care plan: {link}", { link: share }))}`}>{t("Share on WhatsApp")}</a>
+      <a className="btn no-print" href={`https://wa.me/?text=${encodeURIComponent(t("{title}: {link}", { title: t(WHO[s.who ?? "mum"].plan), link: share }))}`}>{t("Share on WhatsApp")}</a>
       <div className="row no-print">
         <button type="button" className="btn sec" onClick={() => printAs("print-compact")}>{t("Print one page")}</button>
         <button type="button" className="btn sec" onClick={() => window.print()}>{t("Print full plan")}</button>

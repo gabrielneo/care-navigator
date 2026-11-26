@@ -108,11 +108,11 @@ export function Check({ checked, onChange, children }: {
 }
 
 /** Segmented single choice (residency, birth year). */
-export function Seg<T extends string>({ name, legend, value, options, onChange }: {
-  name: string; legend: string; value: T | undefined; options: [T, string][]; onChange: (v: T) => void;
+export function Seg<T extends string>({ name, legend, value, options, onChange, className = "" }: {
+  name: string; legend: string; value: T | undefined; options: [T, string][]; onChange: (v: T) => void; className?: string;
 }) {
   return (
-    <fieldset>
+    <fieldset className={className}>
       <legend>{legend}</legend>
       <div className="seg">
         {options.map(([v, label]) => (

@@ -6,11 +6,11 @@ import { dataDate, manifest } from "@/lib/data";
 import { loadGeo } from "@/lib/data/geo";
 import { decodeHash, encodeHash, type Session, type Step } from "@/lib/engine/urlCodec";
 import { locate, type Region } from "@/lib/geo/postal";
-import { JourneyBar, PlanSoFar, QUESTIONS } from "./Journey";
+import { isMale, JourneyBar, PlanSoFar, QUESTIONS, WHO, type Who } from "./Journey";
 import { LangMenu } from "@/components/LangMenu";
-import { LANGS, setLang, t } from "@/lib/i18n";
+import { LANGS, loadLang, loadMale, setLang, setMale, t } from "@/lib/i18n";
 import { Action, ContactsScreen, CostScreen, Matches, Week } from "./Screens";
-import { Check, Radio } from "./ui";
+import { Check, Radio, Seg } from "./ui";
 
 const ALL: Step[] = [...QUESTIONS, "matches", "week", "cost", "contacts", "action"];
 const flow = (s: Session): Step[] => (s.w === "in_nursing_home" ? ["where", "cost", "action"] : ALL);
@@ -40,14 +40,14 @@ export function Planner() {
     // In-app steps always carry today's version, so a mismatch means an older link was opened (option A: recalculate).
     if (got.session.v !== manifest.dataVersion) setBanner("updated");
     const session = { ...got.session, v: manifest.dataVersion };
-    setS(session);
-    setStep(allowed(session, got.step));
+    return Promise.all([loadLang(session.l ?? "en"), isMale(session) && loadMale()])
+      .then(() => { setS(session); setStep(allowed(session, got.step)); });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    load(window.location.hash);
-    document.documentElement.classList.remove("plan-loading");   // set by plan/page.tsx for links with a saved plan
+    // set by plan/page.tsx for links with a saved plan; kept until a draft's dictionary is in, so English doesn't flash
+    Promise.resolve(load(window.location.hash)).then(() => document.documentElement.classList.remove("plan-loading"));
     const onPop = () => load(window.location.hash);
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -75,15 +75,17 @@ export function Planner() {
   const back = () => { const i = f.indexOf(step); if (i > 0) go(f[i - 1]!); else window.location.href = "/"; };
 
   setLang(s.l ?? "en");
+  setMale(isMale(s));
   const qIndex = QUESTIONS.indexOf(step);
   const screen = { s, update, next, restart: () => go("where") };
   return (
     <>
-      <LangMenu value={s.l ?? "en"} onChange={(l) => update({ l: l === "en" ? undefined : l })} />
+      <LangMenu value={s.l ?? "en"} onChange={(l) => loadLang(l).then(() => update({ l: l === "en" ? undefined : l }))} />
       {langInfo.banner && <p className="notice lang-draft" role="note">{langInfo.banner}</p>}
       {banner === "damaged" && <p className="notice warn" role="status">{t("We couldn't open that plan. Start again below.")}</p>}
       {banner === "updated" && (
-        <p className="notice" role="status">{t("Figures updated on {date}. They may differ from when this plan was made.", { date: dataDate })}</p>
+        <p className="notice" role="status">{t("Figures updated on {date}. They may differ from when this plan was made.", { date: dataDate })}{" "}
+          <a href="/changes/">{t("See what changed")}</a></p>
       )}
       <div className="planner">
       <JourneyBar step={step} flow={f} go={(to) => go(to)} />
@@ -123,9 +125,12 @@ function Question({ step, s, update, next }: Q) {
     ];
     const key = s.w === "in_hospital" ? `in_hospital-${s.d ? 1 : 0}` : s.w;
     return (
+      <>
+      <Seg name="who" className="who" legend={t("Who are you planning for?")} value={s.who ?? "mum"}
+        options={(Object.keys(WHO) as Who[]).map((w) => [w, t(WHO[w].label)])}
+        onChange={(w) => loadMale().then(() => update({ who: w === "mum" ? undefined : w }))} />
       <fieldset>
-        <legend><h1>{t("Where is Mum right now?")}</h1></legend>
-        <p className="help">{t('The person you care for. We use "Mum" in examples.')}</p>
+        <legend><h1>{t(WHO[s.who ?? "mum"].where)}</h1></legend>
         {opts.map(([label, w, d]) => {
           const id = w === "in_hospital" ? `in_hospital-${d ? 1 : 0}` : w!;
           return <Radio key={id} name="where" value={id} checked={key === id}
@@ -134,6 +139,7 @@ function Question({ step, s, update, next }: Q) {
         {ask}
         <button type="button" className="btn" onClick={() => proceed(s.w != null)}>{t("Next")}</button>
       </fieldset>
+      </>
     );
   }
 

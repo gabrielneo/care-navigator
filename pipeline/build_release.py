@@ -23,7 +23,7 @@ from typing import Optional
 
 import yaml
 
-from . import validate
+from . import changes, validate
 from .schemas import (
     ContactsBundle, Curated, Manifest, ManifestSource, Place, RegionCentre, RulesBundle, SectorCentre, Sectors,
 )
@@ -181,22 +181,29 @@ def _json(model_or_list) -> bytes:
     return (json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n").encode()
 
 
-def check_urls(c: Curated) -> list[str]:
+def check_urls(c: Curated) -> tuple[list[str], list[str]]:
+    """(pages that didn't answer 200, pages that are gone). Gone means 404 or 410, so a person must act; other
+    failures are often a government site refusing automated requests."""
     urls = sorted({s.url for s in c.source_registry.sources} | {g.official_url for g in c.grant_rules.grants})
-    failures = []
+    failures, gone = [], []
     for u in urls:
-        ok = False
+        ok, code = False, 0
         for _ in range(2):
             try:
                 req = urllib.request.Request(u, headers={"User-Agent": USER_AGENT})
                 with urllib.request.urlopen(req, timeout=20) as r:
                     ok = r.status == 200
                     break
+            except urllib.error.HTTPError as e:
+                code = e.code
+                if code in (404, 410):
+                    break
+                time.sleep(2)
             except Exception:
                 time.sleep(2)
         if not ok:
-            failures.append(u)
-    return failures
+            (gone if code in (404, 410) else failures).append(u)
+    return failures, gone
 
 
 def next_version(previous: Optional[Manifest], today: date) -> str:
@@ -255,8 +262,8 @@ def build(offline: bool = False, check: bool = False, today: Optional[date] = No
                   file=sys.stderr)
             return 1
 
-    url_failures = check_urls(c) if check else []
-    warns = validate.warnings(c, places, len(sectors.sectors), today, url_failures)
+    url_failures, urls_gone = check_urls(c) if check else ([], [])
+    warns = validate.warnings(c, places, len(sectors.sectors), today, url_failures, urls_gone)
 
     if previous and previous.files == hashes and previous.warnings == warns:
         print(f"No change. Data version stays {previous.data_version}.")
@@ -273,6 +280,15 @@ def build(offline: bool = False, check: bool = False, today: Optional[date] = No
         files=hashes, sizes=sizes, warnings=warns,
     )
     out_dir.mkdir(parents=True, exist_ok=True)
+    if not same_data:                                   # 9.8: say what changed in this data version
+        old_rules = json.loads((out_dir / "rules.json").read_text()) if (out_dir / "rules.json").exists() else None
+        changed = lambda k: previous is None or previous.files.get(k) != hashes[k]
+        log_path = out_dir / "changes.json"
+        log = json.loads(log_path.read_text()) if log_path.exists() else []
+        e = changes.entry(old_rules, json.loads(files["rules.json"]), manifest.data_version, today,
+                          rules_changed=changed("rules.json"),
+                          places_changed=any(changed(k) for k in ("places.json", "contacts.json", "sectors.json")))
+        log_path.write_text(json.dumps(changes.add(log, e), ensure_ascii=False, indent=1) + "\n")
     for name, body in files.items():
         (out_dir / name).write_bytes(body)
     (out_dir / "manifest.json").write_bytes(

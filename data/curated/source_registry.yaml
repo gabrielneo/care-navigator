@@ -231,7 +231,7 @@ sources:
     owner: AIC
     url: https://www.aic.sg/Care-Services/Nursing-Home-Respite-Care
     licence: site-terms
-    checked_on: 2026-11-25
+    checked_on: 2026-11-26
     next_review: 2027-02-28
   - source_id: aic_take_a_break
     title: "AIC Take a Break (respite, apply 4 weeks ahead, 7 to 30 days a year)"
@@ -310,3 +310,17 @@ sources:
     licence: site-terms
     checked_on: 2026-11-26
     next_review: 2027-02-28
+  - source_id: moh_medifund
+    title: MediFund (help with bills left after subsidies, insurance and MediSave)
+    owner: MOH
+    url: https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/medifund/
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-05-31
+  - source_id: msf_comcare
+    title: ComCare (temporary support when unable to work, including for caregiving)
+    owner: MSF
+    url: https://www.msf.gov.sg/what-we-do/comcare
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-05-31

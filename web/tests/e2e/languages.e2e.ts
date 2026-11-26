@@ -153,3 +153,16 @@ for (const lang of ["zh", "ms", "ta"] as const) {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Plan care for someone you look after");
   });
 }
+
+test("9.14: the Chinese and Tamil drafts name their own fonts, with no Latin serif in headings", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "checked once");
+  for (const [lang, font] of [["zh", "PingFang SC"], ["ta", "Noto Sans Tamil"]] as const) {
+    for (const url of [`/${lang}/`, `/plan/${encodeHash("where", { v: manifest.dataVersion, l: lang } as Session)}`]) {
+      await page.goto(url);
+      await expect(page.locator("html")).toHaveAttribute("lang", `${lang}-SG`);
+      const h1 = await page.locator("h1").first().evaluate((e) => getComputedStyle(e).fontFamily);
+      expect(h1, url).toContain(font);
+      expect(h1, url).not.toContain("Charter");
+    }
+  }
+});

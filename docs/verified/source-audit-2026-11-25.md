@@ -105,6 +105,16 @@ Each step in `data/curated/next_steps.yaml` cites a page already checked above. 
 | Merdeka Generation gets a long-term care payout | **Not found**: its package lists CareShield Life participation incentives, a MediShield Life premium subsidy and outpatient discounts | MOH Merdeka Generation Package (updated 23 Oct 2026) | A note for Merdeka members: help with premiums, no payout for care costs listed |
 | Pioneer Generation MediSave top-ups and CareShield Life incentives | Supported, but they offset premiums, not care costs | MOH | Not shown on the cost screen |
 
+## Money and respite (Stage 9C, checked 26 Nov 2026)
+
+| Claim | Verdict | Source | Action |
+|---|---|---|---|
+| MediFund helps with bills left after subsidies, insurance and MediSave, at approved long-term care facilities; Singapore Citizens on subsidised care; you apply through the medical social worker | Supported | MOH MediFund (page updated 26 Oct 2024) | Step `medifund`, shown when her week has services. The page doesn't name day care or home care, so the step says "approved care providers" and sends people to ask |
+| ComCare short-to-medium-term help is for people unable to work for a time, naming "caregiving responsibilities"; hotline 1800-777-0000, 24 hours | Supported | MSF ComCare page | Step `comcare` in "For you", shown when the carer is tired or can't keep going. No income figure on the page, so none is shown |
+| Nursing home respite covers a helper's home leave; referral by a hospital, polyclinic or GP, 4 weeks ahead; depends on a free bed | Supported | AIC Nursing Home Respite Care | Step `helper_leave_respite`, shown when there's a live-in helper |
+| An emergency route when the carer suddenly can't cope or the helper leaves | **Not found**: AIC's respite page excludes urgent cases and needs 4 weeks; no emergency placement page | AIC; MOH | Left out (9.12). The AIC hotline stays in the footer |
+| Home-based respite care | Changed: from 1 Apr 2026 AIC points to Enhanced Home Personal Care, and the old service was for home palliative care | AIC Home-based Respite Care | Not added |
+
 ## Still open
 
 - **Centre-based rehabilitation** was removed. If AIC publishes a page for it, add it back with that page as the source.

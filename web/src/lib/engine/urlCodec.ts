@@ -44,6 +44,7 @@ export const SessionSchema = z.strictObject({
   g: z.optional(z.enum(["pg", "mg", "no", "unsure"])),               // Pioneer or Merdeka Generation (8.12)
   q: z.optional(z.record(id, intIn(1, 10_000))),                     // quoted fee per unit, whole dollars
   x: z.optional(intIn(1, 10)),                                       // split between n people
+  who: z.optional(z.enum(["mum", "dad", "wife", "husband", "she", "he"])),   // who the plan is for (9.6); absent = Mum
   l: z.optional(z.enum(["zh", "ms", "ta"])),                          // language: a draft translation (8.13); absent = English
   done: z.optional(z.array(id).check(z.maxLength(20), z.refine(unique, "repeated step"))),  // ticked next steps (8.6)
 });

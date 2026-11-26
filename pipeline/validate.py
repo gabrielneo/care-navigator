@@ -141,8 +141,16 @@ def blocking(c: Curated) -> list[str]:
     return errors
 
 
+# 9.1: warnings that need a person now. The weekly data run fails on these, so GitHub emails the owner.
+ACTION = ("is past its review date", "official page is gone")
+
+
+def needs_action(warns: Iterable[str]) -> list[str]:
+    return [w for w in warns if any(a in w for a in ACTION)]
+
+
 def warnings(c: Curated, places: list[Place], sector_count: int, today: date,
-             url_failures: Iterable[str] = ()) -> list[str]:
+             url_failures: Iterable[str] = (), urls_gone: Iterable[str] = ()) -> list[str]:
     out: list[str] = []
     for s in c.source_registry.sources:
         if s.next_review < today:
@@ -166,4 +174,6 @@ def warnings(c: Curated, places: list[Place], sector_count: int, today: date,
             out.append(f"source {s.source_id} is not referenced by any table")
     for u in url_failures:
         out.append(f"official page did not return HTTP 200 after retries: {u}")
+    for u in urls_gone:
+        out.append(f"official page is gone (HTTP 404 or 410): {u}")
     return out

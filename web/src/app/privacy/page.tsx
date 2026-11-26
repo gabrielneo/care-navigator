@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { mailto, REPORT_EMAIL } from "@/lib/report";
 import { dataDate } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Privacy", description: "What this site does and doesn't collect." };
@@ -20,8 +21,16 @@ export default function Privacy() {
         website host, our host (Vercel) keeps standard technical logs of page requests. Those logs never contain your
         answers, because your answers stay in the part of the link after the # sign, which browsers don't send to
         servers.</p>
-      <p><b>Singapore's Personal Data Protection Act (PDPA).</b> We don't collect personal data, so we hold none to
-        access, correct or delete. A contact address will be added before a public launch.</p>
+      <p><b>Saved for use without signal.</b> After you open a page, your phone keeps a copy of this site&apos;s own
+        files, so a plan opens again without signal. Your answers aren&apos;t in that copy. Clearing this site&apos;s
+        data in your browser removes it.</p>
+      <p><b>If you email us.</b> &ldquo;Report a problem&rdquo; opens your own email app. The message names only the
+        figure&apos;s sources and the data version. It doesn&apos;t include your answers or your plan&apos;s link. If
+        you send it, we see your email address and anything you add. We use it only to reply and fix the problem, and
+        we don&apos;t share it.</p>
+      <p><b>Singapore&apos;s Personal Data Protection Act (PDPA).</b> The site doesn&apos;t collect personal data. The
+        only personal data we hold is in emails you choose to send us. To ask us to see, correct or delete it, email{" "}
+        <a href={mailto("Personal data request")}>{REPORT_EMAIL}</a>.</p>
 
       <h2>About the figures</h2>
       <p>This is an estimate, not a quote. Prices are published "starting from" fees. Subsidies and grants follow the

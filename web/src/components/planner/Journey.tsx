@@ -9,6 +9,20 @@ import type { Session, Step } from "@/lib/engine/urlCodec";
 import { CountRange } from "./ui";
 import { list as join, t } from "@/lib/i18n";
 
+export type Who = NonNullable<Session["who"]>;
+/** 9.6: who the plan is for, and the few sentences that name them. Everything else follows "she" or "he" through t(). */
+export const WHO: Record<Who, { label: string; where: string; plan: string; about: string }> = {
+  mum: { label: "Mum", where: "Where is Mum right now?", plan: "Mum's care plan", about: "About Mum: for her social worker or AIC Link" },
+  dad: { label: "Dad", where: "Where is Dad right now?", plan: "Dad's care plan", about: "About Dad: for his social worker or AIC Link" },
+  wife: { label: "My wife", where: "Where is your wife right now?", plan: "Your wife's care plan",
+    about: "About your wife: for her social worker or AIC Link" },
+  husband: { label: "My husband", where: "Where is your husband right now?", plan: "Your husband's care plan",
+    about: "About your husband: for his social worker or AIC Link" },
+  she: { label: "Someone else (she)", where: "Where is she right now?", plan: "Her care plan", about: "About her: for her social worker or AIC Link" },
+  he: { label: "Someone else (he)", where: "Where is he right now?", plan: "His care plan", about: "About him: for his social worker or AIC Link" },
+};
+export const isMale = (s: Session) => s.who === "dad" || s.who === "husband" || s.who === "he";
+
 export const QUESTIONS: Step[] = ["where", "adl", "alone", "memory", "helper", "limits", "postal"];
 const PHASES: [string, Step[]][] = [
   ["About her", QUESTIONS], ["Services", ["matches"]], ["Her week", ["week"]], ["Cost", ["cost"]], ["Who to call", ["contacts"]], ["Plan", ["action"]],
@@ -118,7 +132,7 @@ export function Handover({ s }: { s: Session }) {
   ];
   return (
     <div className="handover">
-      <h2>{t("About Mum: for her social worker or AIC Link")}</h2>
+      <h2>{t(WHO[s.who ?? "mum"].about)}</h2>
       <p className="meta">{t("What the family told Care Navigator, to save time when you talk. It isn't an assessment.")}</p>
       <dl>{rows.filter(([, v]) => v).map(([k, v]) => <div key={k}><dt>{t(k)}</dt><dd>{v}</dd></div>)}</dl>
     </div>

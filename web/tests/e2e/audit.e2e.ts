@@ -58,7 +58,7 @@ for (const [name, hash] of [
       // p.why (the dementia wait note) carries its source on the next line.
       const scope = (await box.evaluate((e) => e.tagName)) === "P" ? box.locator("xpath=following-sibling::p[1]") : box;
       await expect(scope, `no source for: ${text.slice(0, 80)}`).toContainText(CHECKED);
-      for (const a of await scope.locator("a").all()) await expect(a).toHaveAttribute("href", /^https:\/\//);
+      for (const a of await scope.locator("a").all()) await expect(a).toHaveAttribute("href", /^(https:\/\/|mailto:)/);
     }
     expect(figures).toBeGreaterThan(0);
     // Each cost line's figures are explained in "How is this worked out", which lists the same sources.
@@ -78,7 +78,7 @@ test("privacy: no cookies, nothing in storage, after a whole plan", async ({ pag
 });
 
 test("every page: noindex, OG image and the prototype banner", async ({ page }) => {
-  for (const path of ["/", "/plan/", "/about/", "/privacy/", "/data-sources/"]) {
+  for (const path of ["/", "/plan/", "/about/", "/privacy/", "/data-sources/", "/changes/", "/accessibility/", "/terms/"]) {
     await page.goto(path);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /og\.png$/);
@@ -94,4 +94,16 @@ test("headers: CSP allows only this site, no referrer, no type sniffing", async 
     expect(h["referrer-policy"], path).toBe("no-referrer");
     expect(h["x-content-type-options"], path).toBe("nosniff");
   }
+});
+
+test("9.7: 'Report a problem' names the figure's sources and the data version, and nothing she answered", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "checked once");
+  await page.goto(`/plan/${encodeHash("cost", MEI)}`);
+  const href = await page.getByRole("link", { name: "Report a problem" }).first().getAttribute("href");
+  expect(href).toMatch(/^mailto:neoyikai3@gmail\.com\?subject=Figure%20may%20be%20wrong/);
+  const body = decodeURIComponent(href!.split("&body=")[1]!);
+  expect(body).toContain(`Data version: ${manifest.dataVersion}`);
+  expect(body).toMatch(/https:\/\/www\.(moh|aic)/);
+  expect(href).not.toContain("#s=");                                // not the plan's link
+  expect(href).not.toMatch(/5601|in_hospital|le1969|T1/);           // nor her answers
 });

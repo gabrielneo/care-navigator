@@ -4,7 +4,7 @@ import { range } from "../../src/components/planner/ui";
 import type { RulesBundle } from "../../src/lib/data/types";
 import { costPlan } from "../../src/lib/engine/cost";
 import { decodeHash, encodeHash } from "../../src/lib/engine/urlCodec";
-import { answer, expect, startPlan, test } from "./helpers";
+import { answer, expect, MEI, startPlan, test } from "./helpers";
 
 const rules = rulesJson as unknown as RulesBundle;
 
@@ -288,7 +288,7 @@ test("8.11 and 8.12: calendar reminders from the plan; Pioneer and Merdeka answe
   expect(ics).toContain("BEGIN:VCALENDAR");
   expect(ics).toContain("SUMMARY:Care plan: Functional Assessment Report");
   expect(ics).toContain("SUMMARY:Care plan: review it");
-  expect(ics.replace(/\r\n /g, "")).toContain(`Her plan: ${page.url()}`);       // the link to her plan, unfolded
+  expect(ics.replace(/\r\n /g, "")).toContain(`The plan: ${page.url()}`);       // the link to her plan, unfolded
 
   await page.goto(`/plan/${encodeHash("cost", s as never)}`);
   const grants = page.locator(".panel", { hasText: "You may qualify for" });
@@ -301,4 +301,12 @@ test("8.11 and 8.12: calendar reminders from the plan; Pioneer and Merdeka answe
   await expect(grants).not.toContainText("Pioneer Generation Disability Assistance Scheme");
   await expect(grants).toContainText("The Merdeka Generation Package helps with MediShield Life and CareShield Life premiums.");
   expect(decodeHash(new URL(page.url()).hash)!.session.g).toBe("mg");
+});
+
+test("9.8: an older link says the figures changed and links to what changed", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "checked once");
+  await page.goto(`/plan/${encodeHash("cost", { ...MEI, v: "2026.01.01-1" })}`);
+  await page.getByRole("link", { name: "See what changed" }).click();
+  await expect(page.getByRole("heading", { name: "What changed", level: 1 })).toBeVisible();
+  await expect(page.getByText(/version \d{4}\.\d{2}\.\d{2}-\d+/).first()).toBeVisible();
 });

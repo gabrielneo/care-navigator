@@ -378,6 +378,74 @@ Priority: **P0** fix now (the site says something wrong), **Must**, **Should**, 
 
 **Suggested order:** 8.1, then 8.2, 8.6 and 8.4 together (the timeline, its ticks and the handover), then 8.3, 8.5, 8.14 to 8.16, then the Should items.
 
+## Stage 9: gaps after Stage 8 (owner, 26 Nov 2026)
+
+From the gap review on 26 Nov 2026. The owner asked for all of it, in an order the assistant picks, with a review after each batch. The usual rules still apply: official sources only, nothing stored, no interviews.
+
+**How a batch ends:** run every test (pipeline, unit, e2e in Chromium and WebKit; Firefox in CI) and update the traceability table. Then show the owner what changed and wait for a go-ahead before starting the next batch.
+
+**Why this order:** the first batch protects what's already built and needs no new sources. The second batch has the biggest wins for families, using wording only. The third depends on finding official pages first. The last is platform work that matters most nearer a launch.
+
+### 9A: safety net · Review A: **approved 26 Nov 2026**
+
+**9.1 Data-health alarm** · Must · **Done 26 Nov 2026** (`pipeline/alarm.py`, `data.yml`)
+- The weekly data run checks every official page and fails when a source is past its review date or a page is gone (HTTP 404 or 410). GitHub then emails the owner.
+- Pages that refuse automated requests are listed in the run's summary but don't fail it.
+
+**9.2 One-page print in every language** · Must · **Done 26 Nov 2026**: Malay and Tamil overflowed onto 2 pages; their one-page print now uses slightly smaller type
+- The one-page and full-plan print tests run in English, Chinese, Malay and Tamil.
+
+**9.3 Link length** · Should · **Done 26 Nov 2026**: the heaviest plan is 1,772 characters; the test keeps it under 2,000
+- The heaviest possible plan makes a link short enough for WhatsApp and SMS. A test pins the limit.
+
+**9.4 Dependency updates** · Should · **Done 26 Nov 2026** (`.github/dependabot.yml`)
+- Dependabot opens monthly update PRs for npm, pip and GitHub Actions. CI checks each one.
+
+**9.5 Size budget in CI** · Should · **Done 26 Nov 2026** (`web/scripts/size-budget.mjs`): it found the three dictionaries (50 KB gzipped) loading on every page; they now load only when chosen
+- The build fails if the JavaScript on the Start page or the planner grows past the budget. This guards N2; the 3D hero loads later and is budgeted separately.
+
+### 9B: for families · Review B: **approved 26 Nov 2026**, with the report link switched to email
+
+**9.6 Who you're planning for** · Must · **Done 26 Nov 2026**: six choices at the top of the first screen (`who` in the link); English 'he' wording in `web/src/lib/he.ts`, Chinese swaps 她 for 他, and Malay and Tamil pronouns already fit anyone
+- The first question asks who the plan is for: Mum, Dad, a spouse, or someone else.
+- The planner's wording follows the answer ("she" or "he", "Mum" or "Dad"), the choice is kept in the link, and all four languages are covered.
+
+**9.7 Report a wrong figure** · Must · **Done 26 Nov 2026**: a prefilled email to the owner's address (`web/src/lib/report.ts`, also used on Accessibility and Privacy)
+- Each figure gets a "Report a problem" email link. The message holds only the figure, its source and the data version: no answers and no postal code.
+
+**9.8 What changed** · Should · **Done 26 Nov 2026** (`pipeline/changes.py` writes `changes.json`; `/changes/`)
+- The "Figures updated" notice links to a short public changelog by data version.
+
+**9.9 Accessibility statement and terms of use** · Should · **Done 26 Nov 2026** (`/accessibility/`, `/terms/`)
+- An accessibility page says what is tested and the known limits (screen reader still untested).
+- Terms of use say this is an estimate, not advice.
+
+### 9C: money and help (needs official pages first) · Review C: **approved 26 Nov 2026**
+
+**9.10 "I can't afford this"** · Must, if official pages exist · **Done 26 Nov 2026**: MediFund (via the medical social worker) and ComCare ("For you"); see the source audit
+- ComCare and MediFund, and asking the medical social worker or the provider for financial help.
+- Each step needs its official page. Anything without one is left out, as before.
+
+**9.11 Helper support** · Should, if official pages exist · **Done 26 Nov 2026**: the levy concession (already shown for a helper or one being considered) and the Caregivers Training Grant (already covers a helper) were in place; added nursing home respite for the helper's home leave
+- The levy concession and helper training, shown when there's a live-in helper.
+
+**9.12 Respite and emergencies** · Could, if official pages exist · **Left out 26 Nov 2026**: no official page describes an emergency route; respite needs 4 weeks' notice
+- What to do if the carer is suddenly unable to cope or the helper leaves.
+
+### 9D: platform and handover · Review D: **approved 26 Nov 2026**
+
+**9.13 Offline after the first visit** · Should · **Done 26 Nov 2026** (`web/public/sw.js`, `Offline.tsx`; Privacy page says what is kept)
+- A small service worker, so a plan already opened reopens without signal.
+
+**9.14 Fonts on older phones** · Could · **Done 26 Nov 2026**: named Chinese and Tamil font stacks, no Latin serif in their headings. Not checked on a real older phone
+- Check Chinese and Tamil on an older Android setup and set fallback fonts.
+
+**9.15 Two people in one plan** · Could · **Decided: not built** (owner, 26 Nov 2026). One plan each already works with two links, and each person has their own branch, matches, subsidy and next steps; one plan for two would double every screen and the link length
+- Families make one plan for each person and share both links (the Start page says so).
+
+**9.16 Ownership and handover** · Should · **Done 26 Nov 2026** (`docs/ownership.md`)
+- A short doc: who rechecks sources and when, who renews the domain, and when the site comes down if nobody does.
+
 ---
 
 ## Execution sequence and gates

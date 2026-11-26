@@ -5,7 +5,7 @@ import { LangMenu } from "@/components/LangMenu";
 import { Hero3D } from "@/components/start/Hero3D";
 import { Tilt } from "@/components/planner/ui";
 import { range } from "@/lib/format";
-import { LANGS, tl, type Lang } from "@/lib/i18n";
+import { LANGS, loadLang, tl, type Lang } from "@/lib/i18n";
 import { manifest, rules } from "@/lib/data";
 import { costPlan } from "@/lib/engine/cost";
 import { matchServices } from "@/lib/engine/matching";
@@ -26,7 +26,8 @@ const STEPS: [string, string, string][] = [
     "M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"],
 ];
 
-export function Landing({ lang }: { lang: Lang }) {
+export async function Landing({ lang }: { lang: Lang }) {
+  await loadLang(lang);
   const T = (en: string, vars?: Record<string, string | number>) => tl(lang, en, vars);
   const info = LANGS.find((x) => x.id === lang)!;
   const plan = lang === "en" ? "/plan/" : `/plan/${encodeHash("where", { v: manifest.dataVersion, l: lang })}`;

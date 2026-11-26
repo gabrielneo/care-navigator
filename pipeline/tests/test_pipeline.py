@@ -260,3 +260,37 @@ def test_next_step_with_bad_references_is_blocked():
     errors = validate.blocking(bad)
     assert any("unknown grant 'no_such_grant'" in e for e in errors)
     assert any("'after' must name an earlier step" in e for e in errors)
+
+
+# ---------- 9.1 data-health alarm ----------
+def test_alarm_fails_only_on_overdue_sources_and_gone_pages(tmp_path: Path):
+    from pipeline import alarm
+    c = br.load_curated()
+    w = validate.warnings(c, [], 76, today=date(2026, 11, 25), url_failures=["https://slow.example/"],
+                          urls_gone=["https://gone.example/"])
+    assert validate.needs_action(w) == ["official page is gone (HTTP 404 or 410): https://gone.example/"]
+    m = tmp_path / "manifest.json"
+    m.write_text(json.dumps({"warnings": [x for x in w if "gone" not in x]}))
+    assert alarm.main(m) == 0                       # aggregator prices and slow pages are known, not an alarm
+    m.write_text(json.dumps({"warnings": validate.warnings(c, [], 76, today=date(2028, 1, 1))}))
+    assert alarm.main(m) == 1                       # past review date
+
+
+# ---------- 9.8 what changed ----------
+def test_changes_log_names_each_figure_that_moved(raw_dir: Path, tmp_path: Path):
+    from pipeline import changes
+    out = tmp_path / "out"
+    br.build(offline=True, today=date(2026, 11, 25), raw_dir=raw_dir, out_dir=out)
+    log = json.loads((out / "changes.json").read_text())
+    assert log[0]["version"] == "2026.11.25-1"                     # the first build has nothing to compare with
+    old = json.loads((out / "rules.json").read_text())
+    new = json.loads(json.dumps(old))
+    new["priceReferences"]["prices"][0]["priceHighSgd"] = 80.0
+    new["subsidyTiers"]["schemes"][0]["rates"]["T1"]["pr"] = 50
+    e = changes.entry(old, new, "2026.12.01-1", date(2026, 12, 1), rules_changed=True, places_changed=False)
+    assert e["changes"] == ["Day care centre: price per session, high end: $74 → $80",
+                            "Subsidy (non-residential), T1, pr: 45% → 50%"]
+    same = changes.entry(old, old, "v", date(2026, 12, 1), rules_changed=True, places_changed=True)
+    assert same["changes"] == ["Wording, sources or rules changed; no figures changed.",
+                               "Places and contacts updated from open data."]
+    assert [x["version"] for x in changes.add([{"version": "a"}, {"version": "b"}], {"version": "a", "changes": []})] == ["a", "b"]

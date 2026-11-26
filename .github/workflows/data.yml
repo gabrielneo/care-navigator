@@ -1,6 +1,7 @@
 # Rebuilds web/public/data/ from the curated YAML and five open data.gov.sg layers.
-# Runs on curated-data edits, every Monday, and on demand. Commits the JSON only when it changed;
-# Vercel's Git integration then redeploys the site. No GitHub Releases, no deploy hook (review fix 7).
+# Runs on curated-data edits, every Monday, and on demand. Commits the JSON only when it changed, then fails
+# the run if a source is past its review date or an official page is gone (9.1).
+# A data commit makes Vercel's Git integration redeploy the site. No GitHub Releases, no deploy hook (review fix 7).
 name: data
 
 on:
@@ -31,8 +32,8 @@ jobs:
       - run: pip install -r pipeline/requirements.txt
       - name: Test the pipeline
         run: python -m pytest pipeline -q
-      - name: Build the data release
-        run: python -m pipeline.build_release
+      - name: Build the data release (and check every official page)
+        run: python -m pipeline.build_release --check-urls
       - name: Check the committed schema is current
         run: |
           python -m pipeline.export_schema
@@ -48,3 +49,5 @@ jobs:
             git commit -m "data: rebuild release $(python -c 'import json;print(json.load(open("web/public/data/manifest.json"))["dataVersion"])')"
             git push
           fi
+      - name: Data check (fails if a source is overdue or a page is gone, so GitHub emails the owner)
+        run: python -m pipeline.alarm

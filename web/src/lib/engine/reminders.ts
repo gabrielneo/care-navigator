@@ -20,7 +20,7 @@ export function reminders(steps: PlanStep[], done: string[], today: Date): Remin
       title: `Care plan: ${st.label}`,
       detail: st.unlocks ? `${st.text} ${st.unlocks}` : st.text,
     })),
-    { date: addDays(today, 90), title: "Care plan: review it", detail: "Check if her needs have changed, and update the plan." },
+    { date: addDays(today, 90), title: "Care plan: review it", detail: "Check if the care needed has changed, and update the plan." },
   ];
 }
 
@@ -33,7 +33,7 @@ export function remindersIcs(list: Reminder[], link: string, now: Date): string 
     `DTSTART;VALUE=DATE:${day(r.date)}`,
     `DTEND;VALUE=DATE:${day(addDays(r.date, 1))}`,
     fold(`SUMMARY:${esc(r.title)}`),
-    fold(`DESCRIPTION:${esc(`${r.detail}\n\nHer plan: ${link}`)}`),
+    fold(`DESCRIPTION:${esc(`${r.detail}\n\nThe plan: ${link}`)}`),
     "END:VEVENT",
   ]);
   return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Care Navigator//EN", "CALSCALE:GREGORIAN", ...events, "END:VCALENDAR", ""].join("\r\n");

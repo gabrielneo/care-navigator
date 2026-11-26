@@ -1,0 +1,16 @@
+# 9.4: monthly update pull requests, grouped so each ecosystem is one PR. CI runs every test on each one; the owner
+# merges. Security fixes still come as soon as GitHub knows of them.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /web
+    schedule: { interval: monthly }
+    groups: { web: { patterns: ["*"] } }
+  - package-ecosystem: pip
+    directory: /pipeline
+    schedule: { interval: monthly }
+    groups: { pipeline: { patterns: ["*"] } }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    groups: { actions: { patterns: ["*"] } }

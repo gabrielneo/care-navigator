@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { LangText } from "@/components/LangText";
+import { Offline } from "@/components/Offline";
 import "./globals.css";
 
 const SITE = "https://care-navigator-xi.vercel.app";
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </p>
           </noscript>
           <main>{children}</main>
+          <Offline />
           <footer className="ft">
             <span><b><LangText>AIC hotline 1800-650-6060</LangText></b> · <LangText>Mon–Fri 8.30am–8.30pm, Sat 8.30am–4pm</LangText></span>
             <span><LangText>Medical emergency:</LangText> <b>995</b></span>
@@ -48,6 +50,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/about/">About</Link>
               <Link href="/privacy/">Privacy</Link>
               <Link href="/data-sources/">Data sources</Link>
+              <Link href="/changes/">What changed</Link>
+              <Link href="/accessibility/">Accessibility</Link>
+              <Link href="/terms/">Terms</Link>
             </nav>
           </footer>
         </div>
