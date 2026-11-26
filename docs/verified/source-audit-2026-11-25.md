@@ -115,6 +115,16 @@ Each step in `data/curated/next_steps.yaml` cites a page already checked above. 
 | An emergency route when the carer suddenly can't cope or the helper leaves | **Not found**: AIC's respite page excludes urgent cases and needs 4 weeks; no emergency placement page | AIC; MOH | Left out (9.12). The AIC hotline stays in the footer |
 | Home-based respite care | Changed: from 1 Apr 2026 AIC points to Enhanced Home Personal Care, and the old service was for home palliative care | AIC Home-based Respite Care | Not added |
 
+## "What's this?" explanations (glossary, checked 26 Nov 2026)
+
+| Term | What the page says | Source |
+|---|---|---|
+| Means test | Household means-testing uses income per person ("total gross household monthly income divided by the total number of family members living together"); with no income, the home's Annual Value | MOH subsidy framework, non-residential (page updated 1 Jul 2026) |
+| Government-funded provider | Citizens and PRs using services "by government-funded providers are eligible for the subsidies". The page doesn't define the term further, so neither do we | MOH subsidy framework |
+| Respite care | "a short period of rest or relief from caregiving duties"; at home, in a centre or in a nursing home; nursing home stays "a minimum of seven days per stay, and up to 30 days per year" | AIC Take a Break (accurate as of April 2026) |
+| Functional Assessment Report | "assesses a person's need for assistance with the activities of daily living"; done by a GP or a registered doctor, nurse, physiotherapist or occupational therapist; "You will need to pay the assessment fee, if any" | AIC Home Caregiving Grant |
+| The 6 daily activities | **Not explained:** the AIC page shows them only in an image | — |
+
 ## Still open
 
 - **Centre-based rehabilitation** was removed. If AIC publishes a page for it, add it back with that page as the source.

@@ -35,7 +35,7 @@ export const HE: Record<string, string> = {
  "Someone has to do it for her. Some payouts depend on this. Leave blank if none.": "Someone has to do it for him. Some payouts depend on this. Leave blank if none.",
  "Where does she live?": "Where does he live?",
  "Pick her area:": "Pick his area:",
- "A centre where she spends the day with meals, activities and care, while you work.": "A centre where he spends the day with meals, activities and care, while you work.",
+ "A centre where she spends the day with meals, activities and care, while you work or rest.": "A centre where he spends the day with meals, activities and care, while you work or rest.",
  "Do you care for people at her stage of dementia?": "Do you care for people at his stage of dementia?",
  "Do you need to assess her before you start?": "Do you need to assess him before you start?",
  "Can the nurse handle her wounds, tubes or medicines?": "Can the nurse handle his wounds, tubes or medicines?",
@@ -45,9 +45,9 @@ export const HE: Record<string, string> = {
  "Can you take her in a wheelchair?": "Can you take him in a wheelchair?",
  "Meals delivered to her home when she can't buy or prepare her own.": "Meals delivered to his home when he can't buy or prepare his own.",
  "A carer at home for up to 2 weeks after discharge. Only the ward's medical social worker can refer her, while she is in hospital.": "A carer at home for up to 2 weeks after discharge. Only the ward's medical social worker can refer him, while he is in hospital.",
- "Ask the ward's medical social worker before she leaves. This help can only be requested while she is in hospital.": "Ask the ward's medical social worker before he leaves. This help can only be requested while he is in hospital.",
+ "She's about to leave hospital. This help can only be requested while she's there, through the ward's medical social worker.": "He's about to leave hospital. This help can only be requested while he's there, through the ward's medical social worker.",
  "Staff trained in dementia care look after her during the day.": "Staff trained in dementia care look after him during the day.",
- "Someone is with her while you're at work.": "Someone is with him while you're at work.",
+ "Someone is with her during the day, when she'd otherwise be alone.": "Someone is with him during the day, when he'd otherwise be alone.",
  "Therapy helps her get back her strength and movement.": "Therapy helps him get back his strength and movement.",
  "Someone gets her safely to clinic visits.": "Someone gets him safely to clinic visits.",
  "Regular meals arrive at her door.": "Regular meals arrive at his door.",
@@ -98,5 +98,9 @@ export const HE: Record<string, string> = {
  "See her week and the cost": "See his week and the cost",
  "Your plan lives only in its own link. The postal code stays on your phone. We never ask for her NRIC number, bank details or Singpass.": "Your plan lives only in its own link. The postal code stays on your phone. We never ask for his NRIC number, bank details or Singpass.",
  "Choose where she is right now.": "Choose where he is right now.",
- "Everyone's monthly income in her household, divided by the number of people who live there.": "Everyone's monthly income in his household, divided by the number of people who live there."
+ "Everyone's monthly income in her household, divided by the number of people who live there.": "Everyone's monthly income in his household, divided by the number of people who live there.",
+ "More about her (optional)": "More about him (optional)",
+ "The means test sets her subsidy. It uses household income per person: everyone's gross monthly income, divided by the number of family members living together. With no household income, the home's Annual Value is used instead.": "The means test sets his subsidy. It uses household income per person: everyone's gross monthly income, divided by the number of family members living together. With no household income, the home's Annual Value is used instead.",
+ "Respite is a short break from caregiving, while someone else cares for her. It can be at home, in a day centre, or in a nursing home. A nursing home stay is at least 7 days, and up to 30 days a year.": "Respite is a short break from caregiving, while someone else cares for him. It can be at home, in a day centre, or in a nursing home. A nursing home stay is at least 7 days, and up to 30 days a year.",
+ "It shows how much help she needs with daily activities. A GP, or an approved doctor, nurse, physiotherapist or occupational therapist, does the assessment. There may be a fee.": "It shows how much help he needs with daily activities. A GP, or an approved doctor, nurse, physiotherapist or occupational therapist, does the assessment. There may be a fee."
 };

@@ -4,9 +4,11 @@
 import { rules } from "@/lib/data";
 import { costPlan } from "@/lib/engine/cost";
 import { matchServices } from "@/lib/engine/matching";
+import type { Clause } from "@/lib/data/types";
 import type { TierId } from "@/lib/engine/tiers";
 import type { Session, Step } from "@/lib/engine/urlCodec";
 import { CountRange } from "./ui";
+import { daysOf, daysText } from "@/lib/engine/days";
 import { list as join, t } from "@/lib/i18n";
 
 export type Who = NonNullable<Session["who"]>;
@@ -72,6 +74,27 @@ const SHORT: Record<string, string> = {
   home_therapy: "Therapy", medical_escort: "Escort", meals_on_wheels: "Meals", respite: "Respite",
 };
 
+/** "Because you said…": her own answers behind a match, worded like the chips. Clauses about the hospital stage
+ *  itself ("not yet discharged") add nothing she'd recognise, so they're left out. */
+export function becauseOf(when: Clause[], s: Session): string[] {
+  return when.flatMap((c): string[] => {
+    switch (c.q) {
+      case "where": return s.w ? [t(s.w === "in_hospital" && s.d ? "Home from hospital" : WHERE[s.w]!)] : [];
+      case "adl": {
+        const hit = (Array.isArray(s.adl) ? (s.adl as string[]) : []).filter((a) => !c.any || c.any.includes(a));
+        return hit.length ? [t("Help with {list}", { list: join(hit.map((a) => t(ADL[a]!))) })] : [];
+      }
+      case "cond": return (s.cond ?? []).filter((x) => c.any?.includes(x)).map((x) => t(COND_SHORT[x]!));
+      case "med": return s.med ? [t("Medical care at home")] : [];
+      case "alone": return s.al && ALONE[s.al] ? [t(ALONE[s.al]!)] : [];
+      case "memory": return s.mem && MEMORY[s.mem] ? [t(MEMORY[s.mem]!)] : [];
+      case "helper": return s.hlp && HELPER[s.hlp] ? [t(HELPER[s.hlp]!)] : [];
+      case "limits": return s.lim && LIMITS[s.lim] ? [t(LIMITS[s.lim]!)] : [];
+      default: return [];
+    }
+  });
+}
+
 /** The chips for what's known so far; each stage adds its result once the family has reached it. */
 function chips(s: Session, reached: (x: Step) => boolean) {
   const out: [string, React.ReactNode][] = [];
@@ -87,7 +110,7 @@ function chips(s: Session, reached: (x: Step) => boolean) {
   }
   if (s.loc) out.push(["loc", "sec" in s.loc ? t("Area {sec}", { sec: s.loc.sec }) : t("{region} region", { region: t(REGION[s.loc.reg]!) })]);
   if (reached("week") && s.plan?.some((e) => e.n > 0 && SHORT[e.s])) {
-    out.push(["plan", t("{list} a week", { list: join(s.plan.filter((e) => e.n > 0 && SHORT[e.s]).map((e) => `${t(SHORT[e.s]!)} ×${e.n}`)) })]);
+    out.push(["plan", join(s.plan.filter((e) => e.n > 0 && SHORT[e.s]).map((e) => t("{name} ({days})", { name: t(SHORT[e.s]!), days: daysText(daysOf(e), t, join) })))]);
   }
   const total = reached("cost") ? costPlan(rules, s).total : null;
   if (total?.withSubsidy) out.push(["cost", <><CountRange r={total.withSubsidy} />{t(" a month with subsidy")}</>]);
@@ -112,13 +135,14 @@ export function PlanSoFar({ s, step, flow, go, startNew }: {
         <h2>{t("Her plan so far")}</h2>
         <button type="button" className="link" onClick={startNew}>{t("Start a new plan")}</button>
       </div>
-      <ul>{list.map(([k, v]) => {
+      <ul>{list.map(([k, v], i) => {
         const to = CHIP_STEP[k];
+        const latest = i === list.length - 1 ? <span className="sr-only">{t(" (latest)")}</span> : null;
         return (
           <li key={`${k}-${typeof v === "string" ? v : k}`}>
             {to && to !== step && flow.includes(to)
-              ? <button type="button" onClick={() => go(to)}>{v}<span className="sr-only">{t(" (change)")}</span></button>
-              : <span>{v}</span>}
+              ? <button type="button" onClick={() => go(to)}>{v}{latest}<span className="sr-only">{t(" (change)")}</span></button>
+              : <span>{v}{latest}</span>}
           </li>
         );
       })}</ul>
@@ -143,7 +167,7 @@ export function Handover({ s }: { s: Session }) {
     ["Live-in helper", T(s.hlp ? ({ yes: "Yes", considering: "No, thinking about one", no: "No" } as Record<string, string>)[s.hlp] ?? "Not sure" : undefined)],
     ["Family carer", T(s.lim ? ({ ok: "Managing", tired: "Tired and needs a break", cant: "Can't keep going like this" } as Record<string, string>)[s.lim] ?? "Not sure" : undefined)],
     ["Area", s.loc ? ("sec" in s.loc ? t("Postal area {sec}", { sec: s.loc.sec }) : t("{region} region", { region: t(REGION[s.loc.reg]!) })) : undefined],
-    ["Being considered", s.plan?.filter((e) => e.n > 0 && SHORT[e.s]).map((e) => t("{name}, {n} a week", { name: t(SHORT[e.s]!), n: e.n })).join("; ") || undefined],
+    ["Being considered", s.plan?.filter((e) => e.n > 0 && SHORT[e.s]).map((e) => t("{name} ({days})", { name: t(SHORT[e.s]!), days: daysText(daysOf(e), t, join) })).join("; ") || undefined],
     ["Household income per person", s.t ? t("{band} a month (range {id})", { band: t(TIER_LABEL[s.t as TierId]), id: s.t }) : undefined],
     ["Residency", T(s.r ? ({ sc: "Singapore Citizen", pr: "Permanent Resident", none: "Neither" } as Record<string, string>)[s.r] : undefined)],
     ["Generation", T(s.g === "pg" ? "Pioneer Generation" : s.g === "mg" ? "Merdeka Generation" : undefined)],

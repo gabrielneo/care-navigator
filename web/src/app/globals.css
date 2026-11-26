@@ -51,6 +51,44 @@ fieldset > .errtxt:empty { margin-block-start: -12px; }
 .or { display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: var(--fs-small); }
 .or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--border-subtle); }
 .alt .opt { border-style: dashed; }
+/* "What's this?" explanations, opened in place. */
+.explain .link { min-height: 32px; gap: 6px; font-size: var(--fs-small); }
+.explain .q { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid currentColor;
+  font-size: var(--fs-meta); font-weight: 700; line-height: 1; text-decoration: none; }
+.explain-text { margin-top: 6px; padding: 10px 12px; border-left: 3px solid var(--primary); background: var(--bg-surface);
+  border-radius: var(--r-sm); font-size: var(--fs-small); color: var(--text-primary); }
+.total .explain .link { color: var(--on-hero); }
+/* "None of these" or "Not sure" chosen: the activities step back (ticking one still works and replaces it). */
+.muted .opt { background: var(--bg-sunken); border-style: dashed; }
+.note.urgent { border-left: 4px solid var(--danger); padding-left: 12px; color: var(--text-primary); }
+.note.urgent a { color: var(--danger); }
+/* Phones: the chip row scrolls sideways, so its right edge fades to show there's more. */
+@media (max-width: 1023px) {
+  .sofar ul { padding-right: 40px; mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+}
+/* Places loading: grey cards the size of the real ones, so nothing jumps when they arrive. */
+.skeletons { display: flex; flex-direction: column; gap: 12px; }
+.contact.skel { min-height: 112px; background: var(--bg-sunken); border-color: var(--border-subtle); }
+@media (prefers-reduced-motion: no-preference) {
+  .contact.skel { animation: skel 1.4s ease-in-out infinite alternate; }
+  @keyframes skel { to { opacity: 0.55; } }
+}
+/* Back sits beside Next at the bottom of each question, so neither is a scroll away; Next keeps the wider share. */
+.nav-row > .sec { flex: 0 0 34%; }
+.more-about > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--primary); font-weight: 600; }
+.more-about[open] > summary { margin-bottom: 8px; }
+.because { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: var(--fs-small); color: var(--text-secondary); }
+/* Week builder: seven day buttons per service; drag across them to choose a run of days. pan-y keeps the page
+   scrolling up and down when a finger starts on the strip. */
+.daystrip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; touch-action: pan-y;
+  user-select: none; -webkit-user-select: none; }
+.daystrip button { min-height: 48px; padding: 0 2px; border: 1px solid var(--border-control); border-radius: var(--r-sm);
+  background: var(--bg-surface); color: var(--text-primary); font: inherit; font-size: var(--fs-small); font-weight: 600;
+  cursor: pointer; overflow-wrap: anywhere; }
+.daystrip button:nth-child(n+6) { background: var(--bg-sunken); }
+.daystrip button[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.presets { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.presets .link { min-height: 32px; font-size: var(--fs-small); }
 fieldset { border: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 legend { padding: 0; margin-bottom: 4px; }
 

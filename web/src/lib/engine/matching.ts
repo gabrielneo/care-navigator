@@ -10,6 +10,7 @@ export interface Match {
   reasonText: string;
   priority: number;
   sourceId: string;
+  when: Clause[];            // the answers that led to it, for "Because you said…"
 }
 
 export interface MatchResult {
@@ -63,7 +64,7 @@ export function matchServices(rules: RulesBundle, s: Session): MatchResult {
     .map((r, i) => ({ r, i }))
     .filter(({ r }) => ruleHolds(r, s))
     .sort((a, b) => a.r.priority - b.r.priority || a.i - b.i)
-    .map(({ r }) => ({ serviceId: r.serviceId, reasonText: r.reasonText, priority: r.priority, sourceId: r.sourceId }))
+    .map(({ r }) => ({ serviceId: r.serviceId, reasonText: r.reasonText, priority: r.priority, sourceId: r.sourceId, when: r.when }))
     .filter((m, i, arr) => arr.findIndex((x) => x.serviceId === m.serviceId) === i);
   // "We're struggling to cope": a break for the carer comes first (branch_rules.yaml flag).
   if (branch.flags.includes("lead_with_respite")) all.sort((a, b) => Number(b.serviceId === "respite") - Number(a.serviceId === "respite"));

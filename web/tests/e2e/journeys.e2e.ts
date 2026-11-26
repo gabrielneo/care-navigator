@@ -25,10 +25,14 @@ test("Mei: mother in hospital after a fall", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /^Help with washing and dressing/ })).toBeVisible();
   await page.getByRole("button", { name: "Build her week" }).click();
 
-  // Default is day care 5 and home care 3 blocks; Mei wants 2 blocks.
-  await expect(page.getByRole("group", { name: "Day care centre" }).locator("output")).toHaveText("5");
-  await page.getByRole("button", { name: "Remove one from Help with washing and dressing at home" }).click();
-  await expect(page.getByRole("group", { name: "Help with washing and dressing at home" }).locator("output")).toHaveText("2");
+  // Default is day care Mon–Fri and home care 3 visits (Mon, Wed, Fri); Mei wants home care on Tue and Thu.
+  const dayCare = page.getByRole("group", { name: "Days for Day care centre" });
+  await expect(dayCare.getByRole("button", { pressed: true })).toHaveCount(5);
+  const home = page.getByRole("group", { name: "Days for Help with washing and dressing at home" });
+  await page.locator(".panel", { has: home }).getByRole("button", { name: "Clear" }).click();
+  await home.getByRole("button", { name: "Tue" }).click();
+  await home.getByRole("button", { name: "Thu" }).click();
+  await expect(page.locator(".panel", { has: home })).toContainText("Tue, Thu · 2 4-hour visits a week");
   // Weekdays first: day care Mon–Fri, home care Tue and Thu, nothing pushed onto the weekend.
   const week = page.getByLabel("Her week");
   await expect(week.locator(".day", { hasText: "Tue" })).toContainText("Home care");
@@ -72,7 +76,7 @@ test("Mei: mother in hospital after a fall", async ({ page }) => {
   const got = decodeHash(new URL(shared).hash)!;
   expect(got.step).toBe("action");
   expect(got.session).toMatchObject({ t: "T1", r: "sc", x: 3, loc: { sec: "56" } });
-  expect(got.session.plan).toEqual(expect.arrayContaining([{ s: "day_care", n: 5 }, { s: "home_personal_care", n: 2 }]));
+  expect(got.session.plan).toEqual(expect.arrayContaining([{ s: "day_care", n: 5 }, { s: "home_personal_care", n: 2, d: 0b1010 }]));   // Tue, Thu
   expect(shared).not.toContain("560123");
 
   await expect(page.getByText(/^AIC Link .+, or the AIC hotline/)).toBeVisible();   // location data has loaded
@@ -296,6 +300,7 @@ test("8.11 and 8.12: calendar reminders from the plan; Pioneer and Merdeka answe
   const grants = page.locator(".panel", { hasText: "You may qualify for" });
   await expect(grants).toContainText("Pioneer Generation Disability Assistance Scheme");
   await expect(grants).toContainText("(if she is a Pioneer Generation member)");
+  await page.getByText("More about her (optional)").click();
   await page.locator("label", { hasText: /^Pioneer$/ }).click();
   await expect(grants).not.toContainText("(if she is a Pioneer Generation member)");
   await expect(grants).toContainText("Pioneer Generation Disability Assistance Scheme");

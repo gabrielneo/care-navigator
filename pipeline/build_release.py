@@ -239,7 +239,7 @@ def build(offline: bool = False, check: bool = False, today: Optional[date] = No
         "rules.json": _json(RulesBundle(
             service_types=c.service_types.services, need_rules=c.need_rules.rules, branch_rules=c.branch_rules,
             price_references=c.price_references, subsidy_tiers=c.subsidy_tiers, grant_rules=c.grant_rules.grants,
-            how_to_apply=c.how_to_apply, next_steps=c.next_steps.steps)),
+            how_to_apply=c.how_to_apply, next_steps=c.next_steps.steps, glossary=c.glossary.terms)),
         "contacts.json": _json(ContactsBundle(contacts=c.contacts.contacts, hotline=c.contacts.hotline)),
         "places.json": _json(places),
         "sectors.json": _json(sectors),

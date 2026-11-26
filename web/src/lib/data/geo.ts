@@ -16,13 +16,18 @@ export function loadGeo(): Promise<Geo> {
     contacts: c.default as unknown as ContactsBundle,
     places: p.default as unknown as Place[],
     sectors: s.default as unknown as Sectors,
-  }));
+  }), (e) => { pending = null; throw e; });       // a failed load (no signal) can be tried again
   return pending;
 }
 
 /** The location data, or null for the moment it takes to load. */
 export function useGeo(): Geo | null {
   const [geo, setGeo] = useState<Geo | null>(null);
-  useEffect(() => { loadGeo().then(setGeo); }, []);
+  useEffect(() => {
+    const tryLoad = () => { loadGeo().then(setGeo, () => {}); };
+    tryLoad();
+    addEventListener("online", tryLoad);                 // retry when the signal comes back
+    return () => removeEventListener("online", tryLoad);
+  }, []);
   return geo;
 }

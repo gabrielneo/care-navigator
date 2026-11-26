@@ -457,7 +457,25 @@ From the 17-heuristic UX audit. The owner approved the top 5; all are built and 
 
 Found while building: the "On this page" links replaced the plan's link with `#grants` and so on, and the planner then read it as a damaged plan. Section links now scroll without touching the address.
 
-Still open from the audit: "Because you said…" tags on matches, collapsed grant cards, plain-language "?" explainers, week presets, skeleton loading for places, and a 995 line under stroke or fall (needs the owner's decision, as it changes the 25 Nov rule).
+### UX audit, the rest, and the week builder (26 Nov 2026)
+
+Owner: "work on the above", plus choosing days for each service.
+- **Week builder:** each service has seven day buttons. Drag across them, tap, or use Space or Enter; there are Weekdays, Every day and Clear shortcuts, and a Remove button. The days are kept in the link as `d`, a 7-bit mask, and `n` must match it. Older links get the usual spread. The days show in the cost lines, "Her plan so far" and the handover summary. A service with no days stays on screen but isn't costed.
+- **Matches:** "Because you said…" tags come from her own answers. Extra matches that come from her own ticks (a health event, medical care) are open by default ("2 more fit your answers").
+- **Reasons rewritten as reasons:** the Interim Caregiver Service, and day care no longer assumes the carer works.
+- **Cost:** Pioneer/Merdeka sits under "More about her (optional)". Grant conditions stay up front, as 8.5 requires.
+- **Questions:** Back sits beside Next. With "None of these" or "Not sure" chosen, the activities are greyed out.
+- **Places:** grey placeholder cards while loading, a clear offline message, and a retry when the signal returns.
+- **Chips:** on phones the row fades at its right edge, and screen readers hear which chip is the latest.
+- **995:** "If it's happening now, call 995" appears under a ticked stroke or fall. This changes the 25 Nov "footer only" rule, as the owner asked on 26 Nov.
+- **JavaScript budget:** the screens after the questions now load on demand while she answers, which cut the planner's up-front JavaScript from 222.6 to 214.4 KB.
+- **Found while testing:** a shared link showed the first question for a moment before the saved screen. The page now waits for the saved screen.
+
+Not done, and why:
+- ~~**"?" explainers**~~ **Done 26 Nov 2026:** "What's this?" beside means test, respite care and Functional Assessment Report on the plan, and beside "government-funded provider" on the cost screen. Each says what the official page says, with its source (`data/curated/glossary.yaml`, checked by the pipeline). **The 6 daily activities are left out:** AIC lists them only in a picture, and no source in the registry lists them in text.
+- **Shorter source titles:** a source-registry change.
+- **One "Report a problem" per screen:** low value.
+- **A "Build her week directly" shortcut:** it would skip the answers that set her branch and subsidy.
 
 ---
 

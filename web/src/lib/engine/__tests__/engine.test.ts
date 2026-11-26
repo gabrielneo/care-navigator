@@ -7,6 +7,7 @@ import { nextSteps } from "../steps";
 import { reminders, remindersIcs } from "../reminders";
 import { incomeOptions, subsidyRate, tierForAnnualValue, tierForPchi, type TierId } from "../tiers";
 import { decodeHash, decodeSession, encodeHash, encodeSession, type Session } from "../urlCodec";
+import { daysOf, daysText, entryFor } from "../days";
 
 const rules = rulesJson as unknown as RulesBundle;
 const V = "2026.11.25-1";
@@ -469,5 +470,28 @@ describe("9.3 link length", () => {
     const url = `https://care-navigator-xi.vercel.app/plan/${encodeHash("contacts", heavy)}`;
     expect(decodeHash(new URL(url).hash)?.session).toEqual(heavy);
     expect(url.length).toBeLessThan(2000);
+  });
+});
+
+describe("days of the week (week builder)", () => {
+  const same = (x: string) => x;
+  const comma = (xs: string[]) => xs.join(", ");
+  it("says the days the way people do", () => {
+    expect(daysText([0, 1, 2, 3, 4], same, comma)).toBe("Mon–Fri");
+    expect(daysText([1, 3], same, comma)).toBe("Tue, Thu");
+    expect(daysText([5, 6], same, comma)).toBe("Sat, Sun");
+    expect(daysText([0, 1, 2, 5], same, comma)).toBe("Mon–Wed, Sat");
+    expect(daysText([0, 1, 2, 3, 4, 5, 6], same, comma)).toBe("Every day");
+  });
+  it("keeps chosen days in the link, and older links get the usual spread", () => {
+    const e = entryFor("day_care", [0, 2, 5]);
+    expect(e).toEqual({ s: "day_care", n: 3, d: 0b100101 });
+    expect(daysOf(e)).toEqual([0, 2, 5]);
+    expect(daysOf({ n: 2 })).toEqual([1, 3]);
+    const s = { v: V, plan: [e] } as Session;
+    expect(decodeSession(encodeSession(s))?.plan).toEqual([e]);
+  });
+  it("rejects a link whose days and count disagree", () => {
+    expect(() => encodeSession({ v: V, plan: [{ s: "day_care", n: 5, d: 0b11 }] } as Session)).toThrow();
   });
 });

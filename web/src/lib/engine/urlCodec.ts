@@ -1,6 +1,7 @@
 // The session lives only in the URL hash: #s=<step>&p=<base64url JSON> (docs/specs/06 and 10).
 // The Zod allowlist is the privacy boundary: no free text, no names, no exact income, no full postal code.
-import * as z from "zod/mini";   // the mini build: same checks, much smaller bundle
+import * as z from "zod/mini";
+import { countOf } from "./days";   // the mini build: same checks, much smaller bundle
 
 export const STEPS = [
   "where", "adl", "alone", "memory", "helper", "limits", "postal",
@@ -36,7 +37,9 @@ export const SessionSchema = z.strictObject({
     z.strictObject({ sec: z.string().check(z.regex(/^\d{2}$/)) }),    // 2-digit postal sector only
     z.strictObject({ reg: z.enum(["central", "north", "northeast", "east", "west"]) }),
   ])),
-  plan: z.optional(z.array(z.strictObject({ s: id, n: intIn(0, 7) }))
+  // d: the days (bit 0 = Monday); when given, n must be how many days it holds.
+  plan: z.optional(z.array(z.strictObject({ s: id, n: intIn(0, 7), d: z.optional(intIn(0, 127)) })
+    .check(z.refine((e) => e.d == null || countOf(e.d) === e.n, "days and count disagree")))
     .check(z.maxLength(13), z.refine((p) => unique(p.map((e) => e.s)), "repeated service"))),
   t: z.optional(z.enum(["T0", "T1", "T2", "T3", "T4", "T5"])),
   r: z.optional(z.enum(["sc", "pr", "none"])),

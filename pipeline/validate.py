@@ -126,6 +126,10 @@ def blocking(c: Curated) -> list[str]:
         if st.after is not None and st.after not in seen:
             errors.append(f"step {st.step_id}: 'after' must name an earlier step, not '{st.after}'")
         seen.add(st.step_id)
+    # Glossary: each explanation sits beside steps that exist.
+    for g in c.glossary.terms:
+        for sid in set(g.steps) - seen:
+            errors.append(f"glossary {g.term_id}: unknown step '{sid}'")
     contact_ids = {x.contact_id for x in c.contacts.contacts}
     missing_regions = REGIONS - {r.region_id for r in c.contacts.regions}
     if missing_regions:

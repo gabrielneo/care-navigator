@@ -19,6 +19,7 @@ function dataTexts(): string[] {
   r.howToApply.routes.forEach((x: any) => (x.extraDocuments ?? []).forEach(add));
   for (const st of r.nextSteps) { add(st.label); add(st.text); add(st.unlocks); }
   for (const g of r.grantRules) { add(g.name); add(g.amountMeaning); add(g.askIf); g.criteria.forEach(add); }
+  for (const g of r.glossary) { add(g.term); add(g.text); }
   return [...out];
 }
 

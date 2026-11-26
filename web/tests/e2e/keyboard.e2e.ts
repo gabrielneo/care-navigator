@@ -4,13 +4,14 @@ import type { Page } from "@playwright/test";
 import { expect, test } from "./helpers";
 
 /** Tab forward until the focused element matches, checking each stop shows a focus ring. */
-async function tabTo(page: Page, matches: (el: { tag: string; text: string; type: string }) => boolean, max = 40) {
+async function tabTo(page: Page, matches: (el: { tag: string; text: string; type: string; inHome?: boolean }) => boolean, max = 60) {
   for (let i = 0; i < max; i++) {
     await page.keyboard.press("Tab");
     const el = await page.evaluate(() => {
       const a = document.activeElement as HTMLElement;
       const ring = (x: Element | null) => !!x && getComputedStyle(x).outlineStyle !== "none" && parseFloat(getComputedStyle(x).outlineWidth) > 0;
       return { tag: a.tagName.toLowerCase(), type: (a as HTMLInputElement).type ?? "", text: a.getAttribute("aria-label") ?? (a.closest("label") ?? a).textContent?.trim() ?? "",
+        inHome: (a.closest("[role=group]")?.getAttribute("aria-label") ?? "").includes("Help with washing"),
         ring: ring(a) || ring(a.closest(".opt")) || ring(a.closest(".seg label")) };
     });
     expect(el.ring, `no visible focus on ${el.tag} "${el.text.slice(0, 40)}"`).toBe(true);
@@ -56,7 +57,9 @@ test("keyboard only: the seven questions, the matches and the week", async ({ pa
   await tabTo(page, (e) => e.tag === "button" && e.text === "Build her week");
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { name: "Build her week" })).toBeVisible();
-  await tabTo(page, (e) => e.tag === "button" && e.text.startsWith("Remove one from Help with washing"));
-  await page.keyboard.press("Enter");
-  await expect(page.getByRole("group", { name: "Help with washing and dressing at home" }).locator("output")).toHaveText("2");
+  // The day buttons work from the keyboard: Space turns Monday off for home care (Mon, Wed, Fri → Wed, Fri).
+  const home = page.getByRole("group", { name: "Days for Help with washing and dressing at home" });
+  await tabTo(page, (e) => e.tag === "button" && e.text === "Mon" && !!e.inHome);
+  await page.keyboard.press("Space");
+  await expect(home.getByRole("button", { pressed: true })).toHaveCount(2);
 });

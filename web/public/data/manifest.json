@@ -1,7 +1,7 @@
 {
- "dataVersion": "2026.11.26-8",
- "builtAt": "2026-11-26T10:28:43+00:00",
- "curatedHash": "2ae1b801e01aa81f7067f4c764122643b8901fc773992f6495dee9ae8be89e51",
+ "dataVersion": "2026.11.26-11",
+ "builtAt": "2026-11-26T15:00:18+00:00",
+ "curatedHash": "0848961788cce9ba6f3a99f2783278fc80377dc82ff6b9d00b669ed974c8e46b",
  "sources": [
   {
    "sourceId": "moh_nonres_subsidy",
@@ -373,13 +373,13 @@
   }
  ],
  "files": {
-  "rules.json": "fc776bd6c677ae6408bde192f7cdffa4a77b5b753a92d3fdef9c5b100176902e",
+  "rules.json": "25f560cdd8216bc6c476d7ad1df4808723509a6222b02bb06b74df3634d36658",
   "contacts.json": "44edb74ca6d3d816693ff23e69ef97144f57e1720cb7936de8df95eded769d35",
   "places.json": "2d789de5cf2255d2eb275285efcb3108b51b6e0191bd9dde0b38014203bed8d0",
   "sectors.json": "27500e57c4319c56b96939968ad183e2ef538af68b47351893fe6b4b99a207c3"
  },
  "sizes": {
-  "rules.json": 8062,
+  "rules.json": 8405,
   "contacts.json": 2122,
   "places.json": 6343,
   "sectors.json": 965
@@ -391,9 +391,6 @@
   "price meals_on_wheels (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price respite (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "78 open-data places were last edited over 24 months ago",
-  "source moh_mg is not referenced by any table",
-  "official page did not return HTTP 200 after retries: https://www.msf.gov.sg/what-we-do/comcare",
-  "official page did not return HTTP 200 after retries: https://www.msf.gov.sg/what-we-do/opg/lasting-power-of-attorney",
-  "official page did not return HTTP 200 after retries: https://www.nhghealth.com.sg/nhg-polyclinics"
+  "source moh_mg is not referenced by any table"
  ]
 }

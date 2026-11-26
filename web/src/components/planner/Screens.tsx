@@ -10,11 +10,12 @@ import { incomeOptions, type TierId } from "@/lib/engine/tiers";
 import type { Session } from "@/lib/engine/urlCodec";
 import { nearbyContacts } from "@/lib/geo/nearby";
 import { pointForSession, type Region } from "@/lib/geo/postal";
-import { Handover, TIER_LABEL, WHO } from "./Journey";
+import { becauseOf, Handover, TIER_LABEL, WHO } from "./Journey";
 import { nextSteps, TIMINGS, type PlanStep, type Timing } from "@/lib/engine/steps";
 import { reminders, remindersIcs } from "@/lib/engine/reminders";
 import { getLang, list as join, t } from "@/lib/i18n";
 import { CountRange, money, NO_PRICE, range, Radio, Seg, Stepper, tilt, UNIT_ONE, UNIT_WEEK } from "./ui";
+import { DAY_KEYS, daysOf, daysText, entryFor, startingDays } from "@/lib/engine/days";
 
 type P = { s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void; restart: () => void; startNew: () => void };
 const services = new Map(rules.serviceTypes.map((x) => [x.serviceId, x]));
@@ -36,6 +37,24 @@ const reportHref = (srcs: { sourceId: string; url: string }[]) => mailto(
   `Figure may be wrong: ${srcs.map((x) => x.sourceId).join(", ")}`,
   `Data version: ${manifest.dataVersion}\nSources:\n${srcs.map((x) => `- ${x.url}`).join("\n")}\n\nWhat looks wrong, and where did you see the right figure?\n`,
 );
+
+/** "What's this?" beside a term: what the official page says it means, in plain words, with its source. The terms
+ *  and their sources are in data/curated/glossary.yaml. */
+const glossary = new Map(rules.glossary.map((g) => [g.termId, g]));
+const termForStep = new Map(rules.glossary.flatMap((g) => (g.steps ?? []).map((st) => [st, g.termId] as const)));
+function Explain({ id }: { id: string }) {
+  const [open, setOpen] = useState(false);
+  const g = glossary.get(id);
+  if (!g) return null;
+  return (
+    <div className="explain no-print">
+      <button type="button" className="link" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <span className="q" aria-hidden="true">?</span>{t("What's this?")}<span className="sr-only"> {t(g.term)}</span>
+      </button>
+      {open && <div className="explain-text"><p>{t(g.text)}</p><Sources ids={[g.sourceId]} /></div>}
+    </div>
+  );
+}
 
 /** In-page links ("On this page", the total bar) scroll to their section without touching the address: the plan
  *  lives in the # part of the link, so a plain #total would replace it. */
@@ -88,14 +107,20 @@ const priceSources = (id: string) => {
 // ---------- 3 · Matches ----------
 export function Matches({ s, update, next, restart }: P) {
   const m = matchServices(rules, s);
+  const because = (x: (typeof m.matches)[number]) => becauseOf(x.when, s);
+  // Matches beyond the top 3 that come from something she ticked herself (a health event, medical care) open by default.
+  const fromTicks = m.more.filter((x) => x.when.some((c) => c.q === "cond" || c.q === "med"));
   const card = (x: (typeof m.matches)[number]) => {
     const svc = services.get(x.serviceId)!;
     return (
       <div className="svc tilt" key={x.serviceId} {...tilt}>
         <h3>{t(svc.name)} <span className="meta">({svc.officialTerm})</span></h3>
-        <p>{t(svc.description)}</p>
-        <p className="why"><b>{t("Why this fits:")}</b> {t(x.reasonText)}</p>
+        {because(x).length > 0 && (
+          <p className="because"><span>{t("Because you said:")}</span> {because(x).map((b) => <span className="tag" key={b}>{b}</span>)}</p>
+        )}
         <p className="price">{priceBadge(x.serviceId)}</p>
+        <p className="why"><b>{t("Why this fits:")}</b> {t(x.reasonText)}</p>
+        <p>{t(svc.description)}</p>
         {svc.unit && <Sources ids={priceSources(x.serviceId)} />}
       </div>
     );
@@ -126,8 +151,9 @@ export function Matches({ s, update, next, restart }: P) {
       {m.confirmWithProfessional && <p className="help">{t('Some answers were "Not sure". Check these with a doctor, the ward social worker or an AIC Link.')}</p>}
       {m.matches.map(card)}
       {m.more.length > 0 && (
-        <details className="panel">
-          <summary>{t("More that may help")}</summary>
+        <details className="panel" open={fromTicks.length > 0}>
+          <summary>{fromTicks.length === 1 ? t("1 more fits your answers") : fromTicks.length ? t("{n} more fit your answers", { n: fromTicks.length })
+            : t("More that may help")}</summary>
           {m.more.map(card)}
         </details>
       )}
@@ -137,16 +163,60 @@ export function Matches({ s, update, next, restart }: P) {
 }
 
 // ---------- 4 · Week ----------
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const SLOTS: Record<number, number[]> = { 1: [2], 2: [1, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 2, 3, 4], 6: [0, 1, 2, 3, 4, 5], 7: [0, 1, 2, 3, 4, 5, 6] };
+/** Seven day buttons for one service. Press and drag across them (a swipe on a phone) to add a run of days, or start
+ *  on a chosen day to clear a run; a tap, Space or Enter turns one day on or off. */
+function DayStrip({ days, onChange, name }: { days: number[]; onChange: (days: number[]) => void; name: string }) {
+  const strip = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ adding: boolean; set: Set<number> } | null>(null);
+  const [live, setLive] = useState<number[] | null>(null);
+  const shown = live ?? days;
+  const dayAt = (x: number, y: number) => {
+    const el = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-day]");
+    return el && strip.current?.contains(el) ? Number(el.dataset.day) : null;
+  };
+  const paint = (i: number) => {
+    const d = drag.current!;
+    if (d.adding) d.set.add(i); else d.set.delete(i);
+    setLive([...d.set].sort());
+  };
+  const end = () => {
+    if (!drag.current) return;
+    onChange([...drag.current.set].sort());
+    drag.current = null;
+    setLive(null);
+  };
+  return (
+    <div className="daystrip" ref={strip} role="group" aria-label={t("Days for {name}", { name })}
+      onPointerDown={(e) => {
+        const i = dayAt(e.clientX, e.clientY);
+        if (i == null) return;
+        drag.current = { adding: !shown.includes(i), set: new Set(shown) };
+        strip.current?.setPointerCapture(e.pointerId);
+        paint(i);
+      }}
+      onPointerMove={(e) => { if (drag.current) { const i = dayAt(e.clientX, e.clientY); if (i != null) paint(i); } }}
+      onPointerUp={end} onPointerCancel={end}>
+      {DAY_KEYS.map((k, i) => (
+        <button type="button" key={k} data-day={i} aria-pressed={shown.includes(i)}
+          // Keyboard presses arrive as clicks with detail 0; pointer presses were already handled above.
+          onClick={(e) => { if (e.detail === 0) onChange(days.includes(i) ? days.filter((x) => x !== i) : [...days, i].sort()); }}>
+          {t(k)}
+        </button>
+      ))}
+    </div>
+  );
+}
 export function Week({ s, update, next }: P) {
   const plan = (s.plan ?? []).filter((e) => e.s !== "day_care_transport");
   // Change one service's count in place (keeps the order); 0 removes it. Transport's n: 0 opt-out is kept.
-  const set = (id: string, n: number) => {
+  // A service keeps its place while its days change, even with none chosen (it then isn't costed); Remove takes it out.
+  const setDays = (id: string, days: number[]) => {
     const cur = s.plan ?? [];
-    const changed = cur.some((e) => e.s === id) ? cur.map((e) => (e.s === id ? { s: id, n } : e)) : [...cur, { s: id, n }];
-    update({ plan: changed.filter((e) => e.n > 0 || e.s === "day_care_transport") });
+    const e = entryFor(id, days);
+    update({ plan: cur.some((x) => x.s === id) ? cur.map((x) => (x.s === id ? e : x)) : [...cur, e] });
   };
+  const remove = (id: string) => update({ plan: (s.plan ?? []).filter((x) => x.s !== id) });
+  const set = (id: string, n: number) => setDays(id, startingDays(n));
   const addable = rules.serviceTypes.filter((x) => prices.has(x.serviceId) && x.unit !== "month" && x.serviceId !== "nursing_home"
     && !plan.some((e) => e.s === x.serviceId));
   const hasDayCare = plan.some((e) => e.s === "day_care" || e.s === "dementia_day_care");
@@ -155,8 +225,8 @@ export function Week({ s, update, next }: P) {
 
   // Display only: each service goes on weekdays first, spread out (2 a week → Tue and Thu), so services share days
   // as they usually do (a carer in the morning, day care after) instead of spilling onto the weekend.
-  const days: string[][] = DAYS.map(() => []);
-  for (const e of plan) for (const i of SLOTS[e.n] ?? []) days[i]!.push(shortName(e.s));
+  const days: string[][] = DAY_KEYS.map(() => []);
+  for (const e of plan) for (const i of daysOf(e)) days[i]!.push(shortName(e.s));
 
   if (plan.length === 0) {
     return (
@@ -172,16 +242,28 @@ export function Week({ s, update, next }: P) {
     <>
       <h1>{t("Build her week")}</h1>
       <p className="help">{t("We've filled in a starting point. It's our assumption, so change it to fit.")}</p>
+      <p className="help">{t("Drag across the days, or tap them, to choose when each service comes.")}</p>
       {plan.map((e) => {
         const svc = services.get(e.s)!;
+        const on = daysOf(e);
+        const weekend = on.some((i) => i >= 5) && e.s.includes("day_care");
         return (
           <div className="panel" key={e.s}>
-            <div className="row" style={{ alignItems: "center" }}>
+            <div className="row" style={{ alignItems: "baseline" }}>
               <h3>{t(svc.name)}</h3>
-              <Stepper value={e.n} min={0} max={7} onChange={(n) => set(e.s, n)} label={t(svc.name)}
-                less={t("Remove one from {name}", { name: t(svc.name) })} more={t("Add one to {name}", { name: t(svc.name) })} />
+              <button type="button" className="link" style={{ flex: "none" }} onClick={() => remove(e.s)}>
+                {t("Remove")}<span className="sr-only"> {t(svc.name)}</span></button>
             </div>
-            <p className="meta">{t(UNIT_WEEK[svc.unit ?? ""] ?? "a week")}{e.n === 7 && e.s.includes("day_care") ? t(" · most centres open weekdays; check weekend care when you call") : ""}</p>
+            <DayStrip days={on} onChange={(d) => setDays(e.s, d)} name={t(svc.name)} />
+            <p className="meta" aria-live="polite">
+              {on.length ? `${daysText(on, t, join)} · ${on.length} ${t(UNIT_WEEK[svc.unit ?? ""] ?? "a week")}` : t("No days chosen, so it isn't costed.")}
+              {weekend ? t(" · most centres open weekdays; check weekend care when you call") : ""}
+            </p>
+            <div className="presets">
+              <button type="button" className="link" onClick={() => setDays(e.s, [0, 1, 2, 3, 4])}>{t("Weekdays")}</button>
+              <button type="button" className="link" onClick={() => setDays(e.s, [0, 1, 2, 3, 4, 5, 6])}>{t("Every day")}</button>
+              <button type="button" className="link" onClick={() => setDays(e.s, [])}>{t("Clear")}</button>
+            </div>
           </div>
         );
       })}
@@ -193,7 +275,7 @@ export function Week({ s, update, next }: P) {
         </label>
       )}
       <div className="panel" style={{ gap: 0 }} aria-label={t("Her week")}>
-        {DAYS.map((day, i) => (
+        {DAY_KEYS.map((day, i) => (
           <div className="day" key={day}><b>{t(day)}</b>
             <span className="tags">{days[i]!.length ? days[i]!.map((t, j) => <span className="tag" key={j}>{t}</span>) : <span className="meta">—</span>}</span>
           </div>
@@ -270,8 +352,12 @@ export function CostScreen({ s, update, next }: P) {
             options={[["le1969", t("1969 or earlier")], ["gt1969", t("After 1969")]]} />
         )}
         {s.r === "sc" && (
-          <Seg name="gen" legend={t("Pioneer or Merdeka Generation?")} value={s.g} onChange={(g) => update({ g })}
-            options={[["pg", t("Pioneer")], ["mg", t("Merdeka")], ["no", t("Neither")], ["unsure", t("Not sure")]]} />
+          // Only a few families need this one, so it waits behind a summary (open once answered).
+          <details className="more-about" open={s.g != null}>
+            <summary>{t("More about her (optional)")}</summary>
+            <Seg name="gen" legend={t("Pioneer or Merdeka Generation?")} value={s.g} onChange={(g) => update({ g })}
+              options={[["pg", t("Pioneer")], ["mg", t("Merdeka")], ["no", t("Neither")], ["unsure", t("Not sure")]]} />
+          </details>
         )}
       </div>
 
@@ -283,6 +369,7 @@ export function CostScreen({ s, update, next }: P) {
           {c.total.withSubsidy && !c.total.sameAsFullPrice ? (
             <>
               <div><p className="lbl">{t("At a government-funded provider, with subsidy")}</p>
+                <Explain id="government_funded" />
                 <p className="big"><CountRange r={c.total.withSubsidy} /></p><p className="sub">{t("a month · estimate")}</p>
                 <p className="asof">{t("Figures as of {date}", { date: dataDate })}</p></div>
               <hr />
@@ -311,9 +398,11 @@ export function CostScreen({ s, update, next }: P) {
           const freq = svc.unit === "month" ? ""
             : svc.unit === "hour" ? t(entry?.n === 1 ? " · {n} visit of {h} hours a week" : " · {n} visits of {h} hours a week", { n: entry?.n ?? 0, h: svc.blockHours ?? 4 })
             : ` · ${entry?.n} ${t(UNIT_WEEK[svc.unit ?? ""] ?? "")}`;
+          const own = s.plan?.find((e) => e.s === l.serviceId);
+          const when = own && svc.unit !== "month" ? ` (${daysText(daysOf(own), t, join)})` : "";
           return (
             <div className="line panel" key={l.serviceId}>
-              <h3>{t(svc.name)}{freq}</h3>
+              <h3>{t(svc.name)}{freq}{when}</h3>
               <div className="two">
                 <span><small>{t("With subsidy")}</small>{l.withSubsidy ? range(l.withSubsidy) : "—"}</span>
                 <span><small>{t("Full price")}</small>{range(l.fullPrice)}</span>
@@ -463,7 +552,15 @@ function IncomeHelper({ onPick }: { onPick: (t: TierId) => void }) {
 // ---------- 6 · Who to call ----------
 export function ContactsScreen({ s, update, next }: P) {
   const geo = useGeo();
-  if (!geo) return <p className="help" aria-busy="true">{t("Finding the nearest places…")}</p>;
+  if (!geo) {
+    return (
+      <div className="skeletons" aria-busy="true">
+        <p className="help">{navigator.onLine ? t("Finding the nearest places…")
+          : t("You're offline. Nearby places will show when you're back online. The AIC hotline is 1800-650-6060.")}</p>
+        {[0, 1, 2].map((i) => <div className="contact skel" key={i} aria-hidden="true" />)}
+      </div>
+    );
+  }
   const { contacts: contactsBundle, places, sectors } = geo;
   const point = pointForSession(sectors, s.loc);
   const branch = matchServices(rules, s).branch;
@@ -554,6 +651,7 @@ export function Action({ s, update, restart, startNew }: Pick<P, "s" | "update" 
                       {st.unlocks && <span className="meta step-meta">{st.group === "plan" ? t("Unlocks: ") : ""}{t(st.unlocks)}</span>}
                     </span>
                   </label>
+                  {termForStep.has(st.id) && <Explain id={termForStep.get(st.id)!} />}
                   {st.id === "call_first" && (
                     <div className="ask">
                       <p className="meta">{t("Ask:")}</p>

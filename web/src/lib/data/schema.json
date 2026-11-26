@@ -409,6 +409,45 @@
    "title": "DementiaFlag",
    "type": "object"
   },
+  "GlossaryTerm": {
+   "additionalProperties": false,
+   "description": "A \"?\" explanation: what an official page says a term means, in plain words (UX audit, 26 Nov 2026).",
+   "properties": {
+    "termId": {
+     "pattern": "^[a-z][a-z0-9_]{1,40}$",
+     "title": "Termid",
+     "type": "string"
+    },
+    "term": {
+     "title": "Term",
+     "type": "string"
+    },
+    "text": {
+     "title": "Text",
+     "type": "string"
+    },
+    "steps": {
+     "default": [],
+     "items": {
+      "type": "string"
+     },
+     "title": "Steps",
+     "type": "array"
+    },
+    "sourceId": {
+     "title": "Sourceid",
+     "type": "string"
+    }
+   },
+   "required": [
+    "termId",
+    "term",
+    "text",
+    "sourceId"
+   ],
+   "title": "GlossaryTerm",
+   "type": "object"
+  },
   "GrantRule": {
    "additionalProperties": false,
    "properties": {
@@ -1358,6 +1397,13 @@
      },
      "title": "Nextsteps",
      "type": "array"
+    },
+    "glossary": {
+     "items": {
+      "$ref": "#/$defs/GlossaryTerm"
+     },
+     "title": "Glossary",
+     "type": "array"
     }
    },
    "required": [
@@ -1368,7 +1414,8 @@
     "subsidyTiers",
     "grantRules",
     "howToApply",
-    "nextSteps"
+    "nextSteps",
+    "glossary"
    ],
    "title": "RulesBundle",
    "type": "object"

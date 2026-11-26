@@ -5,7 +5,7 @@ services:
   - service_id: day_care
     name: Day care centre
     official_term: Day Care
-    description: A centre where she spends the day with meals, activities and care, while you work.
+    description: A centre where she spends the day with meals, activities and care, while you work or rest.
     setting: centre
     scheme: non_residential
     unit: session

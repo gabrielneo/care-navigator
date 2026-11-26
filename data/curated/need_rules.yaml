@@ -18,7 +18,7 @@ rules:
     when:
       - {q: where, in: [in_hospital]}
       - {q: discharged, is: false}
-    reason_text: Ask the ward's medical social worker before she leaves. This help can only be requested while she is in hospital.
+    reason_text: She's about to leave hospital. This help can only be requested while she's there, through the ward's medical social worker.
     priority: 1
     source_id: thk_ics
   - rule_id: R02
@@ -35,7 +35,7 @@ rules:
       - {q: alone, in: [weekdays, most]}
       - {q: memory, in: ["no", unsure]}
       - {q: adl, any: [bath, dress, eat, toilet, move, transfer]}
-    reason_text: Someone is with her while you're at work.
+    reason_text: Someone is with her during the day, when she'd otherwise be alone.
     priority: 2
     source_id: aic_day_care
   - rule_id: R04

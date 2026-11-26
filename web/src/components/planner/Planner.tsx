@@ -1,7 +1,7 @@
 "use client";
 // The /plan wizard. State lives only in the URL hash (docs/specs/06 and 10): each step is one history entry,
 // small edits replace the entry, refresh keeps your place, Back goes to the previous step.
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { dataDate, manifest } from "@/lib/data";
 import { loadGeo } from "@/lib/data/geo";
 import { decodeHash, encodeHash, type Session, type Step } from "@/lib/engine/urlCodec";
@@ -9,7 +9,14 @@ import { locate, type Region } from "@/lib/geo/postal";
 import { isMale, JourneyBar, PlanSoFar, QUESTIONS, WHO, type Who } from "./Journey";
 import { LangMenu } from "@/components/LangMenu";
 import { LANGS, loadLang, loadMale, setLang, setMale, t } from "@/lib/i18n";
-import { Action, ContactsScreen, CostScreen, Matches, Week } from "./Screens";
+// The screens after the questions load as their own chunk (about a third of the planner's code), fetched while she
+// answers, so the first question shows sooner and the JavaScript budget (9.5) has room.
+const loadScreens = () => import("./Screens");
+const Matches = lazy(() => loadScreens().then((m) => ({ default: m.Matches })));
+const Week = lazy(() => loadScreens().then((m) => ({ default: m.Week })));
+const CostScreen = lazy(() => loadScreens().then((m) => ({ default: m.CostScreen })));
+const ContactsScreen = lazy(() => loadScreens().then((m) => ({ default: m.ContactsScreen })));
+const Action = lazy(() => loadScreens().then((m) => ({ default: m.Action })));
 import { Check, Radio, Seg } from "./ui";
 
 const ALL: Step[] = [...QUESTIONS, "matches", "week", "cost", "contacts", "action"];
@@ -32,6 +39,8 @@ export function Planner() {
   const [step, setStep] = useState<Step>("where");
   const [s, setS] = useState<Session>(fresh);
   const [banner, setBanner] = useState<"damaged" | "updated" | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { if (loaded) document.documentElement.classList.remove("plan-loading"); }, [loaded]);   // after the commit
 
   const load = useCallback((hash: string) => {
     const got = hash.length > 1 ? decodeHash(hash) : null;
@@ -46,8 +55,11 @@ export function Planner() {
   }, []);
 
   useEffect(() => {
-    // set by plan/page.tsx for links with a saved plan; kept until a draft's dictionary is in, so English doesn't flash
-    Promise.resolve(load(window.location.hash)).then(() => document.documentElement.classList.remove("plan-loading"));
+    // plan-loading (set by plan/page.tsx for links with a saved plan) comes off once the saved screen has rendered,
+    // below, so neither the first question nor English flashes first.
+    Promise.resolve(load(window.location.hash)).then(() => setLoaded(true));
+    const warm = () => { loadScreens().catch(() => {}); };              // ready before the last question is answered
+    if ("requestIdleCallback" in window) requestIdleCallback(warm); else setTimeout(warm, 1500);
     // A # that isn't a plan (a section link opened by hand) leaves the plan alone.
     const onPop = () => { if (!/^#s=/.test(window.location.hash) && window.location.hash.length > 1) return; load(window.location.hash); };
     window.addEventListener("popstate", onPop);
@@ -99,23 +111,25 @@ export function Planner() {
         {step !== "action" && <div className="top no-print">
           <button type="button" className="link" onClick={back}>{t("Back")}</button>
         </div>}
-        {qIndex >= 0 ? <Question step={step} s={s} update={update} next={next} />
-          : step === "matches" ? <Matches {...screen} />
-          : step === "week" ? <Week {...screen} />
-          : step === "cost" ? <CostScreen {...screen} />
-          : step === "contacts" ? <ContactsScreen {...screen} />
-          : <Action {...screen} />}
+        {qIndex >= 0 ? <Question step={step} s={s} update={update} next={next} back={back} />
+          : <Suspense fallback={<p className="help" aria-busy="true">{t("Loading…")}</p>}>
+            {step === "matches" ? <Matches {...screen} />
+              : step === "week" ? <Week {...screen} />
+              : step === "cost" ? <CostScreen {...screen} />
+              : step === "contacts" ? <ContactsScreen {...screen} />
+              : <Action {...screen} />}
+          </Suspense>}
       </div>
       </div>
     </>
   );
 }
 
-type Q = { step: Step; s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void };
+type Q = { step: Step; s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void; back: () => void };
 
 /** Screens 2a–2g: one question each. Next is always clickable. A missing answer outlines the group that needs it,
  *  says what's missing right there, scrolls it into view and puts focus on its first option. */
-function Question({ step, s, update, next }: Q) {
+function Question({ step, s, update, next, back }: Q) {
   const [missing, setMissing] = useState(false);
   const group = useRef<HTMLFieldSetElement>(null);
   const upd = (p: Partial<Session>) => { setMissing(false); update(p); };
@@ -156,7 +170,10 @@ function Question({ step, s, update, next }: Q) {
             onChange={() => upd({ w, d: w === "in_hospital" ? d : undefined })}>{t(label)}</Radio>;
         })}
       </fieldset>
-      <button type="button" className="btn" onClick={() => proceed(s.w != null)}>{t("Next")}</button>
+      <div className="row nav-row">
+        <button type="button" className="btn sec" onClick={back}>{t("Back")}</button>
+        <button type="button" className="btn" onClick={() => proceed(s.w != null)}>{t("Next")}</button>
+      </div>
       </>
     );
   }
@@ -184,7 +201,7 @@ function Question({ step, s, update, next }: Q) {
         <legend><h1>{t("Which of these does she need help with?")}</h1></legend>
         <p className="help">{t('Pick all that apply. "Help" means someone has to assist or watch.')}</p>
         {err('Choose at least one, or "None of these" or "Not sure".')}
-        <div className="grid2">
+        <div className={s.adl && chosen.length === 0 ? "grid2 muted" : "grid2"}>
           {ADL.map(([k, label]) => <Check key={k} checked={chosen.includes(k)} onChange={(on) => toggle(k, on)}>{t(label)}</Check>)}
         </div>
         <p className="or" aria-hidden="true"><span>{t("or")}</span></p>
@@ -205,12 +222,18 @@ function Question({ step, s, update, next }: Q) {
           <legend><h3>{t("Has any of these happened? (optional)")}</h3></legend>
           {COND.map(([k, label]) => <Check key={k} checked={(s.cond ?? []).includes(k)}
             onChange={(on) => update({ cond: on ? [...(s.cond ?? []), k] : (s.cond ?? []).filter((x) => x !== k) })}>{t(label)}</Check>)}
+          {s.cond?.some((c) => c === "fall" || c === "stroke") && (
+            <p className="note urgent" role="note">{t("If it's happening now, call")} <a href="tel:995"><b>995</b></a>.</p>
+          )}
         </fieldset>
         <Check checked={s.med ?? false} onChange={(on) => update({ med: on })}>
           <b>{t("Medical care at home (optional)")}</b><br /><span className="help">{t("Wounds, tubes, injections or many medicines")}</span>
         </Check>
       </div>
-      <button type="button" className="btn" onClick={() => proceed(s.adl != null)}>{t("Next")}</button>
+      <div className="row nav-row">
+        <button type="button" className="btn sec" onClick={back}>{t("Back")}</button>
+        <button type="button" className="btn" onClick={() => proceed(s.adl != null)}>{t("Next")}</button>
+      </div>
       </>
     );
   }
@@ -238,16 +261,19 @@ function Question({ step, s, update, next }: Q) {
             onChange={() => upd({ [q.field]: v } as Partial<Session>)}>{t(label)}</Radio>
         ))}
       </fieldset>
-      <button type="button" className="btn" onClick={() => proceed(s[q.field] != null)}>{t("Next")}</button>
+      <div className="row nav-row">
+        <button type="button" className="btn sec" onClick={back}>{t("Back")}</button>
+        <button type="button" className="btn" onClick={() => proceed(s[q.field] != null)}>{t("Next")}</button>
+      </div>
       </>
     );
   }
 
-  return <Postal s={s} next={next} />;
+  return <Postal s={s} next={next} back={back} />;
 }
 
 /** 2g: the postal code is matched to its 2-digit area on this device; only the area is kept. */
-function Postal({ s, next }: Pick<Q, "s" | "next">) {
+function Postal({ s, next, back }: Pick<Q, "s" | "next" | "back">) {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [picker, setPicker] = useState(false);
@@ -272,7 +298,10 @@ function Postal({ s, next }: Pick<Q, "s" | "next">) {
         <p id="postal-err" className="errtxt" role="alert">{error ?? ""}</p>
         <p id="postal-help" className="help">{t("6 digits, e.g. 560123. Only the first 2 digits are used, and they stay on your phone.")}</p>
       </div>
-      <button type="button" className="btn" onClick={submit}>{t("Next")}</button>
+      <div className="row nav-row">
+        <button type="button" className="btn sec" onClick={back}>{t("Back")}</button>
+        <button type="button" className="btn" onClick={submit}>{t("Next")}</button>
+      </div>
       <button type="button" className="link" onClick={() => setPicker(true)}>{t("Skip and pick a region")}</button>
       {picker && (
         <fieldset className="panel">

@@ -1,0 +1,31 @@
+# Plain explanations behind the "?" buttons (UX audit, 26 Nov 2026). Each says what the official page says, in plain
+# words, and cites it. steps: the next steps whose label the explanation sits beside.
+# Not here yet: the 6 daily activities. AIC's Home Caregiving Grant page lists them only in a picture, and no source in
+# the registry lists them in text.
+terms:
+  - term_id: means_test
+    term: Means test
+    text: >-
+      The means test sets her subsidy. It uses household income per person: everyone's gross monthly income, divided by
+      the number of family members living together. With no household income, the home's Annual Value is used instead.
+    steps: [means_test]
+    source_id: moh_nonres_subsidy
+  - term_id: government_funded
+    term: Government-funded provider
+    text: >-
+      Subsidies are for Singapore Citizens and PRs who use services from government-funded providers.
+    source_id: moh_nonres_subsidy
+  - term_id: respite
+    term: Respite care
+    text: >-
+      Respite is a short break from caregiving, while someone else cares for her. It can be at home, in a day centre,
+      or in a nursing home. A nursing home stay is at least 7 days, and up to 30 days a year.
+    steps: [respite_referral, helper_leave_respite]
+    source_id: aic_take_a_break
+  - term_id: far
+    term: Functional Assessment Report
+    text: >-
+      It shows how much help she needs with daily activities. A GP, or an approved doctor, nurse, physiotherapist or
+      occupational therapist, does the assessment. There may be a fee.
+    steps: [far]
+    source_id: aic_hcg

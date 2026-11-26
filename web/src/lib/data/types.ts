@@ -125,6 +125,12 @@ export type Planany = string[];
 export type Grantany = string[];
 export type Sourceid9 = string;
 export type Nextsteps = NextStep[];
+export type Termid = string;
+export type Term = string;
+export type Text1 = string;
+export type Steps2 = string[];
+export type Sourceid10 = string;
+export type Glossary = GlossaryTerm[];
 export type Contactid = string;
 export type Kind1 = "aic_link" | "polyclinic";
 export type Name2 = string;
@@ -136,14 +142,14 @@ export type Hours = string | null;
 export type Locationnote = string | null;
 export type Locationprecision = "exact" | "sector";
 export type Checkedon1 = string;
-export type Sourceid10 = string;
+export type Sourceid11 = string;
 export type Contacts = Contact[];
 export type Name3 = string;
 export type Phone = string;
 export type Hours1 = string;
 export type Languages = string[];
 export type Checkedon2 = string;
-export type Sourceid11 = string;
+export type Sourceid12 = string;
 export type Placeid = string;
 export type Kind2 = "fsc" | "cc";
 export type Name4 = string;
@@ -162,7 +168,7 @@ export type Label3 = string;
 export type Dataversion = string;
 export type Builtat = string;
 export type Curatedhash = string;
-export type Sourceid12 = string;
+export type Sourceid13 = string;
 export type Title = string;
 export type Url = string;
 export type Licence = string;
@@ -190,6 +196,7 @@ export interface RulesBundle {
   grantRules: Grantrules;
   howToApply: HowToApply;
   nextSteps: Nextsteps;
+  glossary: Glossary;
 }
 export interface ServiceType {
   serviceId: Serviceid;
@@ -360,6 +367,16 @@ export interface NextStep {
   sourceId: Sourceid9;
 }
 /**
+ * A "?" explanation: what an official page says a term means, in plain words (UX audit, 26 Nov 2026).
+ */
+export interface GlossaryTerm {
+  termId: Termid;
+  term: Term;
+  text: Text1;
+  steps?: Steps2;
+  sourceId: Sourceid10;
+}
+/**
  * contacts.json.
  */
 export interface ContactsBundle {
@@ -378,7 +395,7 @@ export interface Contact {
   locationNote?: Locationnote;
   locationPrecision?: Locationprecision;
   checkedOn: Checkedon1;
-  sourceId: Sourceid10;
+  sourceId: Sourceid11;
 }
 export interface Hotline {
   name: Name3;
@@ -386,7 +403,7 @@ export interface Hotline {
   hours: Hours1;
   languages: Languages;
   checkedOn: Checkedon2;
-  sourceId: Sourceid11;
+  sourceId: Sourceid12;
 }
 export interface Place {
   placeId: Placeid;
@@ -428,7 +445,7 @@ export interface Manifest {
   warnings: Warnings;
 }
 export interface ManifestSource {
-  sourceId: Sourceid12;
+  sourceId: Sourceid13;
   title: Title;
   url: Url;
   licence: Licence;

@@ -294,3 +294,13 @@ def test_changes_log_names_each_figure_that_moved(raw_dir: Path, tmp_path: Path)
     assert same["changes"] == ["Wording, sources or rules changed; no figures changed.",
                                "Places and contacts updated from open data."]
     assert [x["version"] for x in changes.add([{"version": "a"}, {"version": "b"}], {"version": "a", "changes": []})] == ["a", "b"]
+
+
+# ---------- glossary ("?" explanations) ----------
+def test_glossary_term_beside_an_unknown_step_blocks():
+    c = br.load_curated()
+    c.glossary.terms[0].steps.append("no_such_step")
+    assert any("unknown step 'no_such_step'" in e for e in validate.blocking(c))
+    c = br.load_curated()
+    c.glossary.terms[0].source_id = "made_up"
+    assert any("made_up" in e for e in validate.blocking(c))

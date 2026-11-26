@@ -2,11 +2,11 @@
 // place names and source titles; it's labelled as a draft; and it switches back to English.
 import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
-import { decodeHash, encodeHash, type Session } from "../../src/lib/engine/urlCodec";
+import { decodeHash, encodeHash, type Session, type Step } from "../../src/lib/engine/urlCodec";
 import manifest from "../../public/data/manifest.json" with { type: "json" };
 import { LANGS, type Lang } from "../../src/lib/i18n";
 import { ZH } from "../../src/lib/zh";
-import { expect, test } from "./helpers";
+import { expect, MEI as MEI_ZH, test } from "./helpers";
 
 // Official scheme, service and organisation names stay in English in the draft.
 const NAMES = ["Pioneer Generation Disability Assistance Scheme", "Caregivers Training Catalogue", "Care Services Recommender",
@@ -43,7 +43,9 @@ async function checkScreen(page: Page, lang: Lang = "zh") {
 }
 const next = (page: Page) => page.getByRole("button", { name: "下一步", exact: true }).click();
 
-test("8.13: the whole planner in the Chinese draft, then back to English", async ({ page }) => {
+test("8.13: the whole planner in the Chinese draft, then back to English", async ({ page }, info) => {
+  test.skip(info.project.name === "firefox", "Firefox checks the same screens one per test, below (a long run crashed its CI tab)");
+  test.setTimeout(90_000);                                  // a dozen screens, each with axe, on CI's 2-core machines
   await page.goto("/");
   await page.getByLabel("Language / 语言 / Bahasa / மொழி").selectOption("zh");
   await expect(page).toHaveURL(/\/zh\/$/);
@@ -89,7 +91,8 @@ test("8.13: the whole planner in the Chinese draft, then back to English", async
   expect(decodeHash(new URL(page.url()).hash)!.session.l).toBeUndefined();
 });
 
-for (const lang of ["zh", "ms", "ta"] as const) test(`8.13: every screen and branch in ${lang} (Mei, dementia, serious illness, a carer at their limit, nursing home)`, async ({ page }) => {
+// Every screen and branch, in each draft: Mei, dementia, a serious illness, a carer at their limit, a nursing home.
+function screensIn(lang: "zh" | "ms" | "ta"): (readonly [Step, Session])[] {
   const v = manifest.dataVersion;
   const mei: Session = { v, l: lang, w: "in_hospital", d: false, adl: ["bath", "dress"], al: "weekdays", mem: "no", hlp: "no", lim: "tired",
     loc: { sec: "56" }, plan: [{ s: "day_care", n: 5 }, { s: "home_personal_care", n: 2 }], t: "T1", r: "sc", b: "le1969", x: 3 };
@@ -98,8 +101,10 @@ for (const lang of ["zh", "ms", "ta"] as const) test(`8.13: every screen and bra
     t: "T0", r: "sc", b: "le1969", g: "pg", x: 2 };
   const nh: Session = { v, l: lang, w: "in_nursing_home", t: "T1", r: "sc", lim: "tired" };
   const questions = ["where", "adl", "alone", "memory", "helper", "limits", "postal"] as const;
-  for (const [step, sess] of [...questions.map((q) => [q, mei] as const), ["matches", mei], ["week", mei], ["cost", mei], ["contacts", mei],
-    ["action", mei], ["matches", tan], ["week", tan], ["cost", tan], ["action", tan], ["cost", nh], ["action", nh]] as const) {
+  return [...questions.map((q) => [q, mei] as const), ["matches", mei], ["week", mei], ["cost", mei], ["contacts", mei],
+    ["action", mei], ["matches", tan], ["week", tan], ["cost", tan], ["action", tan], ["cost", nh], ["action", nh]] as const;
+}
+async function checkOne(page: Page, lang: "zh" | "ms" | "ta", step: Step, sess: Session) {
     await page.goto(`/plan/${encodeHash(step, sess)}`);
     await expect(page.locator("h1").first()).toBeVisible();
     if (step === "cost") {
@@ -111,7 +116,28 @@ for (const lang of ["zh", "ms", "ta"] as const) test(`8.13: every screen and bra
     if (step === "action") await page.locator("details.handover-box").evaluate((e) => ((e as HTMLDetailsElement).open = true));
     await expect(page.locator("html")).toHaveAttribute("lang", `${lang}-SG`);
     await checkScreen(page, lang);
-  }
+}
+
+for (const lang of ["zh", "ms", "ta"] as const) {
+  test(`8.13: every screen and branch in ${lang} (Mei, dementia, serious illness, a carer at their limit, nursing home)`, async ({ page }, info) => {
+    test.skip(info.project.name === "firefox", "Firefox checks each screen in its own test, below");
+    test.setTimeout(120_000);                               // 19 screens, each with axe, on CI's 2-core machines
+    for (const [step, sess] of screensIn(lang)) await checkOne(page, lang, step, sess);
+  });
+  // Firefox: one fresh page per screen, so a failure names the exact screen and language.
+  screensIn(lang).forEach(([step, sess], i) => test(`8.13 Firefox: ${lang} screen ${i + 1} (${step})`, async ({ page }, info) => {
+    test.skip(info.project.name !== "firefox", "the other browsers run these as one walkthrough, above");
+    await checkOne(page, lang, step, sess);
+  }));
+}
+
+test("8.13 Firefox: switching a plan between a draft and English", async ({ page }, info) => {
+  test.skip(info.project.name !== "firefox", "the other browsers switch inside the Chinese walkthrough");
+  await page.goto(`/plan/${encodeHash("action", { ...MEI_ZH, l: "zh" })}`);
+  await expect(page.locator("html")).toHaveAttribute("lang", "zh-SG");
+  await page.getByLabel("Language / 语言 / Bahasa / மொழி").selectOption("en");
+  await expect(page.getByRole("heading", { name: "Mum's care plan" })).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en-SG");
 });
 
 test("8.13: the Start page's menu offers each draft, and the planner's menu switches between them", async ({ page }) => {

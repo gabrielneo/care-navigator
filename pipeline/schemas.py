@@ -335,6 +335,19 @@ class NextSteps(Model):
     steps: list[NextStep]
 
 
+class GlossaryTerm(Model):
+    """A "?" explanation: what an official page says a term means, in plain words (UX audit, 26 Nov 2026)."""
+    term_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,40}$")
+    term: str
+    text: str
+    steps: list[str] = []                       # next steps whose label it explains
+    source_id: str
+
+
+class Glossary(Model):
+    terms: list[GlossaryTerm]
+
+
 class RulesBundle(Model):
     """rules.json: everything the engine needs to match and cost."""
     service_types: list[ServiceType]
@@ -345,6 +358,7 @@ class RulesBundle(Model):
     grant_rules: list[GrantRule]
     how_to_apply: HowToApply
     next_steps: list[NextStep]
+    glossary: list[GlossaryTerm]
 
 
 class ContactsBundle(Model):
@@ -383,4 +397,5 @@ class Curated(Model):
     branch_rules: BranchRules
     how_to_apply: HowToApply
     next_steps: NextSteps
+    glossary: Glossary
     contacts: Contacts
