@@ -1,5 +1,30 @@
 [
  {
+  "version": "2026.11.27-2",
+  "date": "2026-11-27",
+  "changes": [
+   "Wording, sources or rules changed; no figures changed."
+  ]
+ },
+ {
+  "version": "2026.11.27-1",
+  "date": "2026-11-27",
+  "changes": [
+   "Added: Therapy at a centre: price per therapy_session, low end, $55",
+   "Added: Therapy at a centre: price per therapy_session, high end, $102",
+   "Removed: Therapy at a centre: price per session, low end",
+   "Removed: Therapy at a centre: price per session, high end"
+  ]
+ },
+ {
+  "version": "2026.11.26-12",
+  "date": "2026-11-26",
+  "changes": [
+   "Added: Therapy at a centre: price per session, low end, $55",
+   "Added: Therapy at a centre: price per session, high end, $102"
+  ]
+ },
+ {
   "version": "2026.11.26-11",
   "date": "2026-11-26",
   "changes": [

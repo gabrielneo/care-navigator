@@ -473,9 +473,32 @@ Owner: "work on the above", plus choosing days for each service.
 
 Not done, and why:
 - ~~**"?" explainers**~~ **Done 26 Nov 2026:** "What's this?" beside means test, respite care and Functional Assessment Report on the plan, and beside "government-funded provider" on the cost screen. Each says what the official page says, with its source (`data/curated/glossary.yaml`, checked by the pipeline). **The 6 daily activities are left out:** AIC lists them only in a picture, and no source in the registry lists them in text.
-- **Shorter source titles:** a source-registry change.
+- ~~**Shorter source titles**~~ **Done 26 Nov 2026:** source lines show the short name, and the details in brackets stay in the tooltip and on Data sources. One "Report a problem" per figure is kept on purpose, so each report names its figure.
+
+### Sources and services (26 Nov 2026)
+- **Centre-based rehabilitation added back** as "Therapy at a centre", from AIC's Community Rehabilitation page (rule R14: a stroke or a broken hip).
+- **Dementia day care's high end** now cites MOH (ask.gov.sg).
+- **ElderFund** now cites AIC, with its income, MediSave and policy criteria.
+- **The 6 daily activities** are explained from CPF's page.
+- **The Merdeka note's source** no longer shows as "not referenced".
+- **Still aggregator-based:** the high ends for home personal care, medical escort, meals and respite. No official page gives one (see the source audit).
 - **One "Report a problem" per screen:** low value.
 - **A "Build her week directly" shortcut:** it would skip the answers that set her branch and subsidy.
+
+### Second UX audit, top 5 (27 Nov 2026)
+1. **Helper levy concession:** shown as a cost, "You pay a $60 monthly levy instead of $300". It no longer reads like a payment to her.
+2. **The "more fit your answers" label** counts every extra match that traces to her answers, so it matches the cards shown.
+3. **Share on WhatsApp and Print one page** also sit right under the plan's title.
+4. **"Her week: Day care (Mon–Fri) · …"** on the plan's cost summary, so the shared and printed plan keeps the chosen days.
+5. **Wording and layout:** "1 day a week" and "2 visits of 4 hours a week"; rehabilitation has its own unit ("a session", not "a session (a day)"); the day care transport tick box sits in the day care card; one help line on the week screen.
+
+Next tier, built 27 Nov 2026:
+- **Directions** on each place card. It opens Google Maps with the place's name and address; OneMap doesn't document a link format. It searches by address because some polyclinics sit at their area's centre on our list. Her postal code never goes in the link, and the Privacy page says so.
+- **No days chosen:** "No days chosen yet. Go back to her week to pick days.", with a button back to the week.
+- **Source lists over 3** show the first 2 and "and N more". Printed plans list them all.
+- **Below 360px** the day buttons show one letter each, and screen readers still hear the full day name. At 320px they're about 33px wide: seven in a row can't reach 44px, but they stay above WCAG AA's 24px.
+- **Shorter cards:** the Interim Caregiver description is now "A carer at home for up to 2 weeks after she leaves hospital". The Caregivers Training Grant no longer repeats its age rule.
+- **Place cards** now say "Address checked …" or "Address from government open data, updated …" instead of "record updated".
 
 ---
 

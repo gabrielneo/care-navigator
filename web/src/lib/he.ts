@@ -44,7 +44,7 @@ export const HE: Record<string, string> = {
  "Transport to medical appointments, with someone to go with her.": "Transport to medical appointments, with someone to go with him.",
  "Can you take her in a wheelchair?": "Can you take him in a wheelchair?",
  "Meals delivered to her home when she can't buy or prepare her own.": "Meals delivered to his home when he can't buy or prepare his own.",
- "A carer at home for up to 2 weeks after discharge. Only the ward's medical social worker can refer her, while she is in hospital.": "A carer at home for up to 2 weeks after discharge. Only the ward's medical social worker can refer him, while he is in hospital.",
+ "A carer at home for up to 2 weeks after she leaves hospital.": "A carer at home for up to 2 weeks after he leaves hospital.",
  "She's about to leave hospital. This help can only be requested while she's there, through the ward's medical social worker.": "He's about to leave hospital. This help can only be requested while he's there, through the ward's medical social worker.",
  "Staff trained in dementia care look after her during the day.": "Staff trained in dementia care look after him during the day.",
  "Someone is with her during the day, when she'd otherwise be alone.": "Someone is with him during the day, when he'd otherwise be alone.",
@@ -81,7 +81,6 @@ export const HE: Record<string, string> = {
  "An MOH-accredited assessor finds she can't do 3 of the 6 daily activities": "An MOH-accredited assessor finds he can't do 3 of the 6 daily activities",
  "A live-in migrant domestic worker at her address": "A live-in migrant domestic worker at his address",
  "She is a citizen aged 67 or over, or a doctor certifies she needs help with a daily activity": "He is a citizen aged 67 or over, or a doctor certifies he needs help with a daily activity",
- "$400, then $200 a year (up to $400 at a time) for approved courses. She must be 65 or older, or have a disability.": "$400, then $200 a year (up to $400 at a time) for approved courses. He must be 65 or older, or have a disability.",
  "She is a Singapore Citizen or PR aged 65 or over, or has a disability": "He is a Singapore Citizen or PR aged 65 or over, or has a disability",
  "if she is a Pioneer Generation member": "if he is a Pioneer Generation member",
  "About her": "About him",
@@ -102,5 +101,10 @@ export const HE: Record<string, string> = {
  "More about her (optional)": "More about him (optional)",
  "The means test sets her subsidy. It uses household income per person: everyone's gross monthly income, divided by the number of family members living together. With no household income, the home's Annual Value is used instead.": "The means test sets his subsidy. It uses household income per person: everyone's gross monthly income, divided by the number of family members living together. With no household income, the home's Annual Value is used instead.",
  "Respite is a short break from caregiving, while someone else cares for her. It can be at home, in a day centre, or in a nursing home. A nursing home stay is at least 7 days, and up to 30 days a year.": "Respite is a short break from caregiving, while someone else cares for him. It can be at home, in a day centre, or in a nursing home. A nursing home stay is at least 7 days, and up to 30 days a year.",
- "It shows how much help she needs with daily activities. A GP, or an approved doctor, nurse, physiotherapist or occupational therapist, does the assessment. There may be a fee.": "It shows how much help he needs with daily activities. A GP, or an approved doctor, nurse, physiotherapist or occupational therapist, does the assessment. There may be a fee."
+ "It shows how much help she needs with daily activities. A GP, or an approved doctor, nurse, physiotherapist or occupational therapist, does the assessment. There may be a fee.": "It shows how much help he needs with daily activities. A GP, or an approved doctor, nurse, physiotherapist or occupational therapist, does the assessment. There may be a fee.",
+ "Physiotherapy or speech therapy at a care centre, to help her move, speak or swallow again.": "Physiotherapy or speech therapy at a care centre, to help him move, speak or swallow again.",
+ "After a stroke or a broken bone, therapy at a centre helps her move, speak or swallow again.": "After a stroke or a broken bone, therapy at a centre helps him move, speak or swallow again.",
+ "Washing, dressing, feeding, using the toilet, moving around indoors, and moving between bed and chair. CareShield Life and ElderShield pay out when she can't do 3 or more of them.": "Washing, dressing, feeding, using the toilet, moving around indoors, and moving between bed and chair. CareShield Life and ElderShield pay out when he can't do 3 or more of them.",
+ "No days chosen yet. Go back to her week to pick days.": "No days chosen yet. Go back to his week to pick days.",
+ "Back to her week": "Back to his week"
 };

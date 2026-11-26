@@ -18,6 +18,7 @@ const CostScreen = lazy(() => loadScreens().then((m) => ({ default: m.CostScreen
 const ContactsScreen = lazy(() => loadScreens().then((m) => ({ default: m.ContactsScreen })));
 const Action = lazy(() => loadScreens().then((m) => ({ default: m.Action })));
 import { Check, Radio, Seg } from "./ui";
+import { Explain } from "./Sourced";
 
 const ALL: Step[] = [...QUESTIONS, "matches", "week", "cost", "contacts", "action"];
 const flow = (s: Session): Step[] => (s.w === "in_nursing_home" ? ["where", "cost", "action"] : ALL);
@@ -94,7 +95,7 @@ export function Planner() {
   const startNew = () => {
     if (window.confirm(t("Start a new plan? Your browser's Back button still brings you back to this one."))) go("where", { v: manifest.dataVersion, l: s.l });
   };
-  const screen = { s, update, next, restart: () => go("where"), startNew };
+  const screen = { s, update, next, restart: () => go("where"), startNew, toWeek: () => go("week") };
   return (
     <>
       <LangMenu value={s.l ?? "en"} onChange={(l) => loadLang(l).then(() => update({ l: l === "en" ? undefined : l }))} />
@@ -200,6 +201,7 @@ function Question({ step, s, update, next, back }: Q) {
       <fieldset {...required}>
         <legend><h1>{t("Which of these does she need help with?")}</h1></legend>
         <p className="help">{t('Pick all that apply. "Help" means someone has to assist or watch.')}</p>
+        <Explain id="daily_activities" />
         {err('Choose at least one, or "None of these" or "Not sure".')}
         <div className={s.adl && chosen.length === 0 ? "grid2 muted" : "grid2"}>
           {ADL.map(([k, label]) => <Check key={k} checked={chosen.includes(k)} onChange={(on) => toggle(k, on)}>{t(label)}</Check>)}

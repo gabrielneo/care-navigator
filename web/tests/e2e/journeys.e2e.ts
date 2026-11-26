@@ -32,7 +32,7 @@ test("Mei: mother in hospital after a fall", async ({ page }) => {
   await page.locator(".panel", { has: home }).getByRole("button", { name: "Clear" }).click();
   await home.getByRole("button", { name: "Tue" }).click();
   await home.getByRole("button", { name: "Thu" }).click();
-  await expect(page.locator(".panel", { has: home })).toContainText("Tue, Thu · 2 4-hour visits a week");
+  await expect(page.locator(".panel", { has: home })).toContainText("Tue, Thu · 2 visits of 4 hours a week");
   // Weekdays first: day care Mon–Fri, home care Tue and Thu, nothing pushed onto the weekend.
   const week = page.getByLabel("Her week");
   await expect(week.locator(".day", { hasText: "Tue" })).toContainText("Home care");
@@ -70,7 +70,7 @@ test("Mei: mother in hospital after a fall", async ({ page }) => {
   await expect(page.getByText(`${range(split.each)} each`)).toBeVisible();
 
   // The WhatsApp link carries this page's URL; opening it shows the same plan.
-  const wa = await page.getByRole("link", { name: "Share on WhatsApp" }).getAttribute("href");
+  const wa = await page.getByRole("link", { name: "Share on WhatsApp" }).first().getAttribute("href");
   const shared = decodeURIComponent(new URL(wa!).searchParams.get("text")!).replace("Mum's care plan: ", "");
   expect(shared).toBe(page.url());
   const got = decodeHash(new URL(shared).hash)!;

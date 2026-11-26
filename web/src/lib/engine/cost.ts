@@ -95,6 +95,7 @@ export interface PotentialGrant {
   grantId: string;
   name: string;
   amount: number;
+  kind: GrantRule["kind"];     // a concession lowers a cost (the helper levy); a grant or payout pays money
   period: GrantRule["period"];
   isMaximum: boolean;
   amountMeaning: string | null; // e.g. "$400 to start, then $200 a year, for approved caregiver courses."
@@ -138,7 +139,7 @@ export function potentialGrants(rules: RulesBundle, s: Session, adlCount: number
     if (!adlMet && g.altMinAge == null) return [];
     return [{
       grantId: g.grantId, name: g.name, amount, period: g.period, isMaximum: g.amountIsMaximum ?? false,
-      amountMeaning: g.amountMeaning ?? null, askIf: known ? null : g.askIf ?? null, criteria: g.criteria,
+      kind: g.kind, amountMeaning: g.amountMeaning ?? null, askIf: known ? null : g.askIf ?? null, criteria: g.criteria,
       needsAgeCheck: !adlMet, conditions: g.otherConditions, officialUrl: g.officialUrl, sourceId: g.sourceId,
     }];
   });

@@ -495,3 +495,13 @@ describe("days of the week (week builder)", () => {
     expect(() => encodeSession({ v: V, plan: [{ s: "day_care", n: 5, d: 0b11 }] } as Session)).toThrow();
   });
 });
+
+describe("centre-based rehabilitation (AIC Community Rehabilitation)", () => {
+  it("fits after a stroke or a broken hip, alongside therapy at home, and is priced from AIC and MOH", () => {
+    const all = (s: Session) => { const m = matchServices(rules, s); return [...m.matches, ...m.more].map((x) => x.serviceId); };
+    expect(all({ v: V, w: "changed_at_home", adl: ["move"], cond: ["stroke"] } as Session)).toEqual(expect.arrayContaining(["home_therapy", "community_rehab"]));
+    expect(all({ v: V, w: "changed_at_home", adl: ["move"], cond: ["fall"] } as Session)).not.toContain("community_rehab");
+    const p = rules.priceReferences.prices.find((x) => x.serviceId === "community_rehab")!;
+    expect([p.priceLowSgd, p.lowConfidence, p.priceHighSgd, p.highConfidence]).toEqual([55, "official", 102, "official"]);
+  });
+});

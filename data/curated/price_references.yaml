@@ -22,9 +22,9 @@ prices:
     low_source_id: aic_day_care
     low_confidence: official
     price_high_sgd: 73
-    high_source_id: agg_thebestsingapore
-    high_confidence: aggregator
-    derived: "High: $1,575 a month ÷ 21.7 weekdays."
+    high_source_id: moh_ask_scc_costs
+    high_confidence: official
+    derived: "High: MOH's $1,575 a month for weekday attendance ÷ 21.7 weekdays."
     checked_on: 2026-11-25
   - service_id: day_care_transport
     unit: month
@@ -62,6 +62,16 @@ prices:
     high_source_id: ntuc_fees
     high_confidence: provider
     checked_on: 2026-11-25
+  - service_id: community_rehab
+    unit: therapy_session
+    price_low_sgd: 55
+    low_source_id: aic_community_rehab
+    low_confidence: official
+    price_high_sgd: 102
+    high_source_id: moh_ask_scc_costs
+    high_confidence: official
+    derived: "High: MOH's top estimate for an active rehabilitation session ($70 to $102)."
+    checked_on: 2026-11-26
   - service_id: medical_escort
     unit: trip
     price_low_sgd: 40

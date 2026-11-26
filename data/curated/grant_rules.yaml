@@ -67,20 +67,22 @@ grants:
     criteria:
       - Singapore Citizen aged 30 or over
       - Needs full help with 3 or more daily activities
-      - Lower income and a low MediSave balance
+      - Household income of $1,500 or less a month per person
+      - MediSave balance under $10,000
+      - Not covered by CareShield Life or ElderShield
     other_conditions: >-
-      For lower-income Singapore Citizens who need full assistance with 3 or more of the 6 daily activities, with low MediSave balances.
-      Up to $250 a month; individual amounts can be lower.
-      The income and MediSave limits aren't encoded here, so confirm with AIC.
-    official_url: https://www.healthhub.sg/a-z/costs-and-financing/elderfund
+      For Singapore Citizens aged 30 or over who need full assistance with 3 or more of the 6 daily activities, with household
+      income of $1,500 or less a month per person and a MediSave balance under $10,000, who aren't CareShield Life or ElderShield
+      policyholders. Up to $250 a month. AIC considers others case by case.
+    official_url: https://www.aic.sg/Financial-Assistance/ElderFund
     effective_from: 2020-01-01
-    source_id: healthhub_elderfund
+    source_id: aic_elderfund
   - grant_id: levy_concession
     name: Helper levy concession
     kind: concession
     period: month
     amount_by_band: {T0: 60, T1: 60, T2: 60, T3: 60, T4: 60, T5: 60}
-    amount_meaning: Monthly levy payable with the concession (instead of $300).
+    amount_meaning: You pay a $60 monthly levy instead of $300.
     standard_levy_source_id: mom_levy
     min_adl: 1
     disability: some
@@ -98,7 +100,7 @@ grants:
     kind: grant
     period: once_then_yearly
     amount_by_band: {T0: 400, T1: 400, T2: 400, T3: 400, T4: 400, T5: 400}
-    amount_meaning: "$400, then $200 a year (up to $400 at a time) for approved courses. She must be 65 or older, or have a disability."
+    amount_meaning: "$400, then $200 a year (up to $400 at a time) for approved courses."
     min_adl: 0
     disability: some
     criteria:

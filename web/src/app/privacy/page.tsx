@@ -24,6 +24,8 @@ export default function Privacy() {
       <p><b>Saved for use without signal.</b> After you open a page, your phone keeps a copy of this site&apos;s own
         files, so a plan opens again without signal. Your answers aren&apos;t in that copy. Clearing this site&apos;s
         data in your browser removes it.</p>
+      <p><b>Directions.</b> &ldquo;Directions&rdquo; on a place opens Google Maps with that place&apos;s name and
+        address only. Nothing about her or your plan goes with it.</p>
       <p><b>If you email us.</b> &ldquo;Report a problem&rdquo; opens your own email app. The message names only the
         figure&apos;s sources and the data version. It doesn&apos;t include your answers or your plan&apos;s link. If
         you send it, we see your email address and anything you add. We use it only to reply and fix the problem, and

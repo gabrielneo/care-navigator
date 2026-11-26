@@ -125,9 +125,19 @@ Each step in `data/curated/next_steps.yaml` cites a page already checked above. 
 | Functional Assessment Report | "assesses a person's need for assistance with the activities of daily living"; done by a GP or a registered doctor, nurse, physiotherapist or occupational therapist; "You will need to pay the assessment fee, if any" | AIC Home Caregiving Grant |
 | The 6 daily activities | **Not explained:** the AIC page shows them only in an image | — |
 
+## Sources rechecked and added (26 Nov 2026)
+
+| Claim | Verdict | Source | Action |
+|---|---|---|---|
+| Dementia day care costs $1,260 to $1,575 a month before subsidy, for weekdays, excluding transport | Supported (MOH answer, "updated 2y ago") | MOH on ask.gov.sg | The high end ($73 a session = $1,575 ÷ 21.7) now cites MOH instead of an aggregator |
+| Community Rehabilitation: physiotherapy and speech therapy at a centre, for recovery after "stroke, heart conditions, or fractures"; from $55 (active) and $56 (maintenance) a session; apply through the doctor or therapist at the hospital or polyclinic, or an AIC Link | Supported | AIC Community Rehabilitation | **Added back** as "Therapy at a centre" (rule R14: stroke or broken hip). The high end, $102, is MOH's top active-rehabilitation estimate ($70 to $102) |
+| ElderFund: up to $250 a month; Citizen aged 30+; full help with 3 of 6 activities; household income $1,500 or less per person; MediSave under $10,000; not a CareShield Life or ElderShield policyholder | Supported | AIC ElderFund | The grant now cites AIC (HealthHub's old page moved) and shows the income, MediSave and policy criteria |
+| The 6 daily activities: washing, dressing, feeding, toileting, moving or walking around, transferring | Supported, with CPF's definitions | CPF CareShield Life/ElderShield claims FAQ | "What's this?" on the activities question and the severe-disability step |
+| Meals on Wheels "starts from $4" | Supported (our low end) | AIC Meals on Wheels | No change |
+| NHG Polyclinics page | Loads in a browser; the weekly check gets HTTP 429 (rate-limited as a bot) | NHG | No change; 429 never fails the run |
+
 ## Still open
 
-- **Centre-based rehabilitation** was removed. If AIC publishes a page for it, add it back with that page as the source.
-- **Aggregator prices** still set the upper end of the range for dementia day care, home personal care, medical escort, meals and respite (pipeline warnings).
+- **Aggregator prices** still set the upper end of the range for home personal care, medical escort, meals and respite (pipeline warnings). Checked 26 Nov 2026: no official or provider page gives a comparable top figure. AIC's meals page gives only "from $4", HealthHub's respite page gives no rate, and providers publish conflicting or no rates for home personal care and medical escort.
 - **Documents to bring** are our judgement.
 - Older official pages disagree on the Home Caregiving Grant: MOM's page still says up to $400, and NTUC's page is internally inconsistent. We follow AIC's page.

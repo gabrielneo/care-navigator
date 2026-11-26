@@ -19,6 +19,7 @@ ANSWER_VALUES = {
     "limits": {"ok", "tired", "cant", "unsure"},
 }
 MIN_SECTORS = 70
+CITED_BY_SCREENS = {"moh_mg"}           # keep in step with web/src/components/planner/Screens.tsx
 REGIONS = {"central", "north", "northeast", "east", "west"}
 
 
@@ -172,7 +173,8 @@ def warnings(c: Curated, places: list[Place], sector_count: int, today: date,
         out.append(f"{len(stale)} open-data places were last edited over 24 months ago")
     if sector_count < MIN_SECTORS:
         out.append(f"only {sector_count} postal sectors have a centre (expected at least {MIN_SECTORS}); others use the region picker")
-    used = {sid for _, sid in _source_refs(c.model_dump(exclude={"source_registry"}))}
+    # Sources the screens cite directly rather than through a table (the Merdeka Generation note on the cost screen).
+    used = {sid for _, sid in _source_refs(c.model_dump(exclude={"source_registry"}))} | CITED_BY_SCREENS
     for s in c.source_registry.sources:
         if s.source_id not in used:
             out.append(f"source {s.source_id} is not referenced by any table")

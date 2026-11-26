@@ -12,7 +12,7 @@ steps:
     label: Apply for her services
     text: Ask her doctor at the hospital or polyclinic to apply for the services in her plan. An AIC Link can also help you apply.
     unlocks: Her services can start.
-    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, medical_escort, meals_on_wheels]
+    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, community_rehab, medical_escort, meals_on_wheels]
     source_id: aic_day_care
   - step_id: palliative_referral
     timing: week
@@ -27,7 +27,7 @@ steps:
     label: Means test
     text: Have a rough idea of the monthly income of everyone living at her NRIC address.
     unlocks: The means test, which sets her subsidy.
-    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, medical_escort, meals_on_wheels, respite]
+    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, community_rehab, medical_escort, meals_on_wheels, respite]
     source_id: aic_hcg
   - step_id: respite_referral
     timing: week
@@ -50,7 +50,7 @@ steps:
     label: If the bill is still too much
     text: Still can't pay after subsidies? Ask the medical social worker at the hospital or care provider about MediFund.
     unlocks: Help for Singapore Citizens on subsidised care with what's left of the bill, at approved care providers.
-    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, medical_escort, meals_on_wheels, respite]
+    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, community_rehab, medical_escort, meals_on_wheels, respite]
     source_id: moh_medifund
   - step_id: far
     timing: week

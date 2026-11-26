@@ -71,7 +71,7 @@ const LIMITS: Record<string, string> = { ok: "You're managing", tired: "You need
 const REGION: Record<string, string> = { central: "Central", north: "North", northeast: "North-East", east: "East", west: "West" };
 const SHORT: Record<string, string> = {
   day_care: "Day care", dementia_day_care: "Dementia day care", home_personal_care: "Home care", home_nursing: "Nurse visits",
-  home_therapy: "Therapy", medical_escort: "Escort", meals_on_wheels: "Meals", respite: "Respite",
+  home_therapy: "Therapy", community_rehab: "Centre therapy", medical_escort: "Escort", meals_on_wheels: "Meals", respite: "Respite",
 };
 
 /** "Because you said…": her own answers behind a match, worded like the chips. Clauses about the hospital stage

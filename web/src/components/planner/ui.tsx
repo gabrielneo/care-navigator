@@ -51,12 +51,19 @@ export function Tilt({ className = "", children }: { className?: string; childre
 
 /** "a session (a day)", "an hour" … for "From $55 a session (a day) before subsidy". */
 export const UNIT_ONE: Record<string, string> = {
+  therapy_session: "a session",
   session: "a session (a day)", hour: "an hour", visit: "a visit", trip: "a trip", meal: "a meal", day: "a day", month: "a month",
 };
 /** "days a week" … for the week screen's steppers. */
 export const UNIT_WEEK: Record<string, string> = {
+  therapy_session: "sessions a week",
   session: "days a week", hour: "4-hour visits a week", visit: "visits a week", trip: "trips a week",
   meal: "meals a week", day: "days a week",
+};
+/** The same, for one a week. */
+export const UNIT_WEEK_ONE: Record<string, string> = {
+  therapy_session: "1 session a week", session: "1 day a week", visit: "1 visit a week", trip: "1 trip a week",
+  meal: "1 meal a week", day: "1 day a week",
 };
 /** Price badges for services without a published price (spec 08). */
 export const NO_PRICE: Record<string, string> = {

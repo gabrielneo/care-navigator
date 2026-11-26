@@ -2,7 +2,6 @@
 // Screens 3–7. Wording: docs/specs/08; behaviour and edge cases: docs/specs/06 and 09; layouts: docs/wireframes.
 import { useEffect, useRef, useState } from "react";
 import { dataDate, longDate, manifest, rules, source } from "@/lib/data";
-import { mailto } from "@/lib/report";
 import { useGeo } from "@/lib/data/geo";
 import { costPlan, nursingHome, potentialGrants, planEntries, severeOnlyHidden, type Range } from "@/lib/engine/cost";
 import { matchServices } from "@/lib/engine/matching";
@@ -11,13 +10,15 @@ import type { Session } from "@/lib/engine/urlCodec";
 import { nearbyContacts } from "@/lib/geo/nearby";
 import { pointForSession, type Region } from "@/lib/geo/postal";
 import { becauseOf, Handover, TIER_LABEL, WHO } from "./Journey";
+import { Explain, Sources, termForStep } from "./Sourced";
 import { nextSteps, TIMINGS, type PlanStep, type Timing } from "@/lib/engine/steps";
 import { reminders, remindersIcs } from "@/lib/engine/reminders";
 import { getLang, list as join, t } from "@/lib/i18n";
-import { CountRange, money, NO_PRICE, range, Radio, Seg, Stepper, tilt, UNIT_ONE, UNIT_WEEK } from "./ui";
+import { CountRange, money, NO_PRICE, range, Radio, Seg, Stepper, tilt, UNIT_ONE, UNIT_WEEK, UNIT_WEEK_ONE } from "./ui";
 import { DAY_KEYS, daysOf, daysText, entryFor, startingDays } from "@/lib/engine/days";
 
-type P = { s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void; restart: () => void; startNew: () => void };
+type P = { s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void; restart: () => void; startNew: () => void;
+  toWeek: () => void };
 const services = new Map(rules.serviceTypes.map((x) => [x.serviceId, x]));
 const prices = new Map(rules.priceReferences.prices.map((p) => [p.serviceId, p]));
 const svcName = (id: string) => t(services.get(id)?.name ?? id);
@@ -31,30 +32,6 @@ function priceBadge(id: string): string {
   return t(about === "From" ? "From {amount} {unit} before subsidy" : "About {amount} {unit} before subsidy", { amount, unit: t(UNIT_ONE[svc.unit] ?? "") });
 }
 
-/** 9.7: a prefilled email saying which figure looks wrong. It carries only the sources and the data version, never her
- *  answers, postal code or the plan's link. */
-const reportHref = (srcs: { sourceId: string; url: string }[]) => mailto(
-  `Figure may be wrong: ${srcs.map((x) => x.sourceId).join(", ")}`,
-  `Data version: ${manifest.dataVersion}\nSources:\n${srcs.map((x) => `- ${x.url}`).join("\n")}\n\nWhat looks wrong, and where did you see the right figure?\n`,
-);
-
-/** "What's this?" beside a term: what the official page says it means, in plain words, with its source. The terms
- *  and their sources are in data/curated/glossary.yaml. */
-const glossary = new Map(rules.glossary.map((g) => [g.termId, g]));
-const termForStep = new Map(rules.glossary.flatMap((g) => (g.steps ?? []).map((st) => [st, g.termId] as const)));
-function Explain({ id }: { id: string }) {
-  const [open, setOpen] = useState(false);
-  const g = glossary.get(id);
-  if (!g) return null;
-  return (
-    <div className="explain no-print">
-      <button type="button" className="link" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <span className="q" aria-hidden="true">?</span>{t("What's this?")}<span className="sr-only"> {t(g.term)}</span>
-      </button>
-      {open && <div className="explain-text"><p>{t(g.text)}</p><Sources ids={[g.sourceId]} /></div>}
-    </div>
-  );
-}
 
 /** In-page links ("On this page", the total bar) scroll to their section without touching the address: the plan
  *  lives in the # part of the link, so a plain #total would replace it. */
@@ -87,16 +64,6 @@ function TotalPeek({ r, subsidised }: { r: Range; subsidised: boolean }) {
   );
 }
 
-/** "Sources: <title>, checked 25 Nov 2026" under any figure, so every number shows where it's from and when. */
-function Sources({ ids }: { ids: (string | null | undefined)[] }) {
-  const list = [...new Set(ids)].flatMap((id) => { const src = id ? source(id) : undefined; return src ? [src] : []; });
-  if (!list.length) return null;
-  return (
-    <p className="note sources">{list.length > 1 ? t("Sources") : t("Source")}: {list.map((src, i) => (
-      <span key={src.sourceId}>{i ? "; " : ""}<a href={src.url}>{src.title}</a>{t(", checked {date}", { date: longDate(src.checkedOn) })}</span>
-    ))}<span className="no-print"> · <a href={reportHref(list)}>{t("Report a problem")}</a></span></p>
-  );
-}
 
 /** The sources behind the numbers a price badge shows: a "From" badge shows only the low figure. */
 const priceSources = (id: string) => {
@@ -108,8 +75,10 @@ const priceSources = (id: string) => {
 export function Matches({ s, update, next, restart }: P) {
   const m = matchServices(rules, s);
   const because = (x: (typeof m.matches)[number]) => becauseOf(x.when, s);
-  // Matches beyond the top 3 that come from something she ticked herself (a health event, medical care) open by default.
+  // Matches beyond the top 3 that come from something she ticked herself (a health event, medical care) open by default;
+  // the label counts every one that traces back to her answers, so it matches the cards shown.
   const fromTicks = m.more.filter((x) => x.when.some((c) => c.q === "cond" || c.q === "med"));
+  const fromAnswers = m.more.filter((x) => because(x).length > 0);
   const card = (x: (typeof m.matches)[number]) => {
     const svc = services.get(x.serviceId)!;
     return (
@@ -152,7 +121,8 @@ export function Matches({ s, update, next, restart }: P) {
       {m.matches.map(card)}
       {m.more.length > 0 && (
         <details className="panel" open={fromTicks.length > 0}>
-          <summary>{fromTicks.length === 1 ? t("1 more fits your answers") : fromTicks.length ? t("{n} more fit your answers", { n: fromTicks.length })
+          <summary>{fromAnswers.length === 1 && m.more.length === 1 ? t("1 more fits your answers")
+            : fromAnswers.length === m.more.length ? t("{n} more fit your answers", { n: m.more.length })
             : t("More that may help")}</summary>
           {m.more.map(card)}
         </details>
@@ -163,6 +133,14 @@ export function Matches({ s, update, next, restart }: P) {
 }
 
 // ---------- 4 · Week ----------
+/** One letter for a day on narrow phones: the last character in Chinese (周一 → 一), else the first letter as people
+ *  read it (Tamil vowel signs stay with their letter). */
+function dayLetter(day: string) {
+  if (getLang() === "zh") return day.slice(-1);
+  const seg = typeof Intl !== "undefined" && "Segmenter" in Intl ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : null;
+  return seg ? [...seg.segment(day)][0]?.segment ?? day : [...day][0] ?? day;
+}
+
 /** Seven day buttons for one service. Press and drag across them (a swipe on a phone) to add a run of days, or start
  *  on a chosen day to clear a run; a tap, Space or Enter turns one day on or off. */
 function DayStrip({ days, onChange, name }: { days: number[]; onChange: (days: number[]) => void; name: string }) {
@@ -200,7 +178,7 @@ function DayStrip({ days, onChange, name }: { days: number[]; onChange: (days: n
         <button type="button" key={k} data-day={i} aria-pressed={shown.includes(i)}
           // Keyboard presses arrive as clicks with detail 0; pointer presses were already handled above.
           onClick={(e) => { if (e.detail === 0) onChange(days.includes(i) ? days.filter((x) => x !== i) : [...days, i].sort()); }}>
-          {t(k)}
+          <span className="d-full">{t(k)}</span><span className="d-letter" aria-hidden="true">{dayLetter(t(k))}</span>
         </button>
       ))}
     </div>
@@ -219,7 +197,8 @@ export function Week({ s, update, next }: P) {
   const set = (id: string, n: number) => setDays(id, startingDays(n));
   const addable = rules.serviceTypes.filter((x) => prices.has(x.serviceId) && x.unit !== "month" && x.serviceId !== "nursing_home"
     && !plan.some((e) => e.s === x.serviceId));
-  const hasDayCare = plan.some((e) => e.s === "day_care" || e.s === "dementia_day_care");
+  // Transport sits in the first day care card it belongs to.
+  const firstDayCare = plan.find((e) => e.s === "day_care" || e.s === "dementia_day_care")?.s;
   const transportOn = (s.plan ?? []).find((e) => e.s === "day_care_transport")?.n !== 0;
   const respiteMatched = matchServices(rules, s).matches.some((m) => m.serviceId === "respite");
 
@@ -241,8 +220,7 @@ export function Week({ s, update, next }: P) {
   return (
     <>
       <h1>{t("Build her week")}</h1>
-      <p className="help">{t("We've filled in a starting point. It's our assumption, so change it to fit.")}</p>
-      <p className="help">{t("Drag across the days, or tap them, to choose when each service comes.")}</p>
+      <p className="help">{t("This is our starting point. Drag across the days, or tap them, to change when each service comes.")}</p>
       {plan.map((e) => {
         const svc = services.get(e.s)!;
         const on = daysOf(e);
@@ -256,7 +234,7 @@ export function Week({ s, update, next }: P) {
             </div>
             <DayStrip days={on} onChange={(d) => setDays(e.s, d)} name={t(svc.name)} />
             <p className="meta" aria-live="polite">
-              {on.length ? `${daysText(on, t, join)} · ${on.length} ${t(UNIT_WEEK[svc.unit ?? ""] ?? "a week")}` : t("No days chosen, so it isn't costed.")}
+              {on.length ? `${daysText(on, t, join)} · ${perWeek(svc.unit, on.length, svc.blockHours)}` : t("No days chosen, so it isn't costed.")}
               {weekend ? t(" · most centres open weekdays; check weekend care when you call") : ""}
             </p>
             <div className="presets">
@@ -264,16 +242,16 @@ export function Week({ s, update, next }: P) {
               <button type="button" className="link" onClick={() => setDays(e.s, [0, 1, 2, 3, 4, 5, 6])}>{t("Every day")}</button>
               <button type="button" className="link" onClick={() => setDays(e.s, [])}>{t("Clear")}</button>
             </div>
+            {e.s === firstDayCare && (
+              <label className="opt">
+                <input type="checkbox" checked={transportOn}
+                  onChange={(ev) => update({ plan: [...plan, ...(ev.target.checked ? [] : [{ s: "day_care_transport", n: 0 }])] })} />
+                <span>{t("Include transport to and from day care")}</span>
+              </label>
+            )}
           </div>
         );
       })}
-      {hasDayCare && (
-        <label className="opt">
-          <input type="checkbox" checked={transportOn}
-            onChange={(ev) => update({ plan: [...plan, ...(ev.target.checked ? [] : [{ s: "day_care_transport", n: 0 }])] })} />
-          <span>{t("Include transport to and from day care")}</span>
-        </label>
-      )}
       <div className="panel" style={{ gap: 0 }} aria-label={t("Her week")}>
         {DAY_KEYS.map((day, i) => (
           <div className="day" key={day}><b>{t(day)}</b>
@@ -289,9 +267,14 @@ export function Week({ s, update, next }: P) {
     </>
   );
 }
+/** "1 day a week", "5 days a week", "2 visits of 4 hours a week". */
+function perWeek(unit: string | null | undefined, n: number, hours?: number | null) {
+  if (unit === "hour") return t(n === 1 ? "{n} visit of {h} hours a week" : "{n} visits of {h} hours a week", { n, h: hours ?? 4 });
+  return n === 1 ? t(UNIT_WEEK_ONE[unit ?? ""] ?? "1 a week") : `${n} ${t(UNIT_WEEK[unit ?? ""] ?? "a week")}`;
+}
 function shortName(id: string) {
   const n = ({ day_care: "Day care", dementia_day_care: "Dementia day care", home_personal_care: "Home care", home_nursing: "Nurse",
-    home_therapy: "Therapy", medical_escort: "Escort", meals_on_wheels: "Meals", respite: "Respite" } as Record<string, string | undefined>)[id];
+    home_therapy: "Therapy", community_rehab: "Centre therapy", medical_escort: "Escort", meals_on_wheels: "Meals", respite: "Respite" } as Record<string, string | undefined>)[id];
   return n ? t(n) : svcName(id);
 }
 function AddService({ options, onAdd }: { options: typeof rules.serviceTypes; onAdd: (id: string) => void }) {
@@ -313,7 +296,7 @@ function AddService({ options, onAdd }: { options: typeof rules.serviceTypes; on
 }
 
 // ---------- 5 · Cost ----------
-export function CostScreen({ s, update, next }: P) {
+export function CostScreen({ s, update, next, toWeek }: P) {
   const nursing = s.w === "in_nursing_home";
   const c = costPlan(rules, s);
   const m = matchServices(rules, s);
@@ -387,7 +370,10 @@ export function CostScreen({ s, update, next }: P) {
       )}
       {!nursing && c.total && <TotalPeek r={c.total.withSubsidy && !c.total.sameAsFullPrice ? c.total.withSubsidy : c.total.fullPrice}
         subsidised={!!c.total.withSubsidy && !c.total.sameAsFullPrice} />}
-      {!nursing && !c.total && <p className="help">{t("Her plan is empty, so there's nothing to cost yet.")}</p>}
+      {!nursing && !c.total && (s.plan ?? []).some((e) => e.d === 0)
+        ? <><p className="help">{t("No days chosen yet. Go back to her week to pick days.")}</p>
+            <button type="button" className="btn sec" onClick={toWeek}>{t("Back to her week")}</button></>
+        : !nursing && !c.total && <p className="help">{t("Her plan is empty, so there's nothing to cost yet.")}</p>}
 
       {!nursing && c.lines.length > 0 && (
         <details className="panel lines" id="each" tabIndex={-1}>
@@ -395,9 +381,7 @@ export function CostScreen({ s, update, next }: P) {
           {c.lines.map((l) => {
           const svc = services.get(l.serviceId)!;
           const entry = planEntries(s).find((e) => e.s === l.serviceId);
-          const freq = svc.unit === "month" ? ""
-            : svc.unit === "hour" ? t(entry?.n === 1 ? " · {n} visit of {h} hours a week" : " · {n} visits of {h} hours a week", { n: entry?.n ?? 0, h: svc.blockHours ?? 4 })
-            : ` · ${entry?.n} ${t(UNIT_WEEK[svc.unit ?? ""] ?? "")}`;
+          const freq = svc.unit === "month" ? "" : ` · ${perWeek(svc.unit, entry?.n ?? 0, svc.blockHours)}`;
           const own = s.plan?.find((e) => e.s === l.serviceId);
           const when = own && svc.unit !== "month" ? ` (${daysText(daysOf(own), t, join)})` : "";
           return (
@@ -438,7 +422,7 @@ export function CostScreen({ s, update, next }: P) {
         {grants.length ? (
           <ul className="plain">
             {grants.map((g) => (
-              <li key={g.grantId}><b>{t(g.name)}</b>: {g.period === "once_then_yearly" && g.amountMeaning ? t(g.amountMeaning).replace(/\.$/, "")
+              <li key={g.grantId}><b>{t(g.name)}</b>: {(g.period === "once_then_yearly" || g.kind === "concession") && g.amountMeaning ? t(g.amountMeaning).replace(/\.$/, "")
                 : <>{t(g.isMaximum ? "up to {amount}" : "{amount}", { amount: money(g.amount) })}{g.period === "month" ? t(" a month") : ""}</>}
                 {g.needsAgeCheck ? t(" (if she is 67 or older)") : ""}{g.askIf ? ` (${t(g.askIf)})` : ""}.
                 <ul className="criteria">{g.criteria.map((c) => <li key={c}>{t(c)}</li>)}</ul>
@@ -593,7 +577,15 @@ export function ContactsScreen({ s, update, next }: P) {
           {i.kind === "ward_msw" && <p>{t("Ask before she's discharged. Some help can only be requested through them.")}</p>}
           {i.address && <p className="meta">{[dist(i.km, i.precision), i.address].filter(Boolean).join(" · ")}</p>}
           {i.hours && <p className="meta">{i.hours}</p>}
-          {(i.checkedOn || i.updatedOn) && <p className="meta">{i.checkedOn ? t("checked {date}", { date: longDate(i.checkedOn) }) : t("record updated {date}", { date: longDate(i.updatedOn!) })}</p>}
+          {(i.checkedOn || i.updatedOn) && <p className="meta">{i.checkedOn ? t("Address checked {date}", { date: longDate(i.checkedOn) })
+            : t("Address from government open data, updated {date}", { date: longDate(i.updatedOn!) })}</p>}
+          {/* The place's own name and address, never her postal code. Some polyclinics sit at their area's centre on
+              our list, so the search uses the address rather than coordinates. */}
+          {i.address && (
+            <a className="link no-print" rel="noopener"
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${i.name}, ${i.address}, Singapore`)}`}>
+              {t("Directions")}<span className="sr-only"> {i.name}</span></a>
+          )}
         </div>
       ))}
       <div className="contact">
@@ -624,6 +616,10 @@ export function Action({ s, update, restart, startNew }: Pick<P, "s" | "update" 
   const who = /^[A-Z][a-z]/.test(whoRaw) ? whoRaw.charAt(0).toLowerCase() + whoRaw.slice(1) : whoRaw;
   const callText = m.branchId === "in_hospital" && !s.d ? t("Call {who}, before she's discharged.", { who }) : t("Call {who}.", { who });
   const share = typeof window !== "undefined" ? window.location.href : "";
+  const whatsapp = `https://wa.me/?text=${encodeURIComponent(t("{title}: {link}", { title: t(WHO[s.who ?? "mum"].plan), link: share }))}`;
+  // The days chosen in the week builder, so the shared and printed plan keeps the schedule.
+  const week = (s.plan ?? []).filter((e) => e.n > 0 && services.get(e.s)?.unit !== "month")
+    .map((e) => t("{name} ({days})", { name: shortName(e.s), days: daysText(daysOf(e), t, join) }));
   const discharge = m.branch.links?.map((l) => source(l.sourceId) && { ...l, url: source(l.sourceId)!.url }).filter(Boolean) ?? [];
   const steps = nextSteps(rules, s);
   const done = s.done ?? [];
@@ -695,6 +691,11 @@ export function Action({ s, update, restart, startNew }: Pick<P, "s" | "update" 
       </div>
       <p className="ready no-print"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M7 12.5l3.2 3.2L17 9" /></svg>{t("Your plan is ready")}</p>
       <h1>{t(WHO[s.who ?? "mum"].plan)}</h1>
+      {/* The two things most people do next, within reach before the long plan; the full set is at the bottom too. */}
+      <div className="row quick-share no-print">
+        <a className="btn" href={whatsapp}>{t("Share on WhatsApp")}</a>
+        <button type="button" className="btn sec" onClick={() => printAs("print-compact")}>{t("Print one page")}</button>
+      </div>
       <p className="print-only meta">{today} · Care Navigator</p>
       {stepSection("next-steps", t("Your next steps"), steps.filter((st) => st.group === "plan"), true)}
       {stepSection("for-you", t("For you"), steps.filter((st) => st.group === "carer"), false,
@@ -729,6 +730,7 @@ export function Action({ s, update, restart, startNew }: Pick<P, "s" | "update" 
       {c.total && (
         <div className="panel">
           <h3>{t("Estimated monthly cost")}</h3>
+          {week.length > 0 && <p className="meta"><b>{t("Her week")}:</b> {week.join(" · ")}</p>}
           <p style={{ fontVariantNumeric: "tabular-nums" }}>
             {c.total.withSubsidy ? <>{t("{amount} with subsidy", { amount: range(c.total.withSubsidy) })}<br /></> : null}
             <span className="meta">{t("{amount} at full price", { amount: range(c.total.fullPrice) })}</span>
@@ -757,7 +759,7 @@ export function Action({ s, update, restart, startNew }: Pick<P, "s" | "update" 
         <Handover s={s} />
         <button type="button" className="btn sec no-print" onClick={() => printAs("print-handover")}>{t("Print this summary")}</button>
       </details>
-      <a className="btn no-print" href={`https://wa.me/?text=${encodeURIComponent(t("{title}: {link}", { title: t(WHO[s.who ?? "mum"].plan), link: share }))}`}>{t("Share on WhatsApp")}</a>
+      <a className="btn no-print" href={whatsapp}>{t("Share on WhatsApp")}</a>
       <div className="row no-print">
         <button type="button" className="btn sec" onClick={() => printAs("print-compact")}>{t("Print one page")}</button>
         <button type="button" className="btn sec" onClick={() => window.print()}>{t("Print full plan")}</button>

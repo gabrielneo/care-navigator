@@ -51,6 +51,19 @@ fieldset > .errtxt:empty { margin-block-start: -12px; }
 .or { display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: var(--fs-small); }
 .or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--border-subtle); }
 .alt .opt { border-style: dashed; }
+/* Long source lists: the first 2 show, the rest open on tap; printed plans list them all. */
+.sources.folded .src-more { display: none; }
+.sources .src-toggle { display: inline; min-height: 24px; font-size: inherit; }
+@media print { .sources.folded .src-more { display: inline; } .sources .src-toggle { display: none; } }
+/* Day buttons: one letter each on phones narrower than 360 px; the full day name stays for screen readers. */
+.daystrip .d-letter { display: none; }
+@media (max-width: 359px) {
+  .panel:has(> .daystrip) { padding-left: 10px; padding-right: 10px; }
+  .daystrip { gap: 2px; }
+  .daystrip .d-full { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .daystrip .d-letter { display: inline; }
+}
+.quick-share > * { flex: 1; }
 /* "What's this?" explanations, opened in place. */
 .explain .link { min-height: 32px; gap: 6px; font-size: var(--fs-small); }
 .explain .q { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid currentColor;

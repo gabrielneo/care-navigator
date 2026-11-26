@@ -1,7 +1,7 @@
 {
- "dataVersion": "2026.11.26-11",
- "builtAt": "2026-11-26T15:47:33+00:00",
- "curatedHash": "0848961788cce9ba6f3a99f2783278fc80377dc82ff6b9d00b669ed974c8e46b",
+ "dataVersion": "2026.11.27-2",
+ "builtAt": "2026-11-26T17:26:14+00:00",
+ "curatedHash": "9d5dee0bb1948fef20e933a154bb59e799a9926a42d3c3eedd7ea1f3c3d9fe05",
  "sources": [
   {
    "sourceId": "moh_nonres_subsidy",
@@ -130,14 +130,6 @@
    "licence": "site-terms",
    "checkedOn": "2026-11-26",
    "nextReview": "2027-01-31"
-  },
-  {
-   "sourceId": "healthhub_elderfund",
-   "title": "ElderFund (up to $250 a month)",
-   "url": "https://www.healthhub.sg/a-z/costs-and-financing/elderfund",
-   "licence": "site-terms",
-   "checkedOn": "2026-11-26",
-   "nextReview": "2027-02-28"
   },
   {
    "sourceId": "mom_levy",
@@ -370,30 +362,57 @@
    "licence": "site-terms",
    "checkedOn": "2026-11-26",
    "nextReview": "2027-05-31"
+  },
+  {
+   "sourceId": "aic_elderfund",
+   "title": "AIC ElderFund (up to $250 a month; income $1,500 or less per person; MediSave under $10,000)",
+   "url": "https://www.aic.sg/Financial-Assistance/ElderFund",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-05-31"
+  },
+  {
+   "sourceId": "moh_ask_scc_costs",
+   "title": "MOH on ask.gov.sg: estimated costs at Senior Care Centres (dementia day care, rehabilitation)",
+   "url": "https://ask.gov.sg/moh/questions/cm2sgceyz006n46yze4zp4lia",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_community_rehab",
+   "title": "AIC Community Rehabilitation (from $55 a session; apply through the doctor or therapist)",
+   "url": "https://www.aic.sg/care-services/community-rehabilitation",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-05-31"
+  },
+  {
+   "sourceId": "cpf_adl",
+   "title": "CPF: the six Activities of Daily Living (CareShield Life and ElderShield claims)",
+   "url": "https://www.cpf.gov.sg/service/article/when-am-i-eligible-to-make-a-careshield-life-eldershield-claim",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-05-31"
   }
  ],
  "files": {
-  "rules.json": "25f560cdd8216bc6c476d7ad1df4808723509a6222b02bb06b74df3634d36658",
+  "rules.json": "5f59a09a6c0c097d925344bd95c83ae1b75e4c5735831f9cf30d9627302265f4",
   "contacts.json": "44edb74ca6d3d816693ff23e69ef97144f57e1720cb7936de8df95eded769d35",
   "places.json": "2d789de5cf2255d2eb275285efcb3108b51b6e0191bd9dde0b38014203bed8d0",
   "sectors.json": "27500e57c4319c56b96939968ad183e2ef538af68b47351893fe6b4b99a207c3"
  },
  "sizes": {
-  "rules.json": 8405,
+  "rules.json": 8736,
   "contacts.json": 2122,
   "places.json": 6343,
   "sectors.json": 965
  },
  "warnings": [
-  "price dementia_day_care (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price home_personal_care (high) comes from an aggregator (agg_misslobang); check the provider's page",
   "price medical_escort (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price meals_on_wheels (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price respite (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
-  "78 open-data places were last edited over 24 months ago",
-  "source moh_mg is not referenced by any table",
-  "official page did not return HTTP 200 after retries: https://www.msf.gov.sg/what-we-do/comcare",
-  "official page did not return HTTP 200 after retries: https://www.msf.gov.sg/what-we-do/opg/lasting-power-of-attorney",
-  "official page did not return HTTP 200 after retries: https://www.nhghealth.com.sg/nhg-polyclinics"
+  "78 open-data places were last edited over 24 months ago"
  ]
 }

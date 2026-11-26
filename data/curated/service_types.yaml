@@ -84,6 +84,19 @@ services:
       - "What will we pay after the subsidy for each visit?"
       - "Which therapy will she get: physio, occupational or speech?"
     source_id: aic_home_therapy
+  - service_id: community_rehab
+    name: Therapy at a centre
+    official_term: Community Rehabilitation
+    description: Physiotherapy or speech therapy at a care centre, to help her move, speak or swallow again.
+    setting: centre
+    scheme: non_residential
+    unit: therapy_session
+    default_units_per_week: 1
+    how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What will we pay after the subsidy for each session?"
+      - "Is transport to and from the centre available, and what does it cost?"
+    source_id: aic_community_rehab
   - service_id: medical_escort
     name: Escort to appointments
     official_term: Medical Escort and Transport
@@ -137,7 +150,7 @@ services:
   - service_id: interim_caregiver_service
     name: Short-term carer after discharge
     official_term: Interim Caregiver Service
-    description: A carer at home for up to 2 weeks after discharge. Only the ward's medical social worker can refer her, while she is in hospital.
+    description: A carer at home for up to 2 weeks after she leaves hospital.
     setting: ward
     scheme: null
     unit: null

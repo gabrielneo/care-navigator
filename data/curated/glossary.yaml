@@ -1,7 +1,5 @@
 # Plain explanations behind the "?" buttons (UX audit, 26 Nov 2026). Each says what the official page says, in plain
 # words, and cites it. steps: the next steps whose label the explanation sits beside.
-# Not here yet: the 6 daily activities. AIC's Home Caregiving Grant page lists them only in a picture, and no source in
-# the registry lists them in text.
 terms:
   - term_id: means_test
     term: Means test
@@ -29,3 +27,10 @@ terms:
       occupational therapist, does the assessment. There may be a fee.
     steps: [far]
     source_id: aic_hcg
+  - term_id: daily_activities
+    term: The 6 daily activities
+    text: >-
+      Washing, dressing, feeding, using the toilet, moving around indoors, and moving between bed and chair. CareShield
+      Life and ElderShield pay out when she can't do 3 or more of them.
+    steps: [severe_assessment]
+    source_id: cpf_adl

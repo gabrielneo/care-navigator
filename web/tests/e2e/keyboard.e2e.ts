@@ -10,7 +10,7 @@ async function tabTo(page: Page, matches: (el: { tag: string; text: string; type
     const el = await page.evaluate(() => {
       const a = document.activeElement as HTMLElement;
       const ring = (x: Element | null) => !!x && getComputedStyle(x).outlineStyle !== "none" && parseFloat(getComputedStyle(x).outlineWidth) > 0;
-      return { tag: a.tagName.toLowerCase(), type: (a as HTMLInputElement).type ?? "", text: a.getAttribute("aria-label") ?? (a.closest("label") ?? a).textContent?.trim() ?? "",
+      return { tag: a.tagName.toLowerCase(), type: (a as HTMLInputElement).type ?? "", text: a.getAttribute("aria-label") ?? ((a.closest("label") ?? a) as HTMLElement).innerText?.trim() ?? "",   // visible text only
         inHome: (a.closest("[role=group]")?.getAttribute("aria-label") ?? "").includes("Help with washing"),
         ring: ring(a) || ring(a.closest(".opt")) || ring(a.closest(".seg label")) };
     });

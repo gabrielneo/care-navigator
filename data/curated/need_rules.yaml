@@ -98,6 +98,14 @@ rules:
     priority: 4
     note: "AIC describes home therapy as helping people regain daily abilities; linking these events to it is our judgement (8.7)."
     source_id: aic_home_therapy
+  - rule_id: R14
+    service_id: community_rehab
+    when:
+      - {q: cond, any: [stroke, hip]}
+    reason_text: After a stroke or a broken bone, therapy at a centre helps her move, speak or swallow again.
+    priority: 5
+    note: "AIC's Community Rehabilitation page names stroke, heart conditions and fractures. It suits someone who can travel; home therapy is the other option."
+    source_id: aic_community_rehab
   - rule_id: R13
     service_id: home_palliative_care
     when:
