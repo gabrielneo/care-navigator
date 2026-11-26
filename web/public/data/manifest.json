@@ -1,6 +1,6 @@
 {
  "dataVersion": "2026.11.27-2",
- "builtAt": "2026-11-26T17:26:14+00:00",
+ "builtAt": "2026-11-26T17:34:55+00:00",
  "curatedHash": "9d5dee0bb1948fef20e933a154bb59e799a9926a42d3c3eedd7ea1f3c3d9fe05",
  "sources": [
   {
@@ -413,6 +413,7 @@
   "price medical_escort (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price meals_on_wheels (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price respite (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
-  "78 open-data places were last edited over 24 months ago"
+  "78 open-data places were last edited over 24 months ago",
+  "official page did not return HTTP 200 after retries: https://www.nhghealth.com.sg/nhg-polyclinics"
  ]
 }
