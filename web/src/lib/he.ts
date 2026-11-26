@@ -96,5 +96,7 @@ export const HE: Record<string, string> = {
  "Tell us about her": "Tell us about him",
  "Seven short questions: where she is now, what she needs help with, and how you're coping.": "Seven short questions: where he is now, what he needs help with, and how you're coping.",
  "See her week and the cost": "See his week and the cost",
- "Your plan lives only in its own link. The postal code stays on your phone. We never ask for her NRIC number, bank details or Singpass.": "Your plan lives only in its own link. The postal code stays on your phone. We never ask for his NRIC number, bank details or Singpass."
+ "Your plan lives only in its own link. The postal code stays on your phone. We never ask for her NRIC number, bank details or Singpass.": "Your plan lives only in its own link. The postal code stays on your phone. We never ask for his NRIC number, bank details or Singpass.",
+ "Choose where she is right now.": "Choose where he is right now.",
+ "Everyone's monthly income in her household, divided by the number of people who live there.": "Everyone's monthly income in his household, divided by the number of people who live there."
 };

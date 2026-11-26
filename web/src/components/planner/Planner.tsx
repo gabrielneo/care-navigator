@@ -1,7 +1,7 @@
 "use client";
 // The /plan wizard. State lives only in the URL hash (docs/specs/06 and 10): each step is one history entry,
 // small edits replace the entry, refresh keeps your place, Back goes to the previous step.
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { dataDate, manifest } from "@/lib/data";
 import { loadGeo } from "@/lib/data/geo";
 import { decodeHash, encodeHash, type Session, type Step } from "@/lib/engine/urlCodec";
@@ -48,7 +48,8 @@ export function Planner() {
   useEffect(() => {
     // set by plan/page.tsx for links with a saved plan; kept until a draft's dictionary is in, so English doesn't flash
     Promise.resolve(load(window.location.hash)).then(() => document.documentElement.classList.remove("plan-loading"));
-    const onPop = () => load(window.location.hash);
+    // A # that isn't a plan (a section link opened by hand) leaves the plan alone.
+    const onPop = () => { if (!/^#s=/.test(window.location.hash) && window.location.hash.length > 1) return; load(window.location.hash); };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, [load]);
@@ -77,7 +78,11 @@ export function Planner() {
   setLang(s.l ?? "en");
   setMale(isMale(s));
   const qIndex = QUESTIONS.indexOf(step);
-  const screen = { s, update, next, restart: () => go("where") };
+  // A fresh plan in the same language; this one stays a Back press away in the browser's history.
+  const startNew = () => {
+    if (window.confirm(t("Start a new plan? Your browser's Back button still brings you back to this one."))) go("where", { v: manifest.dataVersion, l: s.l });
+  };
+  const screen = { s, update, next, restart: () => go("where"), startNew };
   return (
     <>
       <LangMenu value={s.l ?? "en"} onChange={(l) => loadLang(l).then(() => update({ l: l === "en" ? undefined : l }))} />
@@ -89,7 +94,7 @@ export function Planner() {
       )}
       <div className="planner">
       <JourneyBar step={step} flow={f} go={(to) => go(to)} />
-      <PlanSoFar s={s} step={step} flow={f} />
+      <PlanSoFar s={s} step={step} flow={f} go={(to) => go(to)} startNew={startNew} />
       <div className="scr enter" key={step}>
         {step !== "action" && <div className="top no-print">
           <button type="button" className="link" onClick={back}>{t("Back")}</button>
@@ -108,11 +113,24 @@ export function Planner() {
 
 type Q = { step: Step; s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void };
 
-/** Screens 2a–2g: one question each. Next is always clickable; a missing answer shows an inline message. */
+/** Screens 2a–2g: one question each. Next is always clickable. A missing answer outlines the group that needs it,
+ *  says what's missing right there, scrolls it into view and puts focus on its first option. */
 function Question({ step, s, update, next }: Q) {
   const [missing, setMissing] = useState(false);
-  const proceed = (ok: boolean, session?: Session) => (ok ? (setMissing(false), next(session)) : setMissing(true));
-  const ask = <span className="errtxt" role="alert">{missing ? t("Choose an answer to go on.") : ""}</span>;
+  const group = useRef<HTMLFieldSetElement>(null);
+  const upd = (p: Partial<Session>) => { setMissing(false); update(p); };
+  const proceed = (ok: boolean, session?: Session) => {
+    if (ok) { setMissing(false); next(session); return; }
+    setMissing(true);
+    requestAnimationFrame(() => {
+      const g = group.current;
+      if (!g) return;
+      g.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      g.querySelector<HTMLInputElement>("input")?.focus({ preventScroll: true });
+    });
+  };
+  const required = { ref: group, className: missing ? "invalid" : undefined, "aria-describedby": `${step}-err` };
+  const err = (msg: string) => <p id={`${step}-err`} className="errtxt" role="alert">{missing ? t(msg) : ""}</p>;
 
   if (step === "where") {
     const opts: [string, Session["w"], boolean | undefined][] = [
@@ -129,16 +147,16 @@ function Question({ step, s, update, next }: Q) {
       <Seg name="who" className="who" legend={t("Who are you planning for?")} value={s.who ?? "mum"}
         options={(Object.keys(WHO) as Who[]).map((w) => [w, t(WHO[w].label)])}
         onChange={(w) => loadMale().then(() => update({ who: w === "mum" ? undefined : w }))} />
-      <fieldset>
+      <fieldset {...required}>
         <legend><h1>{t(WHO[s.who ?? "mum"].where)}</h1></legend>
+        {err("Choose where she is right now.")}
         {opts.map(([label, w, d]) => {
           const id = w === "in_hospital" ? `in_hospital-${d ? 1 : 0}` : w!;
           return <Radio key={id} name="where" value={id} checked={key === id}
-            onChange={() => update({ w, d: w === "in_hospital" ? d : undefined })}>{t(label)}</Radio>;
+            onChange={() => upd({ w, d: w === "in_hospital" ? d : undefined })}>{t(label)}</Radio>;
         })}
-        {ask}
-        <button type="button" className="btn" onClick={() => proceed(s.w != null)}>{t("Next")}</button>
       </fieldset>
+      <button type="button" className="btn" onClick={() => proceed(s.w != null)}>{t("Next")}</button>
       </>
     );
   }
@@ -149,7 +167,7 @@ function Question({ step, s, update, next }: Q) {
     const chosen = s.adl && s.adl[0] !== "unsure" ? (s.adl as string[]) : [];
     const toggle = (a: string, on: boolean) => {
       const list = on ? [...chosen, a] : chosen.filter((x) => x !== a);
-      update({ adl: list as Session["adl"], sev: s.sev?.filter((x) => list.includes(x)) });
+      upd({ adl: list as Session["adl"], sev: s.sev?.filter((x) => list.includes(x)) });
     };
     // Which of the chosen activities she can't do at all. Worded apart from the list above so the two never read as repeats.
     const SEVERE: Record<string, string> = { bath: "Washing", dress: "Getting dressed", eat: "Feeding herself", toilet: "Toileting",
@@ -158,13 +176,24 @@ function Question({ step, s, update, next }: Q) {
     const COND: [NonNullable<Session["cond"]>[number], string][] = [["fall", "A recent fall"], ["stroke", "A stroke"],
       ["hip", "A broken hip"], ["eol", "A serious illness, with doctors expecting less than a year"]];
     const setSev = (a: string, on: boolean) => update({ sev: (on ? [...sev, a] : sev.filter((x) => x !== a)) as Session["sev"] });
+    // The six activities are the one required answer, so "None of these" and "Not sure" sit right under them, inside
+    // the same group; the health events and medical care that follow are optional.
     return (
-      <fieldset>
+      <>
+      <fieldset {...required}>
         <legend><h1>{t("Which of these does she need help with?")}</h1></legend>
         <p className="help">{t('Pick all that apply. "Help" means someone has to assist or watch.')}</p>
+        {err('Choose at least one, or "None of these" or "Not sure".')}
         <div className="grid2">
           {ADL.map(([k, label]) => <Check key={k} checked={chosen.includes(k)} onChange={(on) => toggle(k, on)}>{t(label)}</Check>)}
         </div>
+        <p className="or" aria-hidden="true"><span>{t("or")}</span></p>
+        <div className="row alt">
+          <Check checked={s.adl != null && s.adl.length === 0} onChange={(on) => upd({ adl: on ? [] : undefined, sev: undefined })}>{t("None of these")}</Check>
+          <Check checked={s.adl?.[0] === "unsure"} onChange={(on) => upd({ adl: on ? ["unsure"] : undefined, sev: undefined })}>{t("Not sure")}</Check>
+        </div>
+      </fieldset>
+      <div className="optional">
         {chosen.length > 0 && (
           <fieldset className="panel">
             <legend><h3>{t("Which of these can't she do at all?")}</h3></legend>
@@ -178,15 +207,11 @@ function Question({ step, s, update, next }: Q) {
             onChange={(on) => update({ cond: on ? [...(s.cond ?? []), k] : (s.cond ?? []).filter((x) => x !== k) })}>{t(label)}</Check>)}
         </fieldset>
         <Check checked={s.med ?? false} onChange={(on) => update({ med: on })}>
-          <b>{t("Medical care at home")}</b><br /><span className="help">{t("Wounds, tubes, injections or many medicines")}</span>
+          <b>{t("Medical care at home (optional)")}</b><br /><span className="help">{t("Wounds, tubes, injections or many medicines")}</span>
         </Check>
-        <div className="row">
-          <Check checked={s.adl != null && s.adl.length === 0} onChange={(on) => update({ adl: on ? [] : undefined, sev: undefined })}>{t("None of these")}</Check>
-          <Check checked={s.adl?.[0] === "unsure"} onChange={(on) => update({ adl: on ? ["unsure"] : undefined, sev: undefined })}>{t("Not sure")}</Check>
-        </div>
-        {ask}
-        <button type="button" className="btn" onClick={() => proceed(s.adl != null)}>{t("Next")}</button>
-      </fieldset>
+      </div>
+      <button type="button" className="btn" onClick={() => proceed(s.adl != null)}>{t("Next")}</button>
+      </>
     );
   }
 
@@ -203,16 +228,18 @@ function Question({ step, s, update, next }: Q) {
   const q = SIMPLE[step];
   if (q) {
     return (
-      <fieldset>
+      <>
+      <fieldset {...required}>
         <legend><h1>{t(q.title)}</h1></legend>
         {q.help && <p className="help">{t(q.help)}</p>}
+        {err("Choose one answer to go on.")}
         {q.opts.map(([v, label]) => (
           <Radio key={v} name={q.field} value={v} checked={s[q.field] === v}
-            onChange={() => update({ [q.field]: v } as Partial<Session>)}>{t(label)}</Radio>
+            onChange={() => upd({ [q.field]: v } as Partial<Session>)}>{t(label)}</Radio>
         ))}
-        {ask}
-        <button type="button" className="btn" onClick={() => proceed(s[q.field] != null)}>{t("Next")}</button>
       </fieldset>
+      <button type="button" className="btn" onClick={() => proceed(s[q.field] != null)}>{t("Next")}</button>
+      </>
     );
   }
 

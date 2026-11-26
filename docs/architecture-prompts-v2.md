@@ -446,6 +446,19 @@ From the gap review on 26 Nov 2026. The owner asked for all of it, in an order t
 **9.16 Ownership and handover** · Should · **Done 26 Nov 2026** (`docs/ownership.md`)
 - A short doc: who rechecks sources and when, who renews the domain, and when the site comes down if nobody does.
 
+### UX audit quick wins (26 Nov 2026)
+
+From the 17-heuristic UX audit. The owner approved the top 5; all are built and tested (`web/tests/e2e/quickwins.e2e.ts`).
+1. **Errors point at the question:** a skipped question is outlined, says what's missing under its heading, scrolls into view and takes focus. This applies on all seven questions.
+2. **Activities screen:** "None of these" and "Not sure" sit inside the required question, after an "or". The health events and medical care that follow are marked optional.
+3. **Monthly total in reach on a phone:** a bar at the bottom while the total is further down, and a "Figures as of" chip on the total.
+4. **Plain income wording:** "Monthly household income, per person" with a one-line explanation. The T0 to T5 codes stay only in the handover summary for professionals.
+5. **A way back:** each "Her plan so far" chip goes back to its answer, and "Start a new plan" (also "Start a plan for someone else" on the plan) starts fresh in the same language.
+
+Found while building: the "On this page" links replaced the plan's link with `#grants` and so on, and the planner then read it as a damaged plan. Section links now scroll without touching the address.
+
+Still open from the audit: "Because you said…" tags on matches, collapsed grant cards, plain-language "?" explainers, week presets, skeleton loading for places, and a 995 line under stroke or fall (needs the owner's decision, as it changes the 25 Nov rule).
+
 ---
 
 ## Execution sequence and gates

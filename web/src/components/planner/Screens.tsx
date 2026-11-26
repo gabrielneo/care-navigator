@@ -1,10 +1,10 @@
 "use client";
 // Screens 3–7. Wording: docs/specs/08; behaviour and edge cases: docs/specs/06 and 09; layouts: docs/wireframes.
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { dataDate, longDate, manifest, rules, source } from "@/lib/data";
 import { mailto } from "@/lib/report";
 import { useGeo } from "@/lib/data/geo";
-import { costPlan, nursingHome, potentialGrants, planEntries, severeOnlyHidden } from "@/lib/engine/cost";
+import { costPlan, nursingHome, potentialGrants, planEntries, severeOnlyHidden, type Range } from "@/lib/engine/cost";
 import { matchServices } from "@/lib/engine/matching";
 import { incomeOptions, type TierId } from "@/lib/engine/tiers";
 import type { Session } from "@/lib/engine/urlCodec";
@@ -16,7 +16,7 @@ import { reminders, remindersIcs } from "@/lib/engine/reminders";
 import { getLang, list as join, t } from "@/lib/i18n";
 import { CountRange, money, NO_PRICE, range, Radio, Seg, Stepper, tilt, UNIT_ONE, UNIT_WEEK } from "./ui";
 
-type P = { s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void; restart: () => void };
+type P = { s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void; restart: () => void; startNew: () => void };
 const services = new Map(rules.serviceTypes.map((x) => [x.serviceId, x]));
 const prices = new Map(rules.priceReferences.prices.map((p) => [p.serviceId, p]));
 const svcName = (id: string) => t(services.get(id)?.name ?? id);
@@ -36,6 +36,37 @@ const reportHref = (srcs: { sourceId: string; url: string }[]) => mailto(
   `Figure may be wrong: ${srcs.map((x) => x.sourceId).join(", ")}`,
   `Data version: ${manifest.dataVersion}\nSources:\n${srcs.map((x) => `- ${x.url}`).join("\n")}\n\nWhat looks wrong, and where did you see the right figure?\n`,
 );
+
+/** In-page links ("On this page", the total bar) scroll to their section without touching the address: the plan
+ *  lives in the # part of the link, so a plain #total would replace it. */
+function jump(e: React.MouseEvent<HTMLAnchorElement>) {
+  const el = document.getElementById(e.currentTarget.hash.slice(1));
+  if (!el) return;
+  e.preventDefault();
+  el.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  el.focus({ preventScroll: true });
+}
+
+/** On a phone, the monthly total stays in reach while the answers above it change: a bar at the bottom of the screen,
+ *  shown only while the total itself is further down. Tapping it goes to the total. */
+function TotalPeek({ r, subsidised }: { r: Range; subsidised: boolean }) {
+  const [below, setBelow] = useState(false);
+  useEffect(() => {
+    // Checked on every scroll, not with an IntersectionObserver: a jump straight past the total (a fling, End, a link)
+    // never "intersects", which left the bar covering the buttons further down.
+    const check = () => { const el = document.getElementById("total"); setBelow(!!el && el.getBoundingClientRect().top > innerHeight); };
+    check();
+    addEventListener("scroll", check, { passive: true });
+    addEventListener("resize", check);
+    return () => { removeEventListener("scroll", check); removeEventListener("resize", check); };
+  }, []);
+  if (!below) return null;
+  return (
+    <a href="#total" className="peek no-print" onClick={jump}>
+      <b>{range(r)}</b>{t(subsidised ? " a month with subsidy" : " a month, full price")}<span aria-hidden="true"> ↓</span>
+    </a>
+  );
+}
 
 /** "Sources: <title>, checked 25 Nov 2026" under any figure, so every number shows where it's from and when. */
 function Sources({ ids }: { ids: (string | null | undefined)[] }) {
@@ -217,15 +248,17 @@ export function CostScreen({ s, update, next }: P) {
       {!nursing && c.lines.length > 0 && (
         <nav className="onpage no-print" aria-label={t("On this page")}>
           <span className="meta">{t("On this page:")}</span>
-          <a href="#total">{t("Monthly total")}</a><a href="#each">{t("Each service")}</a><a href="#grants">{t("Grants")}</a><a href="#workings">{t("How it's worked out")}</a>
+          <a href="#total" onClick={jump}>{t("Monthly total")}</a><a href="#each" onClick={jump}>{t("Each service")}</a><a href="#grants" onClick={jump}>{t("Grants")}</a><a href="#workings" onClick={jump}>{t("How it's worked out")}</a>
         </nav>
       )}
       <div className="panel">
         <div className="field">
-          <label htmlFor="tier">{t("Household income per person (PCHI)")}</label>
-          <select id="tier" className="input" value={s.t ?? ""} onChange={(e) => update({ t: (e.target.value || undefined) as TierId | undefined })}>
+          <label htmlFor="tier">{t("Monthly household income, per person")}</label>
+          <p id="tier-help" className="help">{t("Everyone's monthly income in her household, divided by the number of people who live there.")}</p>
+          <select id="tier" className="input" aria-describedby="tier-help" value={s.t ?? ""}
+            onChange={(e) => update({ t: (e.target.value || undefined) as TierId | undefined })}>
             <option value="">{t("Choose her range")}</option>
-            {(Object.keys(TIER_LABEL) as TierId[]).map((tier) => <option key={tier} value={tier}>{t(TIER_LABEL[tier])} · {t("range {id}", { id: tier })}</option>)}
+            {(Object.keys(TIER_LABEL) as TierId[]).map((tier) => <option key={tier} value={tier}>{t(TIER_LABEL[tier])}</option>)}
           </select>
         </div>
         <IncomeHelper onPick={(t) => update({ t })} />
@@ -246,11 +279,12 @@ export function CostScreen({ s, update, next }: P) {
       {s.t === "T5" && s.r !== "none" && <p className="help">{t("At this income, there's no government subsidy. Both columns show full price.")}</p>}
 
       {!nursing && c.total && (
-        <div className="total" id="total" aria-label={t("Estimated monthly total")}>
+        <div className="total" id="total" tabIndex={-1} aria-label={t("Estimated monthly total")}>
           {c.total.withSubsidy && !c.total.sameAsFullPrice ? (
             <>
               <div><p className="lbl">{t("At a government-funded provider, with subsidy")}</p>
-                <p className="big"><CountRange r={c.total.withSubsidy} /></p><p className="sub">{t("a month · estimate")}</p></div>
+                <p className="big"><CountRange r={c.total.withSubsidy} /></p><p className="sub">{t("a month · estimate")}</p>
+                <p className="asof">{t("Figures as of {date}", { date: dataDate })}</p></div>
               <hr />
               <div><p className="lbl">{t("Full price, at a private provider")}</p>
                 <p className="mid"><CountRange r={c.total.fullPrice} />{t(" a month")}</p><p className="sub">{t("may add 9% GST")}</p></div>
@@ -259,14 +293,17 @@ export function CostScreen({ s, update, next }: P) {
             <div>
               <p className="lbl">{!s.t || !s.r ? t("Full price (pick her income range to see the subsidy)") : t("Full price")}</p>
               <p className="big"><CountRange r={c.total.fullPrice} /></p><p className="sub">{t("a month · estimate · may add 9% GST")}</p>
+              <p className="asof">{t("Figures as of {date}", { date: dataDate })}</p>
             </div>
           )}
         </div>
       )}
+      {!nursing && c.total && <TotalPeek r={c.total.withSubsidy && !c.total.sameAsFullPrice ? c.total.withSubsidy : c.total.fullPrice}
+        subsidised={!!c.total.withSubsidy && !c.total.sameAsFullPrice} />}
       {!nursing && !c.total && <p className="help">{t("Her plan is empty, so there's nothing to cost yet.")}</p>}
 
       {!nursing && c.lines.length > 0 && (
-        <details className="panel lines" id="each">
+        <details className="panel lines" id="each" tabIndex={-1}>
           <summary>{t("Cost of each service, and your own quotes")}</summary>
           {c.lines.map((l) => {
           const svc = services.get(l.serviceId)!;
@@ -307,7 +344,7 @@ export function CostScreen({ s, update, next }: P) {
         <button type="button" className="link" onClick={() => setShowNh(true)}>{t("See what a nursing home may cost")}</button>
       )}
 
-      <div className="panel" id="grants">
+      <div className="panel" id="grants" tabIndex={-1}>
         <h3>{grants.length ? t("You may qualify for") : t("Grants and payouts")}</h3>
         {grants.length ? (
           <ul className="plain">
@@ -328,7 +365,7 @@ export function CostScreen({ s, update, next }: P) {
       </div>
 
       {!nursing && c.lines.length > 0 && (
-        <details className="panel" id="workings">
+        <details className="panel" id="workings" tabIndex={-1}>
           <summary>{t("How is this worked out")}</summary>
           <table className="calc">
             <thead><tr><th>{t("Service")}</th><th>{t("Per month")}</th><th>{t("Price")}</th><th>{t("Subsidy")}</th></tr></thead>
@@ -475,7 +512,7 @@ export function ContactsScreen({ s, update, next }: P) {
 
 // ---------- 7 · Action plan ----------
 const WHEN: Record<Timing, string> = { now: "Now", week: "This week", month: "This month", later: "Later" };
-export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart">) {
+export function Action({ s, update, restart, startNew }: Pick<P, "s" | "update" | "restart" | "startNew">) {
   const m = matchServices(rules, s);
   const c = costPlan(rules, s);
   const grants = potentialGrants(rules, s, m.adlCount);
@@ -555,6 +592,7 @@ export function Action({ s, update, restart }: Pick<P, "s" | "update" | "restart
     <>
       <div className="top no-print">
         <button type="button" className="link" onClick={restart}>{t("Change answers")}</button>
+        <button type="button" className="link" onClick={startNew}>{t("Start a plan for someone else")}</button>
         <span>{today}</span>
       </div>
       <p className="ready no-print"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M7 12.5l3.2 3.2L17 9" /></svg>{t("Your plan is ready")}</p>

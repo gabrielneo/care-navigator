@@ -41,6 +41,16 @@ h3 { font-size: var(--fs-body); line-height: 1.3; }
 .meta { font-size: var(--fs-meta); color: var(--text-secondary); line-height: 1.45; }
 .note { font-size: var(--fs-meta); color: var(--text-secondary); line-height: 1.45; }
 .errtxt { color: var(--danger); font-size: var(--fs-small); }
+/* A question that still needs an answer: the whole group is outlined, and its message sits under the question. The
+   empty message stays in the page (so screen readers announce it when it fills) without leaving a gap. */
+fieldset.invalid { outline: 2px solid var(--danger); outline-offset: 8px; border-radius: var(--r-md); }
+fieldset.invalid > .errtxt { font-weight: 600; }
+fieldset > .errtxt:empty { margin-block-start: -12px; }
+.optional { display: flex; flex-direction: column; gap: 12px; }
+/* "None of these" and "Not sure" replace the other answers, so they sit apart, after an "or", with dashed edges. */
+.or { display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: var(--fs-small); }
+.or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--border-subtle); }
+.alt .opt { border-style: dashed; }
 fieldset { border: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 legend { padding: 0; margin-bottom: 4px; }
 
@@ -119,6 +129,14 @@ select.input { appearance: auto; }
 .total .sub { font-size: var(--fs-small); color: var(--on-hero-muted); font-variant-numeric: tabular-nums; }
 .total .mid { font-size: 1.25rem; color: var(--on-hero); font-variant-numeric: tabular-nums; }
 .total hr { border: 0; border-top: 1px solid rgba(251, 216, 181, 0.35); }
+.total .asof { display: inline-block; margin-top: 10px; font-size: var(--fs-meta); color: var(--on-hero);
+  border: 1px solid var(--on-hero-muted); border-radius: 999px; padding: 2px 10px; }
+/* The monthly total in reach on a phone while the answers above it change (the sidebar shows it on wider screens). */
+.peek { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20; display: flex; align-items: center;
+  justify-content: center; gap: 6px; min-height: 48px; padding: 8px 16px; border-radius: 999px; background: var(--primary);
+  color: var(--on-primary); text-decoration: none; font-size: var(--fs-small);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--text-primary) 25%, transparent); }
+@media (min-width: 1024px) { .peek { display: none; } }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-variant-numeric: tabular-nums; }
 .two small { display: block; color: var(--text-secondary); font-size: var(--fs-meta); }
 details.panel > summary { min-height: 48px; display: flex; align-items: center; justify-content: space-between;
@@ -236,6 +254,14 @@ footer.ft nav a { min-height: 44px; display: inline-flex; align-items: center; }
 .sofar ul { list-style: none; padding: 0 0 4px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
 .sofar li { flex: none; font-size: var(--fs-meta); line-height: 1.4; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 999px; padding: 4px 12px; white-space: nowrap; }
 .sofar li:last-child { border-color: var(--primary); background: var(--sel-fill); }
+/* Each chip goes back to the answer it came from. */
+.sofar li { padding: 0; }
+.sofar li > * { display: block; padding: 4px 12px; }
+.sofar li > button { font: inherit; color: inherit; background: none; border: 0; border-radius: 999px; cursor: pointer; text-align: left; width: 100%; }
+.sofar li > button:hover { text-decoration: underline; text-underline-offset: 3px; }
+.sofar-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.sofar-head h2 { margin-bottom: 0; }
+.sofar-head .link { min-height: 32px; font-size: var(--fs-meta); }
 .ready { display: flex; align-items: center; gap: 10px; color: var(--sage); font-weight: 600; }
 .ready svg { width: 30px; height: 30px; fill: var(--sage-fill); stroke: var(--sage); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 @media (max-width: 699px) {

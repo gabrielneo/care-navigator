@@ -36,7 +36,7 @@ test("Mei: mother in hospital after a fall", async ({ page }) => {
   await expect(week.locator(".day", { hasText: "Sun" })).toContainText("—");
   await page.getByRole("button", { name: "See the cost" }).click();
 
-  await page.getByLabel("Household income per person (PCHI)").selectOption("T1");
+  await page.getByLabel("Monthly household income, per person").selectOption("T1");
   await page.locator("label", { hasText: "Singapore Citizen" }).click();
   await expect(page.getByLabel("Singapore Citizen")).toBeChecked();
   await expect(page.getByLabel("1969 or earlier")).toBeChecked();
@@ -120,7 +120,7 @@ test("Nursing home: a 'from' figure next to real bills, nothing subtracted", asy
   // Before her income range and residency are picked, no subsidy is claimed.
   await expect(page.getByText("from $4,900 a month before subsidy", { exact: true })).toBeVisible();
   await expect(page.getByText(/0% residential subsidy/)).toHaveCount(0);
-  await page.getByLabel("Household income per person (PCHI)").selectOption("T1");
+  await page.getByLabel("Monthly household income, per person").selectOption("T1");
   await page.locator("label", { hasText: "Singapore Citizen" }).click();
   await expect(page.getByLabel("Singapore Citizen")).toBeChecked();
 
@@ -261,8 +261,10 @@ test("8.7 to 8.10: health events, For you, Also worth doing, top 3 first, On thi
   const plan = { ...(s as object), plan: [{ s: "dementia_day_care", n: 5 }], t: "T0", r: "sc", b: "le1969" } as never;
   await page.goto(`/plan/${encodeHash("cost", plan)}`);
   const nav = page.getByRole("navigation", { name: "On this page" });
+  const link = page.url();
   await nav.getByRole("link", { name: "Grants" }).click();
-  await expect(page).toHaveURL(/#grants$/);
+  await expect(page.locator("#grants")).toBeInViewport();
+  expect(page.url()).toBe(link);                     // the plan stays in the address, so it can still be shared
 
   await page.goto(`/plan/${encodeHash("action", plan)}`);
   await expect(page.getByText(/^Ask her doctor at the hospital, polyclinic or GP clinic to refer her for palliative care at home/)).toBeVisible();

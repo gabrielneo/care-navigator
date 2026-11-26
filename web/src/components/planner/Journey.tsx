@@ -96,14 +96,32 @@ function chips(s: Session, reached: (x: Step) => boolean) {
   return out;
 }
 
-export function PlanSoFar({ s, step, flow }: { s: Session; step: Step; flow: Step[] }) {
+// Which question or screen each chip came from, so tapping a chip goes straight back to change it.
+const CHIP_STEP: Record<string, Step> = { where: "where", adl: "adl", sev: "adl", med: "adl", cond: "adl", al: "alone", mem: "memory",
+  hlp: "helper", lim: "limits", loc: "postal", plan: "week", cost: "cost", call: "contacts" };
+
+export function PlanSoFar({ s, step, flow, go, startNew }: {
+  s: Session; step: Step; flow: Step[]; go: (to: Step) => void; startNew: () => void;
+}) {
   const reached = (x: Step) => flow.includes(x) && flow.indexOf(step) >= flow.indexOf(x);
   const list = chips(s, reached);
   if (!list.length || step === "action") return null;
   return (
     <aside className="sofar no-print" aria-label={t("Her plan so far")}>
-      <h2>{t("Her plan so far")}</h2>
-      <ul tabIndex={0}>{list.map(([k, v]) => <li key={`${k}-${typeof v === "string" ? v : k}`}>{v}</li>)}</ul>
+      <div className="sofar-head">
+        <h2>{t("Her plan so far")}</h2>
+        <button type="button" className="link" onClick={startNew}>{t("Start a new plan")}</button>
+      </div>
+      <ul>{list.map(([k, v]) => {
+        const to = CHIP_STEP[k];
+        return (
+          <li key={`${k}-${typeof v === "string" ? v : k}`}>
+            {to && to !== step && flow.includes(to)
+              ? <button type="button" onClick={() => go(to)}>{v}<span className="sr-only">{t(" (change)")}</span></button>
+              : <span>{v}</span>}
+          </li>
+        );
+      })}</ul>
     </aside>
   );
 }

@@ -69,7 +69,7 @@ test("8.13: the whole planner in the Chinese draft, then back to English", async
   await expect(page.getByRole("heading", { name: "安排她的一周" })).toBeVisible();
   await checkScreen(page);
   await page.getByRole("button", { name: "查看费用" }).click();
-  await page.getByLabel("家庭人均月收入（PCHI）").selectOption("T1");
+  await page.getByLabel("家庭人均月收入").selectOption("T1");
   await page.locator("label", { hasText: /^新加坡公民$/ }).click();
   await expect(page.getByText("在政府资助的机构，扣除津贴后")).toBeVisible();
   await checkScreen(page);
