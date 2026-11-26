@@ -45,7 +45,9 @@ const next = (page: Page) => page.getByRole("button", { name: "下一步", exact
 
 test("8.13: the whole planner in the Chinese draft, then back to English", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "中文（草稿）" }).click();
+  await page.getByLabel("Language / 语言 / Bahasa / மொழி").selectOption("zh");
+  await expect(page).toHaveURL(/\/zh\/$/);
+  await page.getByRole("link", { name: "开始规划" }).first().click();
   await expect(page.getByRole("heading", { name: "妈妈现在在哪里？" })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-SG");
   await checkScreen(page);
@@ -112,10 +114,12 @@ for (const lang of ["zh", "ms", "ta"] as const) test(`8.13: every screen and bra
   }
 });
 
-test("8.13: the Start page links to each draft, and the planner's menu switches between them", async ({ page }) => {
+test("8.13: the Start page's menu offers each draft, and the planner's menu switches between them", async ({ page }) => {
   await page.goto("/");
-  for (const x of LANGS.filter((l) => l.id !== "en")) await expect(page.getByRole("link", { name: x.name })).toBeVisible();
-  await page.getByRole("link", { name: "Bahasa Melayu (draf)" }).click();
+  const menu = page.getByLabel("Language / 语言 / Bahasa / மொழி");
+  for (const x of LANGS) await expect(menu.locator(`option[value="${x.id}"]`)).toHaveText(x.name);
+  await menu.selectOption("ms");
+  await page.getByRole("link", { name: "Mula merancang" }).first().click();
   await expect(page.getByRole("heading", { name: "Di manakah Ibu sekarang?" })).toBeVisible();
   await page.getByLabel("Language / 语言 / Bahasa / மொழி").selectOption("ta");
   await expect(page.getByRole("heading", { name: "அம்மா இப்போது எங்கே இருக்கிறார்?" })).toBeVisible();
@@ -135,3 +139,17 @@ test("the site banner and footer follow the plan's language, and go back to Engl
   await expect(page.locator(".proto")).toHaveText(/^Prototype for testing/);
   expect(await page.evaluate(() => document.documentElement.lang)).toBe("en-SG");
 });
+
+for (const lang of ["zh", "ms", "ta"] as const) {
+  test(`the Start page in the ${lang} draft: labelled, no English left, axe clean`, async ({ page }, info) => {
+    test.skip(info.project.name === "firefox", "checked in the other browsers");
+    await page.goto(`/${lang}/`);
+    await expect(page.locator("html")).toHaveAttribute("lang", LANGS.find((x) => x.id === lang)!.html);
+    await expect(page.locator(".proto")).not.toHaveText(/^Prototype/);
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await checkScreen(page, lang);
+    await page.getByLabel("Language / 语言 / Bahasa / மொழி").selectOption("en");
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Plan care for someone you look after");
+  });
+}

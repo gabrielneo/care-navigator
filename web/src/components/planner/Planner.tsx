@@ -7,7 +7,8 @@ import { loadGeo } from "@/lib/data/geo";
 import { decodeHash, encodeHash, type Session, type Step } from "@/lib/engine/urlCodec";
 import { locate, type Region } from "@/lib/geo/postal";
 import { JourneyBar, PlanSoFar, QUESTIONS } from "./Journey";
-import { LANGS, setLang, t, type Lang } from "@/lib/i18n";
+import { LangMenu } from "@/components/LangMenu";
+import { LANGS, setLang, t } from "@/lib/i18n";
 import { Action, ContactsScreen, CostScreen, Matches, Week } from "./Screens";
 import { Check, Radio } from "./ui";
 
@@ -78,13 +79,7 @@ export function Planner() {
   const screen = { s, update, next, restart: () => go("where") };
   return (
     <>
-      <div className="lang no-print">
-        <label htmlFor="lang" className="sr-only">Language / 语言 / Bahasa / மொழி</label>
-        <select id="lang" className="input" value={s.l ?? "en"}
-          onChange={(e) => update({ l: e.target.value === "en" ? undefined : (e.target.value as Exclude<Lang, "en">) })}>
-          {LANGS.map((x) => <option key={x.id} value={x.id} lang={x.html}>{x.name}</option>)}
-        </select>
-      </div>
+      <LangMenu value={s.l ?? "en"} onChange={(l) => update({ l: l === "en" ? undefined : l })} />
       {langInfo.banner && <p className="notice lang-draft" role="note">{langInfo.banner}</p>}
       {banner === "damaged" && <p className="notice warn" role="status">{t("We couldn't open that plan. Start again below.")}</p>}
       {banner === "updated" && (

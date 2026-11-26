@@ -28,8 +28,11 @@ export const getLang = () => lang;
 export const tIn = (l: Lang, en: string) => (l === "en" ? en : DICT[l][en] ?? en);
 
 /** t("{n} services may fit", { n: 3 }): this English text in the plan's language, else the English. */
-export function t(en: string, vars?: Record<string, string | number>): string {
-  const s = tIn(lang, en);
+export const t = (en: string, vars?: Record<string, string | number>) => tl(lang, en, vars);
+
+/** t() for a given language, for pages rendered at build time (the Start pages), where the module language can't be used. */
+export function tl(l: Lang, en: string, vars?: Record<string, string | number>): string {
+  const s = tIn(l, en);
   return vars ? s.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k] ?? "")) : s;
 }
 

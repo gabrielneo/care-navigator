@@ -275,10 +275,22 @@ footer.ft nav a { min-height: 44px; display: inline-flex; align-items: center; }
 .handover-box > summary { font-weight: 600; }
 /* Language switch and the Chinese draft banner (8.13) */
 .lang { display: flex; justify-content: flex-end; padding: 8px 16px 0; }
-.lang select { width: auto; min-height: 48px; padding: 4px 10px; font-size: var(--fs-small); }
+/* A quiet pill rather than a full-width white field: globe, the language named in itself, chevron. */
+.lang-menu { position: relative; display: inline-flex; align-items: center; color: var(--text-secondary); }
+.lang-menu select { appearance: none; -webkit-appearance: none; field-sizing: content; min-height: 48px; padding: 0 38px 0 40px;
+  border: 1px solid var(--border-subtle); border-radius: 999px; background: color-mix(in srgb, var(--bg-surface) 55%, transparent);
+  color: var(--text-primary); font-size: var(--fs-small); font-weight: 600; cursor: pointer;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out; }
+.lang-menu select:hover { background: var(--bg-surface); border-color: var(--border-control); }
+.lang-menu select:focus-visible { border-radius: 999px; }
+.lang-menu option { color: var(--text-primary); background: var(--bg-surface); }
+.lang-menu svg { position: absolute; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.lang-globe { left: 14px; }
+.lang-chevron { right: 14px; width: 16px !important; height: 16px !important; }
+.landing > .lang { padding: 12px 16px 4px; }
+@media (min-width: 900px) { .landing > .lang { padding: 16px 16px 0; } }
 .lang-draft { background: var(--banner-fill); color: var(--banner); }
-.hero-langs { display: flex; flex-wrap: wrap; gap: 4px 16px; }
-.hero .hero-langs a { color: var(--on-hero-muted); font-size: var(--fs-meta); text-underline-offset: 3px; min-height: 32px; display: inline-flex; align-items: center; }
 .onpage { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font-size: var(--fs-meta); }
 .onpage a { min-height: 24px; display: inline-flex; align-items: center; }
 #total, #each, #grants, #workings { scroll-margin-top: 16px; }

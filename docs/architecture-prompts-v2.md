@@ -262,7 +262,7 @@ Owner's direction: fill the gaps AIC's Care Services Recommender leaves, especia
 - nothing stored, no outside services
 - no interviews: evidence is desk-based, as in Stage 7
 
-Priority: **P0** fix now (the site says something wrong), **Must**, **Should**, **Could**. Nothing here has been built yet.
+Priority: **P0** fix now (the site says something wrong), **Must**, **Should**, **Could**. All of 8.1 to 8.17 is built; 8.7 and 8.13 are partly done (see each item).
 
 ### P0: correctness
 
