@@ -1,7 +1,7 @@
 {
- "dataVersion": "2026.11.26-1",
- "builtAt": "2026-11-25T17:01:35+00:00",
- "curatedHash": "a1e020e3affc58a35565df190d90487f95b442f769bea8e49d7fff55bf58f02e",
+ "dataVersion": "2026.11.26-6",
+ "builtAt": "2026-11-26T02:22:46+00:00",
+ "curatedHash": "8a6e987d466e98631facd61ab7a5d9130541fd1616b30b3a3f02221c68a80ba4",
  "sources": [
   {
    "sourceId": "moh_nonres_subsidy",
@@ -282,16 +282,88 @@
    "licence": "site-terms",
    "checkedOn": "2026-11-26",
    "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_home_palliative",
+   "title": "AIC Home Palliative Care (homebound, serious illness; doctor refers)",
+   "url": "https://www.aic.sg/care-services/home-palliative-care",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_caregiver_support",
+   "title": "AIC Connecting with other caregivers (Caregiver Support Network)",
+   "url": "https://www.aic.sg/Caregiving-Support/Connecting-with-other-caregivers",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_mental_health",
+   "title": "AIC Mental health support (mindline 1771, free counselling)",
+   "url": "https://www.aic.sg/Caregiving-Support/Mental-Health-Support",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_caregiver_training",
+   "title": "AIC Choosing learning options (Caregivers Training Catalogue, applying for the grant)",
+   "url": "https://www.aic.sg/Caregiving-Support/Choosing-Learning-Options",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "opg_lpa",
+   "title": "Office of the Public Guardian, Lasting Power of Attorney",
+   "url": "https://www.msf.gov.sg/what-we-do/opg/lasting-power-of-attorney",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_acp",
+   "title": "AIC Advance Care Planning, finding a facilitator",
+   "url": "https://www.aic.sg/Care-Services/Advance-Care-Planning-ACP/Finding-an-ACP-Facilitator",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "moh_pg",
+   "title": "MOH Pioneer Generation Package (who qualifies, PioneerDAS)",
+   "url": "https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/pioneer-generation-package",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "moh_mg",
+   "title": "MOH Merdeka Generation Package (who qualifies, premium support)",
+   "url": "https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/merdeka-generation-package",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
+  },
+  {
+   "sourceId": "aic_ctg",
+   "title": "AIC Caregivers Training Grant ($400, $200 yearly top-up, capped at $400)",
+   "url": "https://www.aic.sg/Financial-Assistance/Caregivers-Training-Grant",
+   "licence": "site-terms",
+   "checkedOn": "2026-11-26",
+   "nextReview": "2027-02-28"
   }
  ],
  "files": {
-  "rules.json": "92b1b3f76948ba268b2a2f885e6cb777dc7261a27fdb0111a69c88a3dab32f08",
+  "rules.json": "f756c1bc6a1dd5095bf1309d68af4768b816921cc982243485790e7d82f0774d",
   "contacts.json": "44edb74ca6d3d816693ff23e69ef97144f57e1720cb7936de8df95eded769d35",
   "places.json": "2d789de5cf2255d2eb275285efcb3108b51b6e0191bd9dde0b38014203bed8d0",
   "sectors.json": "27500e57c4319c56b96939968ad183e2ef538af68b47351893fe6b4b99a207c3"
  },
  "sizes": {
-  "rules.json": 5785,
+  "rules.json": 7764,
   "contacts.json": 2122,
   "places.json": 6343,
   "sectors.json": 965
@@ -302,6 +374,7 @@
   "price medical_escort (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price meals_on_wheels (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "price respite (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
-  "78 open-data places were last edited over 24 months ago"
+  "78 open-data places were last edited over 24 months ago",
+  "source moh_mg is not referenced by any table"
  ]
 }

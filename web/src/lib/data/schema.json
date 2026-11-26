@@ -200,7 +200,8 @@
       "memory",
       "helper",
       "limits",
-      "med"
+      "med",
+      "cond"
      ],
      "title": "Q",
      "type": "string"
@@ -224,14 +225,6 @@
      "anyOf": [
       {
        "items": {
-        "enum": [
-         "bath",
-         "dress",
-         "eat",
-         "toilet",
-         "move",
-         "transfer"
-        ],
         "type": "string"
        },
        "type": "array"
@@ -494,6 +487,30 @@
      "default": null,
      "title": "Askif"
     },
+    "criteria": {
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1,
+     "title": "Criteria",
+     "type": "array"
+    },
+    "requiresGeneration": {
+     "anyOf": [
+      {
+       "const": "pg",
+       "enum": [
+        "pg"
+       ],
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Requiresgeneration"
+    },
     "altMinAge": {
      "anyOf": [
       {
@@ -574,6 +591,7 @@
     "amountByBand",
     "minAdl",
     "disability",
+    "criteria",
     "otherConditions",
     "officialUrl",
     "sourceId"
@@ -881,6 +899,106 @@
     "sourceId"
    ],
    "title": "NeedRule",
+   "type": "object"
+  },
+  "NextStep": {
+   "additionalProperties": false,
+   "description": "One step on the action plan's timeline. Every step cites the official page that describes it.",
+   "properties": {
+    "stepId": {
+     "pattern": "^[a-z][a-z0-9_]{1,40}$",
+     "title": "Stepid",
+     "type": "string"
+    },
+    "timing": {
+     "enum": [
+      "now",
+      "week",
+      "month",
+      "later"
+     ],
+     "title": "Timing",
+     "type": "string"
+    },
+    "label": {
+     "title": "Label",
+     "type": "string"
+    },
+    "text": {
+     "title": "Text",
+     "type": "string"
+    },
+    "unlocks": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Unlocks"
+    },
+    "after": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "After"
+    },
+    "when": {
+     "default": [],
+     "items": {
+      "$ref": "#/$defs/Clause"
+     },
+     "title": "When",
+     "type": "array"
+    },
+    "group": {
+     "default": "plan",
+     "enum": [
+      "plan",
+      "carer",
+      "ahead"
+     ],
+     "title": "Group",
+     "type": "string"
+    },
+    "planAny": {
+     "default": [],
+     "items": {
+      "type": "string"
+     },
+     "title": "Planany",
+     "type": "array"
+    },
+    "grantAny": {
+     "default": [],
+     "items": {
+      "type": "string"
+     },
+     "title": "Grantany",
+     "type": "array"
+    },
+    "sourceId": {
+     "title": "Sourceid",
+     "type": "string"
+    }
+   },
+   "required": [
+    "stepId",
+    "timing",
+    "label",
+    "text",
+    "sourceId"
+   ],
+   "title": "NextStep",
    "type": "object"
   },
   "Place": {
@@ -1226,6 +1344,13 @@
     },
     "howToApply": {
      "$ref": "#/$defs/HowToApply"
+    },
+    "nextSteps": {
+     "items": {
+      "$ref": "#/$defs/NextStep"
+     },
+     "title": "Nextsteps",
+     "type": "array"
     }
    },
    "required": [
@@ -1235,7 +1360,8 @@
     "priceReferences",
     "subsidyTiers",
     "grantRules",
-    "howToApply"
+    "howToApply",
+    "nextSteps"
    ],
    "title": "RulesBundle",
    "type": "object"
@@ -1383,6 +1509,14 @@
     "howToApplyId": {
      "title": "Howtoapplyid",
      "type": "string"
+    },
+    "askProvider": {
+     "default": [],
+     "items": {
+      "type": "string"
+     },
+     "title": "Askprovider",
+     "type": "array"
     },
     "sourceId": {
      "title": "Sourceid",

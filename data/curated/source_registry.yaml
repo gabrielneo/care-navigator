@@ -247,3 +247,66 @@ sources:
     licence: site-terms
     checked_on: 2026-11-26
     next_review: 2027-02-28
+  - source_id: aic_home_palliative
+    title: AIC Home Palliative Care (homebound, serious illness; doctor refers)
+    owner: AIC
+    url: https://www.aic.sg/care-services/home-palliative-care
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28
+  - source_id: aic_caregiver_support
+    title: AIC Connecting with other caregivers (Caregiver Support Network)
+    owner: AIC
+    url: https://www.aic.sg/Caregiving-Support/Connecting-with-other-caregivers
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28
+  - source_id: aic_mental_health
+    title: AIC Mental health support (mindline 1771, free counselling)
+    owner: AIC
+    url: https://www.aic.sg/Caregiving-Support/Mental-Health-Support
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28
+  - source_id: aic_caregiver_training
+    title: AIC Choosing learning options (Caregivers Training Catalogue, applying for the grant)
+    owner: AIC
+    url: https://www.aic.sg/Caregiving-Support/Choosing-Learning-Options
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28
+  - source_id: opg_lpa
+    title: "Office of the Public Guardian, Lasting Power of Attorney"
+    owner: MSF
+    url: https://www.msf.gov.sg/what-we-do/opg/lasting-power-of-attorney
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28
+  - source_id: aic_acp
+    title: "AIC Advance Care Planning, finding a facilitator"
+    owner: AIC
+    url: https://www.aic.sg/Care-Services/Advance-Care-Planning-ACP/Finding-an-ACP-Facilitator
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28
+  - source_id: moh_pg
+    title: MOH Pioneer Generation Package (who qualifies, PioneerDAS)
+    owner: MOH
+    url: https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/pioneer-generation-package
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28
+  - source_id: moh_mg
+    title: MOH Merdeka Generation Package (who qualifies, premium support)
+    owner: MOH
+    url: https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/merdeka-generation-package
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28
+  - source_id: aic_ctg
+    title: AIC Caregivers Training Grant ($400, $200 yearly top-up, capped at $400)
+    owner: AIC
+    url: https://www.aic.sg/Financial-Assistance/Caregivers-Training-Grant
+    licence: site-terms
+    checked_on: 2026-11-26
+    next_review: 2027-02-28

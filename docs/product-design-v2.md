@@ -605,7 +605,7 @@ From the pre-development review on 25 Nov 2026. Items are ranked by risk to laun
   - Rollback: use Vercel's instant rollback for the site, or `git revert` the JSON commit for data.
 - [x] **13. Versions and browsers.** *Done (25 Nov 2026), except testing on real browsers.*
   - Pin Node (LTS), Next.js and Python 3.12. *Node 26 (`.nvmrc`), Python 3.12 (`.python-version`, CI), exact versions in `web/package.json` (Next.js 16.4.6, React 19.3.1).*
-  - Browser support: the last 2 versions of Chrome, Safari, Firefox and Edge; iOS Safari 16+; Android WebView from the last 3 years. *The automated tests run in Chromium only; Safari, Firefox and WhatsApp's in-app browser are checked by hand on real phones.*
+  - Browser support: the last 2 versions of Chrome, Safari, Firefox and Edge; iOS Safari 16+; Android WebView from the last 3 years. *The automated tests run in Chromium, WebKit (as iPhone Safari) and Firefox; WhatsApp's in-app browser and printing on a real iPhone are checked by hand.*
 - [x] **14. Budgets and headers.** *Done (25 Nov 2026), with one accepted change to the budget.*
   - Performance budget: JavaScript under 150 KB gzipped on first load; all data files under 100 KB gzipped. *Data: enforced by the pipeline. JavaScript: 208 KB, of which about 173 KB is the Next.js and React framework; the owner accepted a budget of the framework plus 50 KB (architecture decisions, Stage 5).*
   - Headers: a Content-Security-Policy allowing only self plus the Umami origin, `Referrer-Policy: no-referrer`, and `X-Content-Type-Options: nosniff`. *In `web/vercel.json` and tested. The Umami origin is added only when analytics are. Scripts and styles need `'unsafe-inline'` (architecture decisions).*

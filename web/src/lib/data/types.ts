@@ -11,13 +11,14 @@ export type Defaultunitsperweek = number | null;
 export type Blockhours = number | null;
 export type Wardonly = boolean;
 export type Howtoapplyid = string;
+export type Askprovider = string[];
 export type Sourceid = string;
 export type Servicetypes = ServiceType[];
 export type Ruleid = string;
 export type Serviceid1 = string;
-export type Q = "where" | "discharged" | "adl" | "alone" | "memory" | "helper" | "limits" | "med";
+export type Q = "where" | "discharged" | "adl" | "alone" | "memory" | "helper" | "limits" | "med" | "cond";
 export type In = string[] | null;
-export type Any = ("bath" | "dress" | "eat" | "toilet" | "move" | "transfer")[] | null;
+export type Any = string[] | null;
 export type None = boolean | null;
 export type Is = boolean | null;
 export type When = Clause[];
@@ -85,6 +86,11 @@ export type Amountmeaning = string | null;
 export type Minadl = number;
 export type Disability = "some" | "severe";
 export type Askif = string | null;
+/**
+ * @minItems 1
+ */
+export type Criteria = [string, ...string[]];
+export type Requiresgeneration = "pg" | null;
 export type Altminage = number | null;
 export type Requireshelper = boolean;
 export type Citizensonly = boolean;
@@ -107,6 +113,18 @@ export type Steps1 = string[] | null;
 export type Extradocuments1 = string[] | null;
 export type Sourceid8 = string;
 export type Grantsteps = GrantStep[];
+export type Stepid = string;
+export type Timing = "now" | "week" | "month" | "later";
+export type Label2 = string;
+export type Text = string;
+export type Unlocks = string | null;
+export type After = string | null;
+export type When1 = Clause[];
+export type Group = "plan" | "carer" | "ahead";
+export type Planany = string[];
+export type Grantany = string[];
+export type Sourceid9 = string;
+export type Nextsteps = NextStep[];
 export type Contactid = string;
 export type Kind1 = "aic_link" | "polyclinic";
 export type Name2 = string;
@@ -118,14 +136,14 @@ export type Hours = string | null;
 export type Locationnote = string | null;
 export type Locationprecision = "exact" | "sector";
 export type Checkedon1 = string;
-export type Sourceid9 = string;
+export type Sourceid10 = string;
 export type Contacts = Contact[];
 export type Name3 = string;
 export type Phone = string;
 export type Hours1 = string;
 export type Languages = string[];
 export type Checkedon2 = string;
-export type Sourceid10 = string;
+export type Sourceid11 = string;
 export type Placeid = string;
 export type Kind2 = "fsc" | "cc";
 export type Name4 = string;
@@ -140,11 +158,11 @@ export type Lng2 = number;
 export type N = number;
 export type Lat3 = number;
 export type Lng3 = number;
-export type Label2 = string;
+export type Label3 = string;
 export type Dataversion = string;
 export type Builtat = string;
 export type Curatedhash = string;
-export type Sourceid11 = string;
+export type Sourceid12 = string;
 export type Title = string;
 export type Url = string;
 export type Licence = string;
@@ -171,6 +189,7 @@ export interface RulesBundle {
   subsidyTiers: SubsidyTiers;
   grantRules: Grantrules;
   howToApply: HowToApply;
+  nextSteps: Nextsteps;
 }
 export interface ServiceType {
   serviceId: Serviceid;
@@ -184,6 +203,7 @@ export interface ServiceType {
   blockHours?: Blockhours;
   wardOnly?: Wardonly;
   howToApplyId: Howtoapplyid;
+  askProvider?: Askprovider;
   sourceId: Sourceid;
 }
 export interface NeedRule {
@@ -290,6 +310,8 @@ export interface GrantRule {
   minAdl: Minadl;
   disability: Disability;
   askIf?: Askif;
+  criteria: Criteria;
+  requiresGeneration?: Requiresgeneration;
   altMinAge?: Altminage;
   requiresHelper?: Requireshelper;
   citizensOnly?: Citizensonly;
@@ -322,6 +344,22 @@ export interface GrantStep {
   sourceId: Sourceid8;
 }
 /**
+ * One step on the action plan's timeline. Every step cites the official page that describes it.
+ */
+export interface NextStep {
+  stepId: Stepid;
+  timing: Timing;
+  label: Label2;
+  text: Text;
+  unlocks?: Unlocks;
+  after?: After;
+  when?: When1;
+  group?: Group;
+  planAny?: Planany;
+  grantAny?: Grantany;
+  sourceId: Sourceid9;
+}
+/**
  * contacts.json.
  */
 export interface ContactsBundle {
@@ -340,7 +378,7 @@ export interface Contact {
   locationNote?: Locationnote;
   locationPrecision?: Locationprecision;
   checkedOn: Checkedon1;
-  sourceId: Sourceid9;
+  sourceId: Sourceid10;
 }
 export interface Hotline {
   name: Name3;
@@ -348,7 +386,7 @@ export interface Hotline {
   hours: Hours1;
   languages: Languages;
   checkedOn: Checkedon2;
-  sourceId: Sourceid10;
+  sourceId: Sourceid11;
 }
 export interface Place {
   placeId: Placeid;
@@ -378,7 +416,7 @@ export interface Regions {
 export interface RegionCentre {
   lat: Lat3;
   lng: Lng3;
-  label: Label2;
+  label: Label3;
 }
 export interface Manifest {
   dataVersion: Dataversion;
@@ -390,7 +428,7 @@ export interface Manifest {
   warnings: Warnings;
 }
 export interface ManifestSource {
-  sourceId: Sourceid11;
+  sourceId: Sourceid12;
   title: Title;
   url: Url;
   licence: Licence;

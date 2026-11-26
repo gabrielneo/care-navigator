@@ -3,6 +3,8 @@ import rulesJson from "../../../../public/data/rules.json";
 import type { RulesBundle } from "../../data/types";
 import { costPlan, nursingHome, planEntries, potentialGrants, round5, severeCount, severeOnlyHidden, WEEKS_PER_MONTH } from "../cost";
 import { clauseHolds, matchServices, MAX_MATCHES } from "../matching";
+import { nextSteps } from "../steps";
+import { reminders, remindersIcs } from "../reminders";
 import { incomeOptions, subsidyRate, tierForAnnualValue, tierForPchi, type TierId } from "../tiers";
 import { decodeHash, decodeSession, encodeHash, encodeSession, type Session } from "../urlCodec";
 
@@ -61,7 +63,7 @@ const ALT: Record<string, string[]> = {
   where: ["in_hospital", "changed_at_home", "struggling"], alone: ["weekdays", "most", "no", "unsure"],
   memory: ["dx", "undx", "no", "unsure"], helper: ["yes", "considering", "no", "unsure"], limits: ["ok", "tired", "cant", "unsure"],
 };
-const FIELD: Record<string, keyof Session> = { where: "w", discharged: "d", alone: "al", memory: "mem", helper: "hlp", limits: "lim", med: "med", adl: "adl" };
+const FIELD: Record<string, keyof Session> = { where: "w", discharged: "d", alone: "al", memory: "mem", helper: "hlp", limits: "lim", med: "med", adl: "adl", cond: "cond" };
 
 function satisfy(rule: RulesBundle["needRules"][number]): Session {
   const s: Record<string, unknown> = { ...NEUTRAL };
@@ -329,5 +331,116 @@ describe("URL codec", () => {
 
   it("a typical link stays short", () => {
     expect(encodeHash("action", { ...MEI, loc: { sec: "56" } }).length).toBeLessThan(400);
+  });
+});
+
+describe("next steps (8.2)", () => {
+  const ids = (s: Session) => nextSteps(rules, s).map((x) => `${x.timing}:${x.id}`);
+  const MEI_PLAN: Session = { v: V, w: "in_hospital", d: false, adl: ["bath", "dress"], al: "weekdays", mem: "no", hlp: "no", lim: "ok",
+    plan: [{ s: "day_care", n: 5 }, { s: "home_personal_care", n: 2 }], t: "T1", r: "sc", b: "le1969" };
+
+  it("starts with the first call, then follows her services and grants in order", () => {
+    expect(ids(MEI_PLAN)).toEqual(["now:call_first", "week:apply_services", "week:means_test", "later:caregiver_training", "later:lpa", "later:acp"]);
+    const groups = Object.fromEntries(nextSteps(rules, MEI_PLAN).map((x) => [x.id, x.group]));
+    expect(groups).toMatchObject({ call_first: "plan", means_test: "plan", caregiver_training: "carer", lpa: "ahead", acp: "ahead" });
+    expect(nextSteps(rules, MEI_PLAN)[0]!.text).toBe("Call the medical social worker on her ward, before she's discharged.");
+  });
+
+  it("adds the assessment report before the Home Caregiving Grant, and says which comes first", () => {
+    const heavy = { ...MEI_PLAN, adl: ["bath", "dress", "toilet"] } as Session;
+    const steps = nextSteps(rules, heavy);
+    const far = steps.findIndex((x) => x.id === "far"), hcg = steps.findIndex((x) => x.id === "apply_hcg");
+    expect(far).toBeGreaterThan(0);
+    expect(hcg).toBeGreaterThan(far);
+    expect(steps[hcg]!.after).toBe("Functional Assessment Report");
+    expect(ids(heavy)).not.toContain("month:severe_assessment");        // needs help, but none "can't do at all"
+    expect(ids({ ...heavy, sev: ["bath", "dress", "toilet"] } as Session)).toContain("month:severe_assessment");
+  });
+
+  it("respite referral for a tired carer; nothing about grants before income is known", () => {
+    expect(ids({ ...MEI_PLAN, lim: "tired" })).toContain("week:respite_referral");
+    expect(ids({ ...MEI_PLAN, t: undefined, r: undefined })).not.toContain("later:caregiver_training");
+  });
+
+  it("every step names a source in the manifest", () => {
+    const heavy = { ...MEI_PLAN, adl: ["bath", "dress", "toilet"], sev: ["bath", "dress", "toilet"], hlp: "yes", lim: "cant" } as Session;
+    for (const st of nextSteps(rules, heavy)) expect(st.sourceIds.length).toBeGreaterThan(0);
+  });
+
+  it("8.6: ticked steps travel in the link", () => {
+    const s: Session = { v: V, done: ["call_first", "far"] };
+    expect(decodeSession(encodeSession(s))).toEqual(s);
+    expect(() => encodeSession({ v: V, done: ["far", "far"] })).toThrow();
+  });
+});
+
+describe("grant criteria (8.5)", () => {
+  it("every grant she may qualify for carries its criteria", () => {
+    const s: Session = { v: V, w: "changed_at_home", adl: ["bath", "dress", "toilet"], sev: ["bath", "dress", "toilet"], hlp: "yes", t: "T0", r: "sc" };
+    const gs = potentialGrants(rules, s, 3);
+    expect(gs.length).toBeGreaterThanOrEqual(6);
+    for (const g of gs) expect(g.criteria.length).toBeGreaterThan(0);
+  });
+});
+
+describe("health events (8.7) and support for the carer (8.8)", () => {
+  const BASE: Session = { v: V, w: "changed_at_home", adl: [], al: "no", mem: "no", hlp: "no", lim: "ok" };
+  it("a fall, stroke or broken hip suggests home therapy; a serious illness suggests palliative care at home", () => {
+    for (const c of ["fall", "stroke", "hip"] as const) expect(allServices({ ...BASE, cond: [c] })).toContain("home_therapy");
+    expect(allServices({ ...BASE, cond: ["eol"] })).toContain("home_palliative_care");
+    expect(allServices(BASE)).not.toContain("home_palliative_care");
+  });
+  it("a serious illness adds the specially trained Advance Care Plan step", () => {
+    const steps = nextSteps(rules, { ...BASE, cond: ["eol"] }).map((x) => x.id);
+    expect(steps).toContain("acp_serious");
+    expect(nextSteps(rules, BASE).map((x) => x.id)).not.toContain("acp_serious");
+  });
+  it("mindline only when the carer can't keep going; the support network when tired or worse", () => {
+    const ids = (lim: Session["lim"]) => nextSteps(rules, { ...BASE, lim }).map((x) => x.id);
+    expect(ids("ok")).not.toContain("carer_network");
+    expect(ids("tired")).toContain("carer_network");
+    expect(ids("tired")).not.toContain("mindline");
+    expect(ids("cant")).toEqual(expect.arrayContaining(["mindline", "carer_network"]));
+  });
+  it("the condition list travels in the link, with no repeats", () => {
+    expect(decodeSession(encodeSession({ v: V, cond: ["fall", "eol"] }))).toEqual({ v: V, cond: ["fall", "eol"] });
+    expect(() => encodeSession({ v: V, cond: ["fall", "fall"] })).toThrow();
+  });
+});
+
+describe("calendar reminders (8.11)", () => {
+  const S: Session = { v: V, w: "in_hospital", d: false, adl: ["bath", "dress", "toilet"], al: "weekdays", mem: "no", hlp: "no", lim: "tired",
+    plan: [{ s: "day_care", n: 5 }], t: "T1", r: "sc", b: "le1969" };
+  const today = new Date(2026, 10, 26);
+  it("reminds about open this-week and this-month steps, skips ticked ones, and adds a review", () => {
+    const steps = nextSteps(rules, S);
+    const all = reminders(steps, [], today);
+    const ticked = reminders(steps, ["far"], today);
+    expect(all.find((r) => r.title === "Care plan: Functional Assessment Report")!.date).toEqual(new Date(2026, 11, 3));
+    expect(all.find((r) => r.title === "Care plan: Home Caregiving Grant")!.date).toEqual(new Date(2026, 11, 26));
+    expect(ticked.some((r) => r.title === "Care plan: Functional Assessment Report")).toBe(false);
+    expect(all.at(-1)!.title).toBe("Care plan: review it");
+    expect(all.some((r) => r.title.includes("First call"))).toBe(false);          // "now" steps aren't reminders
+  });
+  it("writes a valid calendar file with escaped text and folded lines", () => {
+    const ics = remindersIcs([{ date: today, title: "Care plan: a, b; c", detail: "x".repeat(200) }], "https://example.org/plan/#s=action", today);
+    expect(ics.startsWith("BEGIN:VCALENDAR\r\nVERSION:2.0")).toBe(true);
+    expect(ics).toContain("DTSTART;VALUE=DATE:20261126");
+    expect(ics).toContain("SUMMARY:Care plan: a\\, b\\; c");
+    for (const line of ics.split("\r\n")) expect(line.length).toBeLessThanOrEqual(75);
+    expect(ics.trimEnd().endsWith("END:VCALENDAR")).toBe(true);
+  });
+});
+
+describe("Pioneer and Merdeka Generation (8.12)", () => {
+  const S: Session = { v: V, w: "changed_at_home", adl: ["bath", "dress", "toilet"], t: "T1", r: "sc", b: "le1969" };
+  const pio = (g?: Session["g"]) => potentialGrants(rules, { ...S, g }, 3).find((x) => x.grantId === "pioneer_das");
+  it("shows the Pioneer scheme with a caveat until known, without it for Pioneers, and hides it otherwise", () => {
+    expect(pio()?.askIf).toBe("if she is a Pioneer Generation member");
+    expect(pio("unsure")?.askIf).toBe("if she is a Pioneer Generation member");
+    expect(pio("pg")).toBeDefined();
+    expect(pio("pg")?.askIf).toBeNull();
+    expect(pio("mg")).toBeUndefined();
+    expect(pio("no")).toBeUndefined();
   });
 });

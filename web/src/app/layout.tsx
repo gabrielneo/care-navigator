@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { LangText } from "@/components/LangText";
 import "./globals.css";
 
 const SITE = "https://care-navigator-xi.vercel.app";
@@ -31,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="page">
           <div className="proto" role="note">
-            Prototype for testing. Figures and wording have not yet been checked by a care professional.
+            <LangText>Prototype for testing. Figures and wording have not yet been checked by a care professional.</LangText>
           </div>
           <noscript>
             <p className="notice warn">
@@ -40,9 +41,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </noscript>
           <main>{children}</main>
           <footer className="ft">
-            <span><b>AIC hotline 1800-650-6060</b> · Mon–Fri 8.30am–8.30pm, Sat 8.30am–4pm</span>
-            <span>Medical emergency: <b>995</b></span>
-            <span>Independent student project. Not affiliated with MOH, AIC or the Government of Singapore.</span>
+            <span><b><LangText>AIC hotline 1800-650-6060</LangText></b> · <LangText>Mon–Fri 8.30am–8.30pm, Sat 8.30am–4pm</LangText></span>
+            <span><LangText>Medical emergency:</LangText> <b>995</b></span>
+            <span><LangText>Independent student project. Not affiliated with MOH, AIC or the Government of Singapore.</LangText></span>
             <nav aria-label="Site">
               <Link href="/about/">About</Link>
               <Link href="/privacy/">Privacy</Link>

@@ -100,6 +100,7 @@ export interface PotentialGrant {
   amountMeaning: string | null; // e.g. "$400 to start, then $200 a year, for approved caregiver courses."
   needsAgeCheck: boolean;      // e.g. levy concession: met by age 67+, which the planner doesn't ask
   askIf: string | null;        // a condition the planner doesn't ask, e.g. "if she is a Pioneer Generation member"
+  criteria: string[];          // 8.5: what she must meet, from the official page
   conditions: string;
   officialUrl: string;
   sourceId: string;
@@ -129,12 +130,15 @@ export function potentialGrants(rules: RulesBundle, s: Session, adlCount: number
     if (g.citizensOnly && s.r !== "sc") return [];
     if (g.requiresHelper && !(s.hlp === "yes" || s.hlp === "considering")) return [];
     if (g.grantId === "home_caregiving_grant" && inHome) return [];       // not for residents of a nursing home
+    // 8.12: a generation-only scheme is shown with "(if she is …)" until the family says; hidden once they say she isn't.
+    const known = g.requiresGeneration && s.g != null && s.g !== "unsure";
+    if (known && s.g !== g.requiresGeneration) return [];
     // "severe" payouts count only activities she can't do at all (CPF, AIC, HealthHub; source audit 26 Nov 2026).
     const adlMet = (g.disability === "severe" ? severeCount(s) : adlCount) >= g.minAdl;
     if (!adlMet && g.altMinAge == null) return [];
     return [{
       grantId: g.grantId, name: g.name, amount, period: g.period, isMaximum: g.amountIsMaximum ?? false,
-      amountMeaning: g.amountMeaning ?? null, askIf: g.askIf ?? null,
+      amountMeaning: g.amountMeaning ?? null, askIf: known ? null : g.askIf ?? null, criteria: g.criteria,
       needsAgeCheck: !adlMet, conditions: g.otherConditions, officialUrl: g.officialUrl, sourceId: g.sourceId,
     }];
   });

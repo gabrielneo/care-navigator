@@ -65,6 +65,46 @@ Verdicts: **Supported**, the page says it. **Partly**, the page says something c
 
 Before this fix, the site listed CareShield Life, MediSave Care and ElderFund for anyone who needed help with 3 activities. It now asks which activities she can't do at all. Older shared links without that answer read as "some help" and show no severe-only payouts.
 
+## Next steps on the action plan (to-do 8.2, 26 Nov 2026)
+
+Each step in `data/curated/next_steps.yaml` cites a page already checked above. The first call comes from the branch rules.
+
+| Step | Source | What the page says |
+|---|---|---|
+| Ask her doctor to apply for her services, or get help at an AIC Link | AIC Day Care (and the home care pages) | A doctor at the hospital or polyclinic submits the application; an AIC Link can help |
+| Have the household's monthly income ready | AIC Home Caregiving Grant | Subsidies are means-tested on income per person; the household is everyone at her NRIC address |
+| Ask her doctor to refer her for respite, about 4 weeks ahead | AIC Take a Break | Referral by a doctor, submitted 4 weeks before; 7 to 30 days a year |
+| Book a Functional Assessment Report, then apply for the Home Caregiving Grant on eFASS | AIC Home Caregiving Grant | The report is done by an approved doctor, nurse or therapist; apply online with Singpass |
+| Ask about a severe disability assessment | CPF CareShield Life | An MOH-accredited assessor must find her unable to do 3 of the 6 activities |
+| Doctor's certification, then AIC's recommendation, for the levy concession | MOM levy concession | The activity route needs a doctor's certification and AIC's recommendation letter |
+| Look for approved caregiver courses | Together for Better | The Caregivers Training Grant pays for approved courses |
+
+## Health events, the carer and planning ahead (to-dos 8.7 to 8.9, checked 26 Nov 2026)
+
+| Claim | Verdict | Source | Action |
+|---|---|---|---|
+| Home palliative care: homebound with a serious illness, expected under a year; a doctor refers; an AIC Link helps | Supported; no price ("charges may apply"), and a medical social worker can help with fees | AIC Home Palliative Care | New service, shown without a price; referral step added |
+| A fall, stroke or broken hip points to therapy | Partly: AIC's home therapy page covers "regaining" daily abilities for frail, homebound people but doesn't name these events | AIC Home Therapy | Rule R12 marked as our matching judgement |
+| CREST dementia outreach | **Not found**: AIC's dementia page returns 404; Dementia Singapore's CREST page describes caregiver group activities, not outreach | Dementia Singapore | Left out; the Caregiver Support Network is listed instead |
+| Mobility (wheelchair, bedbound) changes which services fit | **Not found**: no official eligibility rule found | — | Not built |
+| Caregiver Support Network: peer support and counselling; Dementia Singapore 6377 0700, Club HEAL 6899 3463, Mindfull Community 6460 4400 | Supported ("accurate as of March 2026") | AIC Connecting with other caregivers | "For you" step for a tired carer |
+| mindline 1771 or WhatsApp 6669 1771, a counsellor any time; community mental health counselling at no charge | Supported | AIC Mental health support | "For you" step when the carer can't keep going |
+| Caregiver courses: pick one in the Caregivers Training Catalogue; ask the provider to apply for the grant at least 2 weeks before | Supported | AIC Choosing learning options | Step rewritten |
+| Lasting Power of Attorney: donor 21 or older; made online with Singpass; free for citizens with Form 1; a Certificate Issuer (doctor, lawyer or psychiatrist) certifies it for a fee | Supported | Office of the Public Guardian (MSF) | "Also worth doing" step. We don't say "make it while she still has capacity", because the page doesn't say so in those words |
+| Advance Care Plan: facilitators listed in AIC's directory; some community providers are free; serious conditions need specially trained facilitators | Supported | AIC Finding an ACP facilitator | Two steps: general, and for a serious illness |
+| An official guide to writing a will | **Not found** (MinLaw has none; LifeSG didn't load) | — | Left out |
+
+**Caregivers Training Grant: resolved (26 Nov 2026).** AIC's own grant page agrees with Together for Better (last updated 19 Dec 2025): $400 to start, a $200 top-up each financial year, and a balance capped at $400. AIC's learning page ("up to $200 in subsidies annually") describes only the yearly top-up. The grant now links to AIC's grant page. That page adds that the grant can be shared between caregivers, including a helper who is the main carer.
+
+## Pioneer and Merdeka Generation (to-do 8.12, checked 26 Nov 2026)
+
+| Claim | Verdict | Source | Action |
+|---|---|---|---|
+| Pioneer Generation: citizens born in 1949 or earlier who became citizens by 31 Dec 1986 | Supported | MOH Pioneer Generation Package (updated 6 Nov 2026) | In the Pioneer scheme's criteria |
+| PioneerDAS: $100 a month for life, for some assistance with 3 or more activities; a nursing home can receive it directly | Supported | MOH; AIC PioneerDAS | Shown without "(if …)" for Pioneers, hidden for others |
+| Merdeka Generation gets a long-term care payout | **Not found**: its package lists CareShield Life participation incentives, a MediShield Life premium subsidy and outpatient discounts | MOH Merdeka Generation Package (updated 23 Oct 2026) | A note for Merdeka members: help with premiums, no payout for care costs listed |
+| Pioneer Generation MediSave top-ups and CareShield Life incentives | Supported, but they offset premiums, not care costs | MOH | Not shown on the cost screen |
+
 ## Still open
 
 - **Centre-based rehabilitation** was removed. If AIC publishes a page for it, add it back with that page as the source.

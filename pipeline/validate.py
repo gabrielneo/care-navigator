@@ -61,6 +61,7 @@ def blocking(c: Curated) -> list[str]:
         ("grant_id", [g.grant_id for g in c.grant_rules.grants]),
         ("contact_id", [x.contact_id for x in c.contacts.contacts]),
         ("apply_id", [r.apply_id for r in c.how_to_apply.routes]),
+        ("step_id", [x.step_id for x in c.next_steps.steps]),
     ]:
         for d in _dupes(ids):
             errors.append(f"duplicate {label} '{d}'")
@@ -110,6 +111,21 @@ def blocking(c: Curated) -> list[str]:
     for gs in c.how_to_apply.grant_steps:
         if gs.grant_id not in grant_ids:
             errors.append(f"grant step for unknown grant '{gs.grant_id}'")
+    # Next steps: known services and grants, valid answers, and "after" points to an earlier step.
+    seen: set[str] = set()
+    for st in c.next_steps.steps:
+        for sid in st.plan_any:
+            if sid not in services:
+                errors.append(f"step {st.step_id}: unknown service '{sid}'")
+        for gid in st.grant_any:
+            if gid not in grant_ids:
+                errors.append(f"step {st.step_id}: unknown grant '{gid}'")
+        for cl in st.when:
+            if cl.in_ is not None and cl.q in ANSWER_VALUES and set(cl.in_) - ANSWER_VALUES[cl.q]:
+                errors.append(f"step {st.step_id}: '{cl.q}' has no answer {sorted(set(cl.in_) - ANSWER_VALUES[cl.q])}")
+        if st.after is not None and st.after not in seen:
+            errors.append(f"step {st.step_id}: 'after' must name an earlier step, not '{st.after}'")
+        seen.add(st.step_id)
     contact_ids = {x.contact_id for x in c.contacts.contacts}
     missing_regions = REGIONS - {r.region_id for r in c.contacts.regions}
     if missing_regions:

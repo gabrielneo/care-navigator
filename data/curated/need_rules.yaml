@@ -10,7 +10,8 @@
 #   alone: weekdays | most | no | unsure       memory: dx | undx | no | unsure
 #   helper: yes | considering | no | unsure    limits: ok | tired | cant | unsure
 #   med: true | false   (the "Medical care at home" card on question 2b; not one of the 6 activities, so it never counts toward adlCount)
-# priority: lower number shows first. At most 5 are shown (edge case 12).
+#   cond: fall, stroke, hip, eol   (optional health events on question 2b, to-do 8.7; {q: cond, any: [...]})
+# priority: lower number shows first. The top 3 are shown; the rest go under "More that may help" (8.10).
 rules:
   - rule_id: R01
     service_id: interim_caregiver_service
@@ -89,3 +90,18 @@ rules:
     reason_text: A nurse handles the medical care at home.
     priority: 3
     source_id: aic_home_nursing
+  - rule_id: R12
+    service_id: home_therapy
+    when:
+      - {q: cond, any: [fall, stroke, hip]}
+    reason_text: After a fall, stroke or broken hip, therapy helps her regain daily abilities.
+    priority: 4
+    note: "AIC describes home therapy as helping people regain daily abilities; linking these events to it is our judgement (8.7)."
+    source_id: aic_home_therapy
+  - rule_id: R13
+    service_id: home_palliative_care
+    when:
+      - {q: cond, any: [eol]}
+    reason_text: Doctors can arrange care at home for a serious illness, and support for the family.
+    priority: 2
+    source_id: aic_home_palliative

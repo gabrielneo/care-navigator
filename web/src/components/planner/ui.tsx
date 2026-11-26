@@ -62,6 +62,7 @@ export const UNIT_WEEK: Record<string, string> = {
 export const NO_PRICE: Record<string, string> = {
   interim_caregiver_service: "Ask the ward's medical social worker",
   active_ageing_centre: "Usually free or low cost",
+  home_palliative_care: "Charges may apply. A medical social worker can help with fees",
 };
 
 const icon = (d: string) => (

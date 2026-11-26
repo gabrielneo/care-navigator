@@ -1,0 +1,44 @@
+# Requirements traceability (to-do 8.14, 26 Nov 2026)
+
+Each requirement, the evidence behind it, where it's built and the test that proves it. Requirements come from `docs/product-design-v2.md` (user stories, business rules, non-functional requirements) and Stage 8 in `docs/architecture-prompts-v2.md`. The evidence column cites the research report (`reports/Singapore caregiver pain points.md`), the Gate 1 walkthrough, the source audit and the desk evaluation, all in `docs/`.
+
+**Status:** **Met** means built and tested. **Partly** means built, but part of it isn't tested or isn't done. **Changed** means the owner changed the requirement.
+
+| ID | Requirement | Evidence | Built in | Proved by | Status |
+|---|---|---|---|---|---|
+| R1 | Start from where she is now; the hospital branch leads with the ward social worker and ward-only services | Research: ward-only access (THK Interim Caregiver Service), about 220 medically fit patients a day waiting (MOH) | `branch_rules.yaml`, `next_steps.yaml`, `Planner.tsx` | e2e "Mei" (first call, ask list); unit: branch and matching rules | Met |
+| R2 | In a nursing home: straight to the nursing home cost and payouts | Design story | `Planner.tsx` flow, `cost.ts` nursingHome | e2e "Nursing home"; unit: nursing home "from" figure | Met |
+| R3 | Plain-language needs questions; 1 to 5 matches, each with a reason tied to the answers | Design story; Gate 1 (AIC wording reused) | `need_rules.yaml`, `matching.ts` | Unit: one test per active rule, plus golden cases; e2e journeys | Met |
+| R4 | "Not sure" still matches and suggests talking to a professional | Design story | `matching.ts` confirmWithProfessional | Unit: unsure cases | Met |
+| R5 | Weekly plan with visible defaults ("our assumption"), 0 to 7 per week | Design story | `Screens.tsx` Week | e2e "Mei" (home care 3 to 2), week layout checks | Met |
+| R6 | Monthly cost range per service and in total, with subsidy and at full price | Research: cost shock is a documented drop-out point (Lien, 2018 evidence) | `cost.ts`, `subsidy_tiers.yaml`, `price_references.yaml` | Unit: golden subsidy table for both schemes and every tier; e2e "Mei" amounts equal the engine's | Met |
+| R7 | "How is this worked out": each price, subsidy %, source and checked date | Accuracy requirement | `Screens.tsx` CostScreen | e2e audit "sources: every figure…" (7 screens) | Met |
+| R8 | A typed quote replaces the price range | Design story | `cost.ts`, `Screens.tsx` Quote | Unit: cost with quotes; e2e axe "quote error" | Met |
+| R9 | Grants as "may qualify", with amount, conditions and official link, never subtracted | Design rule ADR-004; source audit | `grant_rules.yaml`, `cost.ts` potentialGrants | Unit: "never subtracted", HCG tiers, levy; e2e "Nursing home" | Met |
+| R10 | Severe-only payouts need "can't do at all" (8.1) | CPF, AIC, HealthHub pages (source audit, 26 Nov) | `grant_rules.yaml` disability, ADL follow-up question | Pipeline: rule without level rejected; unit and e2e "8.1" | Met |
+| R11 | Grant criteria up front, with the official page to apply (8.5) | AIC scheme pages | `grant_rules.yaml` criteria | Unit "grant criteria"; e2e "8.5 and 8.3" | Met |
+| R12 | Who to call: nearest AIC Link, polyclinic, Family Service Centre, Community Club, with distance and checked date | Research: families trust the MSW and don't know whom to call | `contacts.yaml`, `nearby.ts`, ContactsScreen | Unit: geo tests; e2e "Mei" contacts | Changed: hospitals are not listed, polyclinics are (owner, Stage 4) |
+| R13 | Unplaceable postal area falls back to a region; the rest still works | Design story | `postal.ts`, Postal question | e2e "Unknown area" | Met |
+| R14 | Clear first step, what to ask, what to bring | Design story; Gate 1 (AIC gives no ordered plan) | Action screen | e2e "Mei", "Mr Tan", "Nursing home" | Met (the bring list is labelled our suggestion) |
+| R15 | Ordered next steps, each saying what it unlocks and what comes first (8.2) | Gate 1; source audit next-steps table | `next_steps.yaml`, `steps.ts` | Pipeline: bad step references blocked; unit "next steps"; e2e "8.2 and 8.6" | Met |
+| R16 | Ticks saved in the shared link (8.6) | Owner's direction (siblings share progress) | `urlCodec.ts` done | Unit codec; e2e "8.2 and 8.6" (sibling sees ticks) | Met |
+| R17 | Handover summary for the social worker or AIC Link (8.4) | Research: the MSW makes placement happen; Age Well SG single assessment | `Journey.tsx` Handover | e2e "8.4" (content, one printed page, no postal code) | Met |
+| R18 | Questions to ask providers (8.3) | Research: the fee quote at the counter is where referrals stall | `service_types.yaml` ask_provider | e2e "8.5 and 8.3" | Met (screen only; left off the paper plan to keep one page) |
+| R19 | Share: a link that reopens the same plan, a printable page, a cost split | Design story | Action screen, `urlCodec.ts` | e2e "Mei" (WhatsApp link reopens the same text); print test | Met |
+| R20 | The link holds no personal data beyond answers | Privacy requirement | `urlCodec.ts` allowlist (2-digit area only) | Unit codec; e2e: no request or link carries a postal code (every test) | Met |
+| R21 | Older users: body text 18px or more, targets 48px or more, one question per screen | Design story | `globals.css` | `sizes.e2e.ts`: on every screen at 375 px, text 14 px or more, main text 18 px or more, controls 48 px or more, other targets 24 px or more | Met |
+| N1 | WCAG 2.2 AA; keyboard, screen reader, 200% zoom | Non-functional requirement | Whole site | axe on every screen and state (0 serious or critical); Lighthouse accessibility 100; `keyboard.e2e.ts` (whole journey by keyboard, visible focus on every stop); `sizes.e2e.ts` (no sideways scroll at 320 px, i.e. 400% zoom, in all four languages) | Partly: screen reader not tested |
+| N2 | First screen interactive in under 2 s on a mid-range phone over 4G | Non-functional requirement | Static export; 3D loads after the page | Lighthouse (devtools throttling): Start 96 to 99, plan 99 to 100, content at about 1.5 to 1.7 s | Met (lab, not a real phone) |
+| N3 | No cookies, no stored personal data, no third-party trackers | Privacy requirement | CSP in `vercel.json`, no analytics | e2e audit "privacy", "headers"; every test checks requests stay on the site | Met |
+| N4 | Every figure traces to a source and checked date | Accuracy requirement | `source_registry.yaml`, Sources lines | Pipeline: unknown source blocked; e2e "sources" audit | Met |
+| N5 | Plain language: sentences under 20 words, reading age about 12 | Spec 08 | All wording | e2e readability on 17 screens (grade 8 or lower) | Met |
+| N6 | The action plan fits one A4 page | Design (print or take to the ward) | Print CSS: "Print one page" and "Print full plan" | e2e: Mei's full plan on 1 page; the heaviest plan on 1 page in "Print one page" and 2 pages at most in full; checked 26 Nov for 5 cases | Met (owner's choice, 26 Nov 2026: one page for everyone, the full plan may run to 2) |
+| R22 | Health events change the matches (8.7) | AIC Home Therapy, Home Palliative Care | `need_rules.yaml` R12, R13; question 2 | Unit "health events"; e2e "8.7 to 8.10" | Partly: mobility and CREST left out (no official source) |
+| R23 | "For you": support for the carer (8.8) | AIC caregiver support and mental health pages | `next_steps.yaml` group carer | Unit; e2e "8.7 to 8.10" | Met |
+| R24 | "Also worth doing": LPA and Advance Care Plan (8.9) | OPG; AIC ACP | `next_steps.yaml` group ahead | Unit; e2e "8.7 to 8.10" | Met (wills left out) |
+| R25 | Lighter first screens: top 3 matches, "On this page", trust note (8.10) | CareCompass; Legal & General | `matching.ts`, cost screen, Start page | e2e "8.7 to 8.10" | Met |
+| R26 | Calendar reminders made on the phone (8.11) | Owner's direction; nothing leaves the phone | `reminders.ts`, action plan | Unit "calendar reminders" (valid file, escaping, line length); e2e "8.11 and 8.12" (download and contents) | Met |
+| R27 | Pioneer and Merdeka Generation (8.12) | MOH Pioneer and Merdeka Generation pages; AIC PioneerDAS | `grant_rules.yaml` requires_generation; cost screen question | Unit "Pioneer and Merdeka"; e2e "8.11 and 8.12" | Met |
+| R28 | Chinese, Malay and Tamil drafts of the planner (8.13) | Owner's direction; design: translations with native-speaker review | `web/src/lib/i18n.ts`, `zh.ts`, `ms.ts`, `ta.ts`, language menu | Unit: each draft covers the rules data and every screen key, placeholders intact; e2e `languages.e2e.ts` (Chinese journey; every screen and branch in all three: no leftover English, axe clean; menu and Start links) | Partly: drafts, not yet reviewed by native speakers |
+
+**Not covered here:** the out-of-scope items in the design (provider directory, applications, accounts, a map), and the Stage 8 items still to do (8.7 onward).

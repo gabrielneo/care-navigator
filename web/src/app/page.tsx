@@ -2,10 +2,11 @@ import Link from "next/link";
 import { Hero3D } from "@/components/start/Hero3D";
 import { Tilt } from "@/components/planner/ui";
 import { range } from "@/lib/format";
+import { LANGS } from "@/lib/i18n";
 import { manifest, rules } from "@/lib/data";
 import { costPlan } from "@/lib/engine/cost";
 import { matchServices } from "@/lib/engine/matching";
-import type { Session } from "@/lib/engine/urlCodec";
+import { encodeHash, type Session } from "@/lib/engine/urlCodec";
 
 // The example plan is worked out by the real engine from today's rules at build time, so its figures stay true.
 const EXAMPLE: Session = {
@@ -36,6 +37,11 @@ export default function Start() {
           <div className="hero-cta">
             <Link className="btn" href="/plan/">Start planning</Link>
             <span className="hero-note">Free. About 5 minutes. Nothing you enter is saved.</span>
+            <span className="hero-langs">
+              {LANGS.filter((x) => x.id !== "en").map((x) => (
+                <a key={x.id} href={`/plan/${encodeHash("where", { v: manifest.dataVersion, l: x.id as "zh" | "ms" | "ta" })}`} lang={x.html}>{x.name}</a>
+              ))}
+            </span>
           </div>
         </div>
         <Hero3D />
@@ -83,7 +89,7 @@ export default function Start() {
 
       <section className="band trust reveal" aria-label="Why you can trust the figures">
         <div><b>{manifest.sources.length} official sources</b><p>Each figure links to its source and the date it was checked.</p></div>
-        <div><b>Nothing stored</b><p>Your plan lives only in its own link. The postal code stays on your phone.</p></div>
+        <div><b>Nothing stored</b><p>Your plan lives only in its own link. The postal code stays on your phone. We never ask for her NRIC number, bank details or Singpass.</p></div>
         <div><b>Independent and free</b><p>A student project, not a government site. No sign-up and no ads.</p></div>
       </section>
 

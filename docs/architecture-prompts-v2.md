@@ -280,19 +280,19 @@ Priority: **P0** fix now (the site says something wrong), **Must**, **Should**, 
 
 ### Must: next steps that don't get lost
 
-**8.2 Ordered timeline with dependencies** · Must
+**8.2 Ordered timeline with dependencies** · Must · **Done 26 Nov 2026** (`data/curated/next_steps.yaml`, `web/src/lib/engine/steps.ts`)
 - The action plan becomes "Today / this week / before discharge / in a month". Each step says what it unlocks, for example:
   - the means test before the subsidy
   - the Functional Assessment Report before the Home Caregiving Grant
   - a respite referral 4 weeks ahead (AIC Take a Break)
 - **Done when:** every step and dependency cites an official page, and the order is tested per branch.
 
-**8.3 Questions for providers** · Must
+**8.3 Questions for providers** · Must · **Done 26 Nov 2026** (`ask_provider` in `service_types.yaml`; on screen, not on the paper plan)
 - When the family calls a day care centre or home care provider, the plan gives what to ask: fee after subsidy, waiting list, transport, trial day, weekend care.
 - Borrowed from Legal & General's "questions to ask".
 - **Done when:** the questions are worded per spec 08 and pass the readability test.
 
-**8.4 Handover summary for the professional** · Must
+**8.4 Handover summary for the professional** · Must · **Done 26 Nov 2026** (on the action plan; prints on its own page)
 - An "About Mum" page for the ward medical social worker or an AIC Link officer:
   - her situation
   - each daily activity and the level of help
@@ -303,35 +303,35 @@ Priority: **P0** fix now (the site says something wrong), **Must**, **Should**, 
 - It extends "Her plan so far". It is printed or shown on the phone, never sent anywhere.
 - **Done when:** it fits one A4 page and contains no free text or exact income.
 
-**8.5 Grant criteria up front, with the official application** · Must
+**8.5 Grant criteria up front, with the official application** · Must · **Done 26 Nov 2026** (`criteria` in `grant_rules.yaml`)
 - For each grant: the key criteria as a short ticked list, and one link to the official application (e.g. AIC's eFASS).
 - Borrowed from AIC's own scheme pages.
 - **Done when:** each criterion and link cites its page.
 
-**8.6 Tickable checklist kept in the link** · Must
+**8.6 Tickable checklist kept in the link** · Must · **Done 26 Nov 2026** (`done` in the link codec)
 - Ticks such as "Called the ward social worker" live in the plan's link (spec 10 codec), so a sibling who opens it sees the same progress. No server, no account.
 - **Done when:** the codec allowlist has the new field, and old links still open.
 
 ### Should: what AIC asks, done better
 
-**8.7 Medical conditions, with mobility** · Should
+**8.7 Medical conditions, with mobility** · Should · **Partly done 26 Nov 2026**: health events and palliative care built; mobility and CREST left out, because no official source was found
 - One optional question: fall, stroke, hip fracture, dementia, end of life.
 - Mobility (walking, wheelchair, bedbound) is folded into the activities question.
 - Each answer changes the matches with a sourced reason, e.g. stroke points to therapy at home.
 - CREST dementia outreach joins the contacts for memory problems, once sourced.
 - **Done when:** each new rule has a source and a golden test.
 
-**8.8 "For you": the caregiver's own needs** · Should
+**8.8 "For you": the caregiver's own needs** · Should · **Done 26 Nov 2026**
 - Built on "How are you coping?": respite timing (book 4 weeks ahead), the Caregivers Training Grant, and official caregiver support groups.
 - No scored questionnaire, because validated scales are licensed.
 - **Done when:** every item is sourced and appears only for "tired" or "can't keep going".
 
-**8.9 "Also worth doing"** · Should
+**8.9 "Also worth doing"** · Should · **Done 26 Nov 2026** (LPA and Advance Care Plan; wills left out, because no official guide was found)
 - Will, Lasting Power of Attorney and advance care plan, with official links, ordered by urgency.
 - Borrowed from AIC's future-planning section.
 - **Done when:** each link is official and dated.
 
-**8.10 Lighter first screens** · Should
+**8.10 Lighter first screens** · Should · **Done 26 Nov 2026**
 - Show the top 3 matches first, with the rest under "More that may help" (borrowed from CareCompass).
 - Add an "On this page" list on the cost screen.
 - Add a trust note: "We never ask for your NRIC, bank details or Singpass."
@@ -339,13 +339,13 @@ Priority: **P0** fix now (the site says something wrong), **Must**, **Should**, 
 
 ### Could
 
-**8.11 Calendar reminders made on the phone** · Could
+**8.11 Calendar reminders made on the phone** · Could · **Done 26 Nov 2026** (`web/src/lib/engine/reminders.ts`)
 - A calendar file (.ics) generated in the browser, e.g. "book respite by …" or "review her plan in 3 months". Nothing is sent.
 
-**8.12 Pioneer and Merdeka Generation extras on the cost screen** · Could
+**8.12 Pioneer and Merdeka Generation extras on the cost screen** · Could · **Done 26 Nov 2026** (the only long-term care payout is PioneerDAS; Merdeka gets premium help only)
 - Each benefit is shown only once sourced.
 
-**8.13 Translations** · Could
+**8.13 Translations** · Could · **Chinese, Malay and Tamil drafts built 26 Nov 2026, not yet reviewed** (owner chose labelled drafts)
 - Chinese, Malay and Tamil. The wording would need a qualified reviewer first.
 
 ### Working with AIC (beyond sharing a plan)
@@ -362,17 +362,17 @@ Priority: **P0** fix now (the site says something wrong), **Must**, **Should**, 
 
 ### Requirements process (no interviews)
 
-**8.14 Traceability table** · Must
+**8.14 Traceability table** · Must · **Done 26 Nov 2026** (`docs/requirements-traceability.md`)
 - In `docs/requirements-traceability.md`: each business requirement, its evidence (a source, the Gate 1 walkthrough, the desk evaluation or the pain-points report), the feature, and the test that proves it.
 
-**8.15 Assumption register** · Must
+**8.15 Assumption register** · Must · **Done 26 Nov 2026** (`docs/assumption-register.md`)
 - Each belief, e.g. "families lose track after the first call", marked *sourced*, *partly sourced* or *untested*, with its evidence.
 
-**8.16 Official-process rule** · Must
+**8.16 Official-process rule** · Must · **Done 26 Nov 2026** (CLAUDE.md)
 - Every next step must cite the official page that describes the process, as every figure already does.
 - Add it to CLAUDE.md and the source audit when 8.2 lands.
 
-**8.17 Desk measures of success** · Should
+**8.17 Desk measures of success** · Should · **Done 26 Nov 2026** (`docs/verified/desk-evaluation-2026-11-25.md`, Stage 8 update)
 - Extend the desk evaluation's output table to the new outputs.
 - Re-run the before/after comparison (time and steps) after Stage 8.
 
@@ -402,7 +402,7 @@ Before Stage 1, work through the "Pre-build checklist" in `docs/product-design-v
 - Stage 5 (25 Nov 2026): no Tailwind. The wireframes' stylesheet on `docs/brand/tokens.css` is ported as one global CSS file (`web/src/app/globals.css`), which is less code and keeps the site identical to the wireframes. Add Tailwind later only if wanted.
 - Stage 5 JS size (25 Nov 2026, owner chose "trim"): the link codec uses `zod/mini`, and contacts, places and area centres load on demand from the postal step. First-load JS on `/plan` went from about 232 to 208 KB gzipped; the planner's own chunk (code, rules and `zod`) from 59 to 35 KB; the location data is now about 9 KB loaded later. About 173 KB is the Next.js 16 and React 19 framework baseline, so 150 KB isn't reachable without leaving Next.js. The working budget is the framework plus 50 KB of app code and data.
 - Item 14 headers (25 Nov 2026): `web/vercel.json` sends a Content-Security-Policy that allows only this site (no outside origin anywhere), `Referrer-Policy: no-referrer` (the plan link never leaks to the official pages people click through to) and `X-Content-Type-Options: nosniff`. Scripts and styles need `'unsafe-inline'`: a static export inlines Next.js's start-up scripts and can't use per-request nonces; React escapes all text, and no user text is ever rendered as HTML. The Umami origin is left out until analytics exist. The e2e server applies the same file, and every test fails if the policy blocks anything.
-- Stage 6 (25 Nov 2026): Playwright + axe in `web/tests/e2e/` (`npm run e2e`, also in CI) against the static build, at 375×812 and 1280×800. The suite covers the four journeys, axe on every screen and on error and edge states, one-page A4 print, sources and checked dates on every figure, the licence notices, a secrets scan, storage and cookies, and the headers. After every test it checks that each request stayed on this site, that no request carried a postal code and that the policy blocked nothing. It runs in Chromium only, so the owner checks WhatsApp's in-app browser, iPhone Safari printing and a screen reader on real phones.
+- Stage 6 (25 Nov 2026): Playwright + axe in `web/tests/e2e/` (`npm run e2e`, also in CI) against the static build, at 375×812 and 1280×800. The suite covers the four journeys, axe on every screen and on error and edge states, one-page A4 print, sources and checked dates on every figure, the licence notices, a secrets scan, storage and cookies, and the headers. After every test it checks that each request stayed on this site, that no request carried a postal code and that the policy blocked nothing. It runs in Chromium at both sizes, in WebKit as an iPhone 14 and in Firefox at desktop size (Firefox runs in CI; it can't start in the local sandbox). Later additions: `sizes.e2e.ts` (text and tap-target sizes on every screen, and 320 px reflow in every language) and `keyboard.e2e.ts` (the whole journey by keyboard). The owner still checks WhatsApp's in-app browser, printing on a real iPhone and a screen reader on real phones.
 - Motion and 3D (owner, 25 Nov 2026): the owner chose "3D on Start only".
   - **The scene:** a small home on an island with a floating heart, built from plain shapes in code (`web/src/components/start/HomeScene.tsx`). It uses three.js 0.187, React Three Fiber 9.8 and drei 10.7 (`Float`, `PresentationControls`, imported from their own files).
   - **What it doesn't do:** no downloaded models (other portfolios' Sketchfab models are licensed to their authors) and no Spline, because Spline loads scenes from its own servers and would break the no-outside-scripts rule and the CSP.
@@ -413,4 +413,21 @@ Before Stage 1, work through the "Pre-build checklist" in `docs/product-design-v
   - **Start page:** wide on desktop (up to 1160 px): a two-column hero; the 3D home builds itself piece by piece, leans toward the pointer anywhere over the hero, and has chimney smoke, window light and two people at the door. Below it: "How it works" cards that tilt toward a mouse, an example plan worked out by the real engine at build time (so its figures stay true), a trust strip (the number of official sources comes from the manifest), and a closing call to action. Sections rise in on scroll (movement only, so text keeps full contrast).
   - **Planner:** a journey bar over all six stages (finished stages are links back), and "Her plan so far", which gathers each answer, the week, the cost and who to call as chips: a strip on phones, a sticky side panel from 1024 px. The final screen opens with "Your plan is ready".
   - **Performance:** the 3D code loads after the page's load event and idle time. The shadow is a canvas-drawn texture, not drei's ContactShadows. Lighthouse mobile (devtools throttling): Start 96–99, plan 99–100, accessibility 100, layout shift 0.
+- Printing (owner, 26 Nov 2026): Stage 8 made richer plans too long for one A4 page, so the action plan has two print buttons.
+  - **"Print one page"** keeps the first call and its questions, this week's steps, what to bring, the cost, and who to call later. A note says the rest is in the plan's link. Every tested case fits one page, including the heaviest.
+  - **"Print full plan"** prints everything, breaking between steps and panels, never through one, and stays within 2 pages.
+  - "Save as PDF" is a tip under the buttons, since it's an option in the print window.
+- Malay and Tamil drafts (owner, 26 Nov 2026): added the same way as the Chinese draft (below), with "Indian" read as Tamil, Singapore's official Indian language.
+  - **Language menu:** the planner's two-way switch is now a menu (English, 中文, Bahasa Melayu, தமிழ்), each named in itself. The Start page links to all three drafts.
+  - **Files and banners:** each draft has its own dictionary (`web/src/lib/zh.ts`, `ms.ts`, `ta.ts`, 506 entries each) and its own "draft, not reviewed" banner in that language. The page's `lang` follows the choice.
+  - **Wording fixes:** in Tamil, "Call …" is worded "அழைக்க வேண்டியவர்: …" (person to call), so it works for any contact without changing its ending. In Malay, the contact is lower-cased mid-sentence like English, except acronyms such as "AIC Link".
+  - **Layout:** long Malay and Tamil words wrap inside options, buttons and the four-way choices. No screen overflows at 320 px in any language.
+  - **Tests:** unit tests check that every draft covers the rules data and every screen key, with placeholders intact. The end-to-end test checks every screen and branch in each language: no known English sentence left (official names excepted), axe clean, the right `lang`. It also checks the menu and the Start page links.
+- Chinese draft (owner, 26 Nov 2026): the planner, from the first question to the action plan, has a Chinese version.
+  - **How it works:** "中文（草稿）" on the Start page or the planner's switch turns it on, and the language travels in the plan's link (`l`). All wording goes through `t()` (`web/src/lib/i18n.ts`), keyed by the English text in `web/src/lib/zh.ts`; a missing entry falls back to English.
+  - **Labelled:** every Chinese screen says it's a draft, not yet reviewed, and that the English version applies if they differ. The page's `lang` switches to `zh-SG` for screen readers.
+  - **Names kept in English:** official scheme, service and organisation names (CareShield Life, Home Caregiving Grant, AIC Link, Interim Caregiver Service), with Chinese explanations around them, rather than guessing their official Chinese names. Well-established Chinese names are used for Pioneer Generation (建国一代) and Merdeka Generation (立国一代).
+  - **Not translated:** the Start page body, About, Privacy and Data sources pages, the prototype banner and footer, source titles, place names and addresses, and the calendar file.
+  - **Tests:** a unit test fails if any text in the rules data lacks a Chinese entry, or if a template loses a placeholder. An end-to-end test walks the planner in Chinese, fails on any leftover English sentence (official names, places and links excepted), and runs axe on each Chinese screen.
+  - **Before relying on it:** a native speaker, ideally one who knows Singapore's care system, reviews `web/src/lib/zh.ts`.
 - Item 15 (error events) waits until analytics exist at public launch. The prototype logs client errors to the console only.

@@ -237,12 +237,26 @@ def test_grant_without_disability_level_is_rejected():
     from pipeline.schemas import GrantRule
     rule = dict(grant_id="x", name="X", kind="payout", period="month",
                 amount_by_band={t: 1 for t in ["T0", "T1", "T2", "T3", "T4", "T5"]}, min_adl=3,
-                other_conditions="-", official_url="https://example.org", source_id="s")
+                criteria=["-"], other_conditions="-", official_url="https://example.org", source_id="s")
     with pytest.raises(ValidationError):
         GrantRule.model_validate(rule)
+    with pytest.raises(ValidationError):                                # 8.5: criteria can't be empty either
+        GrantRule.model_validate({**rule, "disability": "some", "criteria": []})
     assert GrantRule.model_validate({**rule, "disability": "severe"}).disability == "severe"
 
 
 def test_severe_payouts_are_marked_severe():
     severe = {g.grant_id for g in br.load_curated().grant_rules.grants if g.disability == "severe"}
     assert severe == {"careshield_life", "medisave_care", "elderfund"}   # CPF, AIC, HealthHub (26 Nov 2026)
+
+
+# ---------- 8.2: next steps reference real services, grants and earlier steps ----------
+def test_next_step_with_bad_references_is_blocked():
+    c = br.load_curated()
+    bad = c.model_copy(deep=True)
+    st = bad.next_steps.steps[1]
+    st.grant_any = ["no_such_grant"]
+    st.after = "later_step_that_does_not_exist"
+    errors = validate.blocking(bad)
+    assert any("unknown grant 'no_such_grant'" in e for e in errors)
+    assert any("'after' must name an earlier step" in e for e in errors)

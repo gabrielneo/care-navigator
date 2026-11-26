@@ -2,7 +2,7 @@
 import type { Branch, Clause, NeedRule, RulesBundle } from "../data/types";
 import type { Session } from "./urlCodec";
 
-export const MAX_MATCHES = 5;
+export const MAX_MATCHES = 3;   // top 3 first, the rest under "More that may help" (8.10, after CareCompass)
 type BranchId = Branch["branchId"];
 
 export interface Match {
@@ -36,6 +36,7 @@ function answer(s: Session, q: Clause["q"]): unknown {
     case "limits": return s.lim;
     case "med": return s.med ?? false;
     case "adl": return adlOf(s);
+    case "cond": return s.cond ?? [];
   }
 }
 
@@ -43,9 +44,9 @@ export function clauseHolds(c: Clause, s: Session): boolean {
   const v = answer(s, c.q);
   if (c.in != null) return typeof v === "string" && c.in.includes(v);
   if (c.is != null) return v === c.is;
-  const adl = v as string[];
-  if (c.any != null) return c.any.some((a) => adl.includes(a));
-  if (c.none != null) return c.none === (adl.length === 0);
+  const list = v as string[];           // adl or cond
+  if (c.any != null) return c.any.some((a) => list.includes(a));
+  if (c.none != null) return c.none === (list.length === 0);
   return false;
 }
 

@@ -58,7 +58,7 @@ test("Mei: mother in hospital after a fall", async ({ page }) => {
   await page.getByRole("button", { name: "See her action plan" }).click();
 
   await expect(page.getByRole("heading", { name: "Mum's care plan" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /^Call the medical social worker on her ward, before she's discharged/ })).toBeVisible();
+  await expect(page.getByText("Call the medical social worker on her ward, before she's discharged.")).toBeVisible();
   await expect(page.getByText('"When is she likely to be discharged?"')).toBeVisible();
   await page.getByRole("button", { name: "More people" }).click();
   await page.getByRole("button", { name: "More people" }).click();
@@ -109,7 +109,7 @@ test("Mr Tan: wife with memory problems, skips the postal code", async ({ page }
   await expect(page.locator(".contact").first()).toContainText("AIC Link");
   await expect(page.getByText("Distances are from the centre of her area")).toBeVisible();
   await page.getByRole("button", { name: "See her action plan" }).click();
-  await expect(page.getByRole("heading", { name: /^Call an AIC Link/ })).toBeVisible();
+  await expect(page.getByText(/^Call an AIC Link/)).toBeVisible();
   expect(decodeHash(new URL(page.url()).hash)!.session.loc).toEqual({ reg: "north" });
 });
 
@@ -130,7 +130,7 @@ test("Nursing home: a 'from' figure next to real bills, nothing subtracted", asy
   await expect(page.getByText(/\$620 – \$3,069 a month for subsidised residents \(Ren Ci/)).toBeVisible();
   await expect(page.getByText("Grants are never taken off the totals above.")).toBeVisible();
   await page.getByRole("button", { name: "See what to ask" }).click();
-  await expect(page.getByRole("heading", { name: /^Call the nursing home's office/ })).toBeVisible();
+  await expect(page.getByText(/^Call the nursing home's office/)).toBeVisible();
 });
 
 test("Unknown area: the region picker, all the way to the action plan", async ({ page }) => {
@@ -179,4 +179,126 @@ test("8.1: severe-only payouts appear only when she can't do 3 activities at all
   await expect(grants).toContainText("CareShield Life payout: $689 a month");
   await expect(grants).toContainText("MediSave Care: up to $200 a month");
   await expect(grants).not.toContainText("Not shown: MediSave Care");
+});
+
+test("8.2 and 8.6: next steps in order, ticks saved in the shared link", async ({ page, context }) => {
+  const s = { v: (await import("../../public/data/manifest.json", { with: { type: "json" } })).default.dataVersion,
+    w: "in_hospital", d: false, adl: ["bath", "dress", "toilet"], al: "weekdays", mem: "no", hlp: "no", lim: "tired",
+    loc: { sec: "56" }, plan: [{ s: "day_care", n: 5 }, { s: "home_personal_care", n: 2 }], t: "T1", r: "sc", b: "le1969" } as const;
+  await page.goto(`/plan/${encodeHash("action", s as never)}`);
+  const steps = page.locator(".timeline");
+  await expect(steps.getByRole("heading", { name: "Now" })).toBeVisible();
+  await expect(steps.getByText("After: Functional Assessment Report")).toBeVisible();
+  await expect(steps.getByText(/Apply about 4 weeks before you need the break/)).toBeVisible();
+  await expect(steps.getByText(/^0 of \d+ done/)).toBeVisible();
+
+  await page.getByRole("checkbox", { name: /Call the medical social worker/ }).check();
+  await page.getByRole("checkbox", { name: /Book a Functional Assessment Report/ }).check();
+  await expect(steps.getByText(/^2 of \d+ done/)).toBeVisible();
+  expect(decodeHash(new URL(page.url()).hash)!.session.done).toEqual(["call_first", "far"]);
+
+  // A sibling opening the same link sees the same ticks.
+  const sibling = await context.newPage();
+  await sibling.goto(page.url());
+  await expect(sibling.getByRole("checkbox", { name: /Book a Functional Assessment Report/ })).toBeChecked();
+  await expect(sibling.getByRole("checkbox", { name: /Apply for the Home Caregiving Grant/ })).not.toBeChecked();
+});
+
+test("8.4: the summary for her social worker shows her answers and prints on its own page", async ({ page }, info) => {
+  const s = { v: (await import("../../public/data/manifest.json", { with: { type: "json" } })).default.dataVersion,
+    w: "in_hospital", d: false, adl: ["bath", "dress", "toilet"], sev: ["bath"], al: "weekdays", mem: "no", hlp: "no", lim: "tired",
+    loc: { sec: "56" }, plan: [{ s: "day_care", n: 5 }], t: "T1", r: "sc", b: "le1969" } as const;
+  await page.goto(`/plan/${encodeHash("action", s as never)}`);
+  await page.getByText("Summary for her social worker or AIC Link").click();
+  const sum = page.locator(".handover");
+  await expect(sum).toContainText("Can't do at all");
+  await expect(sum).toContainText("washing");
+  await expect(sum).toContainText("$1,501 – $2,300 a month (range T1)");
+  await expect(sum).not.toContainText("560123");
+  if (info.project.name !== "desktop") return;
+  await page.emulateMedia({ media: "print" });
+  await page.evaluate(() => document.documentElement.classList.add("print-handover"));
+  const pdf = (await page.pdf({ format: "A4" })).toString("latin1");
+  expect(pdf.match(/\/Type\s*\/Page[^s]/g)?.length).toBe(1);
+});
+
+test("8.5 and 8.3: grant criteria up front, and questions for each provider", async ({ page }) => {
+  const s = { v: (await import("../../public/data/manifest.json", { with: { type: "json" } })).default.dataVersion,
+    w: "changed_at_home", adl: ["bath", "dress", "toilet"], al: "no", mem: "no", hlp: "no", lim: "ok", loc: { reg: "east" },
+    plan: [{ s: "day_care", n: 5 }, { s: "meals_on_wheels", n: 5 }], t: "T0", r: "sc", b: "le1969" } as const;
+  await page.goto(`/plan/${encodeHash("cost", s as never)}`);
+  const hcg = page.locator(".panel li", { hasText: "Home Caregiving Grant" }).first();
+  await expect(hcg.locator("ul.criteria li")).toContainText(["Needs some help with 3 or more of the 6 daily activities, for good"]);
+  await expect(hcg.getByRole("link", { name: "Official page and how to apply" })).toHaveAttribute("href", /aic\.sg\/financial-assistance\/home-caregiving-grant-hcg/);
+
+  await page.goto(`/plan/${encodeHash("action", s as never)}`);
+  const ask = page.locator(".providers");
+  await expect(ask.getByRole("heading", { name: "Day care centre" })).toBeVisible();
+  await expect(ask).toContainText("Is transport included, and what does it cost?");
+  await expect(ask.getByRole("heading", { name: "Meals delivered" })).toBeVisible();
+  await expect(ask).toContainText("Can you do a special diet, such as halal, vegetarian or soft food?");
+});
+
+test("8.7 to 8.10: health events, For you, Also worth doing, top 3 first, On this page", async ({ page }) => {
+  await startPlan(page);
+  await answer(page, "Living at home, and something has just changed");
+  await page.getByLabel("Washing or bathing", { exact: true }).check();
+  await page.getByLabel("A serious illness, with doctors expecting less than a year").check();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  const v = decodeHash(new URL(page.url()).hash)!.session;
+  expect(v.cond).toEqual(["eol"]);
+
+  const s = { ...v, al: "most", mem: "dx", hlp: "no", lim: "cant", loc: { reg: "east" } } as never;
+  await page.goto(`/plan/${encodeHash("matches", s)}`);
+  await expect(page.locator(".svc").first()).toBeVisible();
+  // Top 3 first; anything else waits under "More that may help".
+  const shown = await page.locator(".scr > .svc").count();          // cards outside "More that may help"
+  expect(shown).toBeGreaterThan(0);
+  expect(shown).toBeLessThanOrEqual(3);
+  await expect(page.getByRole("heading", { name: /^Palliative care at home/ })).toBeVisible();
+  await expect(page.getByText("Charges may apply. A medical social worker can help with fees")).toBeVisible();
+
+  const plan = { ...(s as object), plan: [{ s: "dementia_day_care", n: 5 }], t: "T0", r: "sc", b: "le1969" } as never;
+  await page.goto(`/plan/${encodeHash("cost", plan)}`);
+  const nav = page.getByRole("navigation", { name: "On this page" });
+  await nav.getByRole("link", { name: "Grants" }).click();
+  await expect(page).toHaveURL(/#grants$/);
+
+  await page.goto(`/plan/${encodeHash("action", plan)}`);
+  await expect(page.getByText(/^Ask her doctor at the hospital, polyclinic or GP clinic to refer her for palliative care at home/)).toBeVisible();
+  const forYou = page.locator(".timeline", { has: page.getByRole("heading", { name: "For you" }) });
+  await expect(forYou).toContainText("call mindline on 1771");
+  await expect(forYou).toContainText("Dementia Singapore (6377 0700)");
+  const ahead = page.locator(".timeline", { has: page.getByRole("heading", { name: "Also worth doing" }) });
+  await expect(ahead).toContainText("Lasting Power of Attorney");
+  await expect(ahead).toContainText("specially trained Advance Care Plan facilitator");
+  // Ticks in these sections are saved in the link too.
+  await ahead.getByRole("checkbox", { name: /Lasting Power of Attorney/ }).check();
+  expect(decodeHash(new URL(page.url()).hash)!.session.done).toContain("lpa");
+});
+
+test("8.11 and 8.12: calendar reminders from the plan; Pioneer and Merdeka answers", async ({ page }) => {
+  const s = { v: (await import("../../public/data/manifest.json", { with: { type: "json" } })).default.dataVersion,
+    w: "changed_at_home", adl: ["bath", "dress", "toilet"], al: "no", mem: "no", hlp: "no", lim: "tired", loc: { reg: "east" },
+    plan: [{ s: "day_care", n: 5 }], t: "T1", r: "sc", b: "le1969" } as const;
+  await page.goto(`/plan/${encodeHash("action", s as never)}`);
+  const [file] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Add reminders to your calendar" }).click()]);
+  expect(file.suggestedFilename()).toBe("care-plan-reminders.ics");
+  const ics = (await (await import("node:fs/promises")).readFile((await file.path())!)).toString();
+  expect(ics).toContain("BEGIN:VCALENDAR");
+  expect(ics).toContain("SUMMARY:Care plan: Functional Assessment Report");
+  expect(ics).toContain("SUMMARY:Care plan: review it");
+  expect(ics.replace(/\r\n /g, "")).toContain(`Her plan: ${page.url()}`);       // the link to her plan, unfolded
+
+  await page.goto(`/plan/${encodeHash("cost", s as never)}`);
+  const grants = page.locator(".panel", { hasText: "You may qualify for" });
+  await expect(grants).toContainText("Pioneer Generation Disability Assistance Scheme");
+  await expect(grants).toContainText("(if she is a Pioneer Generation member)");
+  await page.locator("label", { hasText: /^Pioneer$/ }).click();
+  await expect(grants).not.toContainText("(if she is a Pioneer Generation member)");
+  await expect(grants).toContainText("Pioneer Generation Disability Assistance Scheme");
+  await page.locator("label", { hasText: /^Merdeka$/ }).click();
+  await expect(grants).not.toContainText("Pioneer Generation Disability Assistance Scheme");
+  await expect(grants).toContainText("The Merdeka Generation Package helps with MediShield Life and CareShield Life premiums.");
+  expect(decodeHash(new URL(page.url()).hash)!.session.g).toBe("mg");
 });

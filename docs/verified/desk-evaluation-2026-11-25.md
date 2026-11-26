@@ -121,6 +121,22 @@ The planner's counts come from Mei's automated journey. The official counts are 
 
 **Reading:** operating the planner is only somewhat faster. The difference is that the official route can't produce most of what the task asks for, at any speed.
 
+## 5a. Stage 8 update (26 Nov 2026, to-do 8.17)
+
+What the plan now gives, compared again with the official route (AIC's Care Services Recommender, as recorded in Gate 1):
+
+| Output | Official route | Care Navigator after Stage 8 |
+|---|---|---|
+| Steps in order, each saying what it unlocks | ✗ ("apply for them separately") | ✓ Now, this week, this month, later |
+| Shared progress between family members | ✗ | ✓ Ticks kept in the plan's link |
+| A summary for the social worker or AIC Link | ✗ | ✓ One printed page |
+| What she must meet for each grant, and where to apply | ~ On each scheme's own page | ✓ Ticked criteria and the official page beside each grant |
+| Questions for the provider | ✗ | ✓ For each service in her week (our suggestions) |
+| Support for the carer | ~ Separate caregiving pages | ✓ "For you", shown when the carer is tired or at their limit |
+| Planning ahead (LPA, Advance Care Plan) | ~ Future-planning questions; results list schemes | ✓ "Also worth doing", with official links |
+
+Input effort is almost unchanged: the new health-events box and the "can't do at all" follow-up are optional, so Mei's journey still takes the same taps. Reading load went up: the action plan is longer. On paper, richer plans now need 2 pages (see the traceability table, N6).
+
 ## 6. Still open
 
 1. **Prices:** aggregators still set the upper end of the range for 5 services: dementia day care, home personal care, medical escort, meals and respite. We searched NTUC Health, Lions Befrienders and St Luke's (25 Nov 2026), and none publishes a usable per-unit price for them:

@@ -15,7 +15,9 @@ Helps a family get from "something has happened to Mum" to "we know roughly what
 | `docs/architecture-prompts-v2.md` | The six build stages |
 | `docs/specs/` | Approved specs 06–11 (navigation, legal text, wording, edge cases, data contract, sharing) |
 | `docs/adr/` | Architecture decision records |
-| `docs/verified/` | Facts checked against official sources, with dates |
+| `docs/verified/` | Facts checked against official sources, with dates; the source audit and desk evaluation |
+| `docs/competitive-landscape.md` | Other tools, what's different here, and what to borrow |
+| `docs/requirements-traceability.md`, `docs/assumption-register.md` | Each requirement's evidence and test; what we assume and how well it's supported |
 | `docs/brand/` | Colour tokens (warm palette), icons, preview image |
 | `docs/wireframes/index.html` | Lo-fi wireframes of every screen |
 | `data/curated/` | Hand-curated rules, prices, grants and contacts (YAML; every row has a source) |

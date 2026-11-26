@@ -73,6 +73,7 @@ class ServiceType(Model):
     block_hours: Optional[int] = None
     ward_only: bool = False
     how_to_apply_id: str
+    ask_provider: list[str] = []            # 8.3: questions for the provider (our suggestions)
     source_id: str
 
 
@@ -123,6 +124,8 @@ class GrantRule(Model):
     # full assistance (CareShield Life, MediSave Care, ElderFund). Required, so a payout can't be listed without it.
     disability: Literal["some", "severe"]
     ask_if: Optional[str] = None            # a condition the planner doesn't ask, shown as "(if ...)"
+    criteria: list[str] = Field(min_length=1)   # 8.5: what she must meet, from the official page, shown up front
+    requires_generation: Optional[Literal["pg"]] = None   # 8.12: only for Pioneer Generation members
     alt_min_age: Optional[int] = None
     requires_helper: bool = False
     citizens_only: bool = False
@@ -139,14 +142,17 @@ class GrantRules(Model):
 
 
 # ---------- need_rules.yaml ----------
-Question = Literal["where", "discharged", "adl", "alone", "memory", "helper", "limits", "med"]
+Question = Literal["where", "discharged", "adl", "alone", "memory", "helper", "limits", "med", "cond"]
 ADL = Literal["bath", "dress", "eat", "toilet", "move", "transfer"]
+# Health events or conditions (to-do 8.7): a recent fall, a stroke, a hip fracture, a serious illness with under a year expected.
+COND = Literal["fall", "stroke", "hip", "eol"]
+LIST_VALUES = {"adl": {"bath", "dress", "eat", "toilet", "move", "transfer"}, "cond": {"fall", "stroke", "hip", "eol"}}
 
 
 class Clause(Model):
     q: Question
     in_: Optional[list[str]] = Field(default=None, alias="in")
-    any: Optional[list[ADL]] = None
+    any: Optional[list[str]] = None
     none: Optional[bool] = None
     is_: Optional[bool] = Field(default=None, alias="is")
 
@@ -155,8 +161,10 @@ class Clause(Model):
         tests = [self.in_ is not None, self.any is not None, self.none is not None, self.is_ is not None]
         if sum(tests) != 1:
             raise ValueError(f"clause on '{self.q}' needs exactly one of in / any / none / is")
-        if (self.any is not None or self.none is not None) and self.q != "adl":
-            raise ValueError("any / none only apply to q: adl")
+        if (self.any is not None or self.none is not None) and self.q not in LIST_VALUES:
+            raise ValueError("any / none only apply to q: adl or cond")
+        if self.any is not None and set(self.any) - LIST_VALUES[self.q]:
+            raise ValueError(f"'{self.q}' has no value {sorted(set(self.any) - LIST_VALUES[self.q])}")
         return self
 
 
@@ -307,6 +315,26 @@ class Sectors(Model):
     regions: dict[str, RegionCentre]
 
 
+# ---------- next_steps.yaml (to-do 8.2) ----------
+class NextStep(Model):
+    """One step on the action plan's timeline. Every step cites the official page that describes it."""
+    step_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,40}$")
+    timing: Literal["now", "week", "month", "later"]
+    label: str                                  # short name, e.g. "Functional Assessment Report"
+    text: str                                   # what to do
+    unlocks: Optional[str] = None               # what doing it makes possible
+    after: Optional[str] = None                 # step_id that must come first
+    when: list[Clause] = []                     # answers that must hold (same clauses as need_rules)
+    group: Literal["plan", "carer", "ahead"] = "plan"   # plan: the timeline; carer: "For you" (8.8); ahead: "Also worth doing" (8.9)
+    plan_any: list[str] = []                    # shown if her week has any of these services
+    grant_any: list[str] = []                   # shown if she may qualify for any of these
+    source_id: str
+
+
+class NextSteps(Model):
+    steps: list[NextStep]
+
+
 class RulesBundle(Model):
     """rules.json: everything the engine needs to match and cost."""
     service_types: list[ServiceType]
@@ -316,6 +344,7 @@ class RulesBundle(Model):
     subsidy_tiers: SubsidyTiers
     grant_rules: list[GrantRule]
     how_to_apply: HowToApply
+    next_steps: list[NextStep]
 
 
 class ContactsBundle(Model):
@@ -353,4 +382,5 @@ class Curated(Model):
     need_rules: NeedRules
     branch_rules: BranchRules
     how_to_apply: HowToApply
+    next_steps: NextSteps
     contacts: Contacts

@@ -1,0 +1,116 @@
+# The action plan's timeline after the first call (to-do 8.2). The first call itself comes from branch_rules.yaml.
+# Every step cites the official page that describes it (docs/verified/source-audit-2026-11-25.md); a step with no
+# official source doesn't belong here. A step shows when all of its conditions hold:
+#   when: answers, using the same clauses as need_rules.yaml
+#   plan_any: her week includes any of these services
+#   grant_any: she may qualify for any of these grants
+# timing: now | week (this week) | month (this month) | later. after: a step that must come first.
+# group: plan (the timeline, default) | carer ("For you", 8.8) | ahead ("Also worth doing", 8.9).
+steps:
+  - step_id: apply_services
+    timing: week
+    label: Apply for her services
+    text: Ask her doctor at the hospital or polyclinic to apply for the services in her plan. An AIC Link can also help you apply.
+    unlocks: Her services can start.
+    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, medical_escort, meals_on_wheels]
+    source_id: aic_day_care
+  - step_id: palliative_referral
+    timing: week
+    label: Palliative care at home
+    text: Ask her doctor at the hospital, polyclinic or GP clinic to refer her for palliative care at home.
+    unlocks: Care at home for her illness, and support for the family. An AIC Link can help you apply.
+    when:
+      - {q: cond, any: [eol]}
+    source_id: aic_home_palliative
+  - step_id: means_test
+    timing: week
+    label: Means test
+    text: Have a rough idea of the monthly income of everyone living at her NRIC address.
+    unlocks: The means test, which sets her subsidy.
+    plan_any: [day_care, dementia_day_care, home_personal_care, home_nursing, home_therapy, medical_escort, meals_on_wheels, respite]
+    source_id: aic_hcg
+  - step_id: respite_referral
+    timing: week
+    label: Respite referral
+    text: Ask her doctor to refer her for respite care. Apply about 4 weeks before you need the break.
+    unlocks: A nursing home stay of at least 7 days, up to 30 days a year.
+    when:
+      - {q: limits, in: [tired, cant]}
+    source_id: aic_take_a_break
+  - step_id: far
+    timing: week
+    label: Functional Assessment Report
+    text: Book a Functional Assessment Report with an approved doctor, nurse or therapist.
+    unlocks: Applying for the Home Caregiving Grant.
+    grant_any: [home_caregiving_grant]
+    source_id: aic_hcg
+  - step_id: apply_hcg
+    timing: month
+    label: Home Caregiving Grant
+    text: Apply for the Home Caregiving Grant on AIC's eFASS with Singpass.
+    unlocks: A monthly grant, set by household income.
+    after: far
+    grant_any: [home_caregiving_grant]
+    source_id: aic_hcg
+  - step_id: severe_assessment
+    timing: month
+    label: Severe disability assessment
+    text: Ask her doctor about a severe disability assessment by an MOH-accredited assessor.
+    unlocks: Claims for CareShield Life, MediSave Care or ElderFund.
+    grant_any: [careshield_life, medisave_care, elderfund]
+    source_id: cpf_careshield
+  - step_id: levy_concession
+    timing: month
+    label: Helper levy concession
+    text: For the helper levy concession, ask her doctor to certify the help she needs. AIC then recommends her to MOM.
+    unlocks: A $60 monthly levy instead of $300.
+    grant_any: [levy_concession]
+    source_id: mom_levy_concession
+  - step_id: caregiver_training
+    timing: later
+    group: carer
+    label: Caregiver training
+    text: Pick a course in AIC's Caregivers Training Catalogue. Ask the provider to apply for the grant at least 2 weeks before.
+    unlocks: The Caregivers Training Grant pays towards the course.
+    grant_any: [caregivers_training_grant]
+    source_id: aic_caregiver_training
+  - step_id: mindline
+    timing: now
+    group: carer
+    label: Someone to talk to
+    text: If it feels like too much, call mindline on 1771 or WhatsApp 6669 1771, any time.
+    unlocks: A trained counsellor to talk to.
+    when:
+      - {q: limits, in: [cant]}
+    source_id: aic_mental_health
+  - step_id: carer_network
+    timing: week
+    group: carer
+    label: Other caregivers
+    text: "Talk to other caregivers. Call Dementia Singapore (6377 0700), Club HEAL (6899 3463) or Mindfull Community (6460 4400)."
+    unlocks: Peer support and counselling through the Caregiver Support Network.
+    when:
+      - {q: limits, in: [tired, cant]}
+    source_id: aic_caregiver_support
+  - step_id: lpa
+    timing: later
+    group: ahead
+    label: Lasting Power of Attorney
+    text: Check if she has a Lasting Power of Attorney. It names who decides for her if she loses mental capacity.
+    unlocks: Citizens can make one online with Singpass, free with Form 1. A doctor or lawyer certifies it for a fee.
+    source_id: opg_lpa
+  - step_id: acp
+    timing: later
+    group: ahead
+    label: Advance Care Plan
+    text: Think about an Advance Care Plan, her wishes for future care, shared with family and doctors.
+    unlocks: Find a facilitator in AIC's directory. Some community providers offer it free.
+    source_id: aic_acp
+  - step_id: acp_serious
+    timing: month
+    group: ahead
+    label: Advance Care Plan for a serious illness
+    text: With a serious illness, ask her doctor for a specially trained Advance Care Plan facilitator.
+    when:
+      - {q: cond, any: [eol]}
+    source_id: aic_acp

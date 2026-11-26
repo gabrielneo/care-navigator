@@ -7,6 +7,7 @@ import { loadGeo } from "@/lib/data/geo";
 import { decodeHash, encodeHash, type Session, type Step } from "@/lib/engine/urlCodec";
 import { locate, type Region } from "@/lib/geo/postal";
 import { JourneyBar, PlanSoFar, QUESTIONS } from "./Journey";
+import { LANGS, setLang, t, type Lang } from "@/lib/i18n";
 import { Action, ContactsScreen, CostScreen, Matches, Week } from "./Screens";
 import { Check, Radio } from "./ui";
 
@@ -51,6 +52,11 @@ export function Planner() {
     return () => window.removeEventListener("popstate", onPop);
   }, [load]);
 
+  // The page's language, so screen readers read the Chinese draft in Chinese.
+  const langInfo = LANGS.find((x) => x.id === (s.l ?? "en"))!;
+  useEffect(() => { document.documentElement.lang = langInfo.html; }, [langInfo.html]);
+  useEffect(() => () => { document.documentElement.lang = "en-SG"; setLang("en"); }, []);   // the other pages are English
+
   const update = (patch: Partial<Session>) => setS((prev) => {
     const next = { ...prev, ...patch };
     history.replaceState(null, "", encodeHash(step, next));
@@ -67,20 +73,29 @@ export function Planner() {
   // The on-screen Back goes to the previous step even on a shared link, where there's no history to go back to.
   const back = () => { const i = f.indexOf(step); if (i > 0) go(f[i - 1]!); else window.location.href = "/"; };
 
+  setLang(s.l ?? "en");
   const qIndex = QUESTIONS.indexOf(step);
   const screen = { s, update, next, restart: () => go("where") };
   return (
     <>
-      {banner === "damaged" && <p className="notice warn" role="status">We couldn't open that plan. Start again below.</p>}
+      <div className="lang no-print">
+        <label htmlFor="lang" className="sr-only">Language / 语言 / Bahasa / மொழி</label>
+        <select id="lang" className="input" value={s.l ?? "en"}
+          onChange={(e) => update({ l: e.target.value === "en" ? undefined : (e.target.value as Exclude<Lang, "en">) })}>
+          {LANGS.map((x) => <option key={x.id} value={x.id} lang={x.html}>{x.name}</option>)}
+        </select>
+      </div>
+      {langInfo.banner && <p className="notice lang-draft" role="note">{langInfo.banner}</p>}
+      {banner === "damaged" && <p className="notice warn" role="status">{t("We couldn't open that plan. Start again below.")}</p>}
       {banner === "updated" && (
-        <p className="notice" role="status">Figures updated on {dataDate}. They may differ from when this plan was made.</p>
+        <p className="notice" role="status">{t("Figures updated on {date}. They may differ from when this plan was made.", { date: dataDate })}</p>
       )}
       <div className="planner">
       <JourneyBar step={step} flow={f} go={(to) => go(to)} />
       <PlanSoFar s={s} step={step} flow={f} />
       <div className="scr enter" key={step}>
         {step !== "action" && <div className="top no-print">
-          <button type="button" className="link" onClick={back}>Back</button>
+          <button type="button" className="link" onClick={back}>{t("Back")}</button>
         </div>}
         {qIndex >= 0 ? <Question step={step} s={s} update={update} next={next} />
           : step === "matches" ? <Matches {...screen} />
@@ -100,7 +115,7 @@ type Q = { step: Step; s: Session; update: (p: Partial<Session>) => void; next: 
 function Question({ step, s, update, next }: Q) {
   const [missing, setMissing] = useState(false);
   const proceed = (ok: boolean, session?: Session) => (ok ? (setMissing(false), next(session)) : setMissing(true));
-  const ask = <span className="errtxt" role="alert">{missing ? "Choose an answer to go on." : ""}</span>;
+  const ask = <span className="errtxt" role="alert">{missing ? t("Choose an answer to go on.") : ""}</span>;
 
   if (step === "where") {
     const opts: [string, Session["w"], boolean | undefined][] = [
@@ -114,15 +129,15 @@ function Question({ step, s, update, next }: Q) {
     const key = s.w === "in_hospital" ? `in_hospital-${s.d ? 1 : 0}` : s.w;
     return (
       <fieldset>
-        <legend><h1>Where is Mum right now?</h1></legend>
-        <p className="help">The person you care for. We use "Mum" in examples.</p>
+        <legend><h1>{t("Where is Mum right now?")}</h1></legend>
+        <p className="help">{t('The person you care for. We use "Mum" in examples.')}</p>
         {opts.map(([label, w, d]) => {
           const id = w === "in_hospital" ? `in_hospital-${d ? 1 : 0}` : w!;
           return <Radio key={id} name="where" value={id} checked={key === id}
-            onChange={() => update({ w, d: w === "in_hospital" ? d : undefined })}>{label}</Radio>;
+            onChange={() => update({ w, d: w === "in_hospital" ? d : undefined })}>{t(label)}</Radio>;
         })}
         {ask}
-        <button type="button" className="btn" onClick={() => proceed(s.w != null)}>Next</button>
+        <button type="button" className="btn" onClick={() => proceed(s.w != null)}>{t("Next")}</button>
       </fieldset>
     );
   }
@@ -139,30 +154,37 @@ function Question({ step, s, update, next }: Q) {
     const SEVERE: Record<string, string> = { bath: "Washing", dress: "Getting dressed", eat: "Feeding herself", toilet: "Toileting",
       move: "Moving around", transfer: "Getting in and out of bed" };
     const sev = s.sev ?? [];
+    const COND: [NonNullable<Session["cond"]>[number], string][] = [["fall", "A recent fall"], ["stroke", "A stroke"],
+      ["hip", "A broken hip"], ["eol", "A serious illness, with doctors expecting less than a year"]];
     const setSev = (a: string, on: boolean) => update({ sev: (on ? [...sev, a] : sev.filter((x) => x !== a)) as Session["sev"] });
     return (
       <fieldset>
-        <legend><h1>Which of these does she need help with?</h1></legend>
-        <p className="help">Pick all that apply. "Help" means someone has to assist or watch.</p>
+        <legend><h1>{t("Which of these does she need help with?")}</h1></legend>
+        <p className="help">{t('Pick all that apply. "Help" means someone has to assist or watch.')}</p>
         <div className="grid2">
-          {ADL.map(([k, label]) => <Check key={k} checked={chosen.includes(k)} onChange={(on) => toggle(k, on)}>{label}</Check>)}
+          {ADL.map(([k, label]) => <Check key={k} checked={chosen.includes(k)} onChange={(on) => toggle(k, on)}>{t(label)}</Check>)}
         </div>
         {chosen.length > 0 && (
           <fieldset className="panel">
-            <legend><h3>Which of these can&apos;t she do at all?</h3></legend>
-            <p className="help">Someone has to do it for her. Some payouts depend on this. Leave blank if none.</p>
-            {chosen.map((a) => <Check key={a} checked={(sev as string[]).includes(a)} onChange={(on) => setSev(a, on)}>{SEVERE[a]}</Check>)}
+            <legend><h3>{t("Which of these can't she do at all?")}</h3></legend>
+            <p className="help">{t("Someone has to do it for her. Some payouts depend on this. Leave blank if none.")}</p>
+            {chosen.map((a) => <Check key={a} checked={(sev as string[]).includes(a)} onChange={(on) => setSev(a, on)}>{t(SEVERE[a]!)}</Check>)}
           </fieldset>
         )}
+        <fieldset className="panel">
+          <legend><h3>{t("Has any of these happened? (optional)")}</h3></legend>
+          {COND.map(([k, label]) => <Check key={k} checked={(s.cond ?? []).includes(k)}
+            onChange={(on) => update({ cond: on ? [...(s.cond ?? []), k] : (s.cond ?? []).filter((x) => x !== k) })}>{t(label)}</Check>)}
+        </fieldset>
         <Check checked={s.med ?? false} onChange={(on) => update({ med: on })}>
-          <b>Medical care at home</b><br /><span className="help">Wounds, tubes, injections or many medicines</span>
+          <b>{t("Medical care at home")}</b><br /><span className="help">{t("Wounds, tubes, injections or many medicines")}</span>
         </Check>
         <div className="row">
-          <Check checked={s.adl != null && s.adl.length === 0} onChange={(on) => update({ adl: on ? [] : undefined, sev: undefined })}>None of these</Check>
-          <Check checked={s.adl?.[0] === "unsure"} onChange={(on) => update({ adl: on ? ["unsure"] : undefined, sev: undefined })}>Not sure</Check>
+          <Check checked={s.adl != null && s.adl.length === 0} onChange={(on) => update({ adl: on ? [] : undefined, sev: undefined })}>{t("None of these")}</Check>
+          <Check checked={s.adl?.[0] === "unsure"} onChange={(on) => update({ adl: on ? ["unsure"] : undefined, sev: undefined })}>{t("Not sure")}</Check>
         </div>
         {ask}
-        <button type="button" className="btn" onClick={() => proceed(s.adl != null)}>Next</button>
+        <button type="button" className="btn" onClick={() => proceed(s.adl != null)}>{t("Next")}</button>
       </fieldset>
     );
   }
@@ -181,14 +203,14 @@ function Question({ step, s, update, next }: Q) {
   if (q) {
     return (
       <fieldset>
-        <legend><h1>{q.title}</h1></legend>
-        {q.help && <p className="help">{q.help}</p>}
+        <legend><h1>{t(q.title)}</h1></legend>
+        {q.help && <p className="help">{t(q.help)}</p>}
         {q.opts.map(([v, label]) => (
           <Radio key={v} name={q.field} value={v} checked={s[q.field] === v}
-            onChange={() => update({ [q.field]: v } as Partial<Session>)}>{label}</Radio>
+            onChange={() => update({ [q.field]: v } as Partial<Session>)}>{t(label)}</Radio>
         ))}
         {ask}
-        <button type="button" className="btn" onClick={() => proceed(s[q.field] != null)}>Next</button>
+        <button type="button" className="btn" onClick={() => proceed(s[q.field] != null)}>{t("Next")}</button>
       </fieldset>
     );
   }
@@ -201,11 +223,11 @@ function Postal({ s, next }: Pick<Q, "s" | "next">) {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [picker, setPicker] = useState(false);
-  const check = () => { if (code && !/^\d{6}$/.test(code)) setError("Enter 6 digits, e.g. 560123."); };
+  const check = () => { if (code && !/^\d{6}$/.test(code)) setError(t("Enter 6 digits, e.g. 560123.")); };
   useEffect(() => { loadGeo(); }, []);   // start fetching the area centres while she types
   const submit = async () => {
     const r = locate((await loadGeo()).sectors, code);
-    if (r.kind === "invalid") { setError("Enter 6 digits, e.g. 560123."); return; }
+    if (r.kind === "invalid") { setError(t("Enter 6 digits, e.g. 560123.")); return; }
     if (r.kind === "unavailable") { setPicker(true); setError(null); return; }
     next({ ...s, loc: { sec: r.sector } });
   };
@@ -213,22 +235,22 @@ function Postal({ s, next }: Pick<Q, "s" | "next">) {
   const REGIONS: [Region, string][] = [["central", "Central"], ["north", "North"], ["northeast", "North-East"], ["east", "East"], ["west", "West"]];
   return (
     <>
-      <h1>Where does she live?</h1>
+      <h1>{t("Where does she live?")}</h1>
       <div className="field">
-        <label htmlFor="postal">Postal code</label>
+        <label htmlFor="postal">{t("Postal code")}</label>
         <input id="postal" className="input" inputMode="numeric" autoComplete="postal-code" maxLength={6}
           value={code} aria-invalid={error ? true : undefined} aria-describedby="postal-help postal-err"
           onChange={(e) => { setCode(e.target.value.replace(/\D/g, "")); setError(null); }} onBlur={check} />
         <p id="postal-err" className="errtxt" role="alert">{error ?? ""}</p>
-        <p id="postal-help" className="help">6 digits, e.g. 560123. Only the first 2 digits are used, and they stay on your phone.</p>
+        <p id="postal-help" className="help">{t("6 digits, e.g. 560123. Only the first 2 digits are used, and they stay on your phone.")}</p>
       </div>
-      <button type="button" className="btn" onClick={submit}>Next</button>
-      <button type="button" className="link" onClick={() => setPicker(true)}>Skip and pick a region</button>
+      <button type="button" className="btn" onClick={submit}>{t("Next")}</button>
+      <button type="button" className="link" onClick={() => setPicker(true)}>{t("Skip and pick a region")}</button>
       {picker && (
         <fieldset className="panel">
-          <legend><h3>{code ? "We can't place that area. Pick yours:" : "Pick her area:"}</h3></legend>
+          <legend><h3>{code ? t("We can't place that area. Pick yours:") : t("Pick her area:")}</h3></legend>
           <div className="grid2">
-            {REGIONS.map(([r, label]) => <button key={r} type="button" className="chip" onClick={() => pick(r)}>{label}</button>)}
+            {REGIONS.map(([r, label]) => <button key={r} type="button" className="chip" onClick={() => pick(r)}>{t(label)}</button>)}
           </div>
         </fieldset>
       )}

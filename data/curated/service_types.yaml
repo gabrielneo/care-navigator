@@ -11,6 +11,11 @@ services:
     unit: session
     default_units_per_week: 5
     how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What will we pay each month after the subsidy?"
+      - "Is transport included, and what does it cost?"
+      - "Which days are you open? Do you take people on weekends?"
+      - "Is there a waiting list?"
     source_id: aic_day_care
   - service_id: dementia_day_care
     name: Day care for dementia
@@ -21,6 +26,11 @@ services:
     unit: session
     default_units_per_week: 5
     how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What will we pay each month after the subsidy?"
+      - "Do you care for people at her stage of dementia?"
+      - "Is transport included, and what does it cost?"
+      - "Is there a waiting list?"
     source_id: aic_day_care
   - service_id: day_care_transport
     name: Transport to and from day care
@@ -42,6 +52,10 @@ services:
     block_hours: 4
     default_units_per_week: 3
     how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What will we pay after the subsidy, by the hour or per 4-hour visit?"
+      - "Do you need to assess her before you start?"
+      - "Is there a waiting list?"
     source_id: aic_home_personal_care
   - service_id: home_nursing
     name: Nurse visits at home
@@ -52,6 +66,10 @@ services:
     unit: visit
     default_units_per_week: 1
     how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What will we pay after the subsidy for each visit?"
+      - "Can the nurse handle her wounds, tubes or medicines?"
+      - "Is there a waiting list?"
     source_id: aic_home_nursing
   - service_id: home_therapy
     name: Therapy at home
@@ -62,6 +80,9 @@ services:
     unit: visit
     default_units_per_week: 1
     how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What will we pay after the subsidy for each visit?"
+      - "Which therapy will she get: physio, occupational or speech?"
     source_id: aic_home_therapy
   - service_id: medical_escort
     name: Escort to appointments
@@ -72,6 +93,9 @@ services:
     unit: trip
     default_units_per_week: 1
     how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What does each round trip cost after the subsidy?"
+      - "Can you take her in a wheelchair?"
     source_id: aic_met
   - service_id: meals_on_wheels
     name: Meals delivered
@@ -82,6 +106,10 @@ services:
     unit: meal
     default_units_per_week: 5
     how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What does each meal cost after the subsidy?"
+      - "Can you do a special diet, such as halal, vegetarian or soft food?"
+      - "Can you bring lunch, dinner or both?"
     source_id: aic_mow
   - service_id: respite
     name: A break for you
@@ -92,6 +120,9 @@ services:
     unit: day
     default_units_per_week: null
     how_to_apply_id: via_aic_link
+    ask_provider:
+      - "How much notice do you need?"
+      - "What does each day cost after the subsidy?"
     source_id: aic_nh_respite
   - service_id: active_ageing_centre
     name: Activities and company nearby
@@ -124,3 +155,15 @@ services:
     default_units_per_week: null
     how_to_apply_id: via_ward_msw_or_aic
     source_id: aic_nursing_home
+  - service_id: home_palliative_care
+    name: Palliative care at home
+    official_term: Home Palliative Care
+    description: Care at home for someone with a serious illness, when doctors expect less than a year. It supports the family too.
+    setting: home
+    scheme: null
+    unit: null
+    how_to_apply_id: via_doctor_or_aic_link
+    ask_provider:
+      - "What will it cost? Can a medical social worker help with the fees?"
+      - "How soon can you start, and who do we call at night?"
+    source_id: aic_home_palliative

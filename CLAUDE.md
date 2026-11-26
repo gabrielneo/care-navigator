@@ -11,4 +11,6 @@
 - **The owner runs git:** never run `git add`, `git commit` or `git push`.
 - **Colours** come only from `docs/brand/tokens.css` (the warm palette). Never use sg-care-capacity's purple.
 - **Facts:** never invent fees, waiting times, vacancies or eligibility. Every number needs a `source_id`. Use "estimate" and "may qualify", never "eligible".
+- **Next steps and processes:** every step that tells a family what to do, who refers, what comes first or what something unlocks needs the official page that describes that process (`data/curated/next_steps.yaml`, checked in `docs/verified/`). If no official page says it, leave it out or label it "our suggestion".
+- **Translations (Chinese, Malay, Tamil drafts):** new or changed wording in the planner goes through `t()` and needs an entry in `web/src/lib/zh.ts`, `ms.ts` and `ta.ts` (the coverage tests enforce this). Keep official scheme names in English, and keep each "draft, not reviewed" banner until a native speaker has reviewed that language.
 - **Privacy:** no analytics, tracking or third-party scripts in the prototype. The full postal code never leaves the browser.

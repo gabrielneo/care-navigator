@@ -10,10 +10,16 @@ grants:
     amount_by_band: {T0: 600, T1: 400, T2: 400, T3: 400, T4: 200, T5: 0}
     min_adl: 3
     disability: some
+    criteria:
+      - Needs some help with 3 or more of the 6 daily activities, for good
+      - Household income of $4,800 or less a month per person
+      - Lives at home, not in a nursing home
+      - Singapore Citizen, or PR with a citizen parent, child or spouse
     other_conditions: >-
       Not living in a nursing home or other residential facility. Households owning more than one property get $200.
       Needs a Functional Assessment Report from an approved assessor, then an online application on AIC's eFASS.
-    official_url: https://www.togetherforbetter.gov.sg/lifestage/caregivers/
+    official_url: https://www.aic.sg/financial-assistance/home-caregiving-grant-hcg/
+    official_source_id: aic_hcg
     effective_from: 2026-04-01
     source_id: tfb_caregivers
   - grant_id: medisave_care
@@ -24,6 +30,10 @@ grants:
     amount_is_maximum: true
     min_adl: 3
     disability: severe
+    criteria:
+      - Needs full help with 3 or more daily activities, confirmed by a severe disability assessment
+      - A MediSave balance of $5,000 or more
+      - Singapore Citizen or PR aged 30 or over
     other_conditions: >-
       Needs full assistance with 3 or more of the 6 daily activities, confirmed by a severe disability assessment. Withdraw from MediSave:
       $50 a month with a balance of $5,000 or more, up to $200 with $20,000 or more. The amount depends on the balance, not income.
@@ -38,8 +48,11 @@ grants:
     amount_by_band: {T0: 689, T1: 689, T2: 689, T3: 689, T4: 689, T5: 689}
     min_adl: 3
     disability: severe
+    criteria:
+      - Covered by CareShield Life
+      - An MOH-accredited assessor finds she can't do 3 of the 6 daily activities
     other_conditions: For people covered by CareShield Life whom an MOH-accredited assessor finds unable to carry out 3 or more of the 6 daily activities. $689 a month is the 2026 claim amount; it is fixed by the year of the first claim.
-    official_url: https://www.cpf.gov.sg/service/article/what-is-the-monthly-payout-amount-for-careshield-life
+    official_url: https://www.cpf.gov.sg/member/healthcare-financing/careshield-life
     effective_from: 2026-01-01
     source_id: cpf_careshield
   - grant_id: elderfund
@@ -51,6 +64,10 @@ grants:
     min_adl: 3
     disability: severe
     citizens_only: true
+    criteria:
+      - Singapore Citizen aged 30 or over
+      - Needs full help with 3 or more daily activities
+      - Lower income and a low MediSave balance
     other_conditions: >-
       For lower-income Singapore Citizens who need full assistance with 3 or more of the 6 daily activities, with low MediSave balances.
       Up to $250 a month; individual amounts can be lower.
@@ -69,6 +86,9 @@ grants:
     disability: some
     alt_min_age: 67
     requires_helper: true
+    criteria:
+      - A live-in migrant domestic worker at her address
+      - She is a citizen aged 67 or over, or a doctor certifies she needs help with a daily activity
     other_conditions: For a household with a live-in migrant domestic worker and a Singapore Citizen aged 67 or over, or a person a doctor certifies as needing help with at least 1 daily activity.
     official_url: https://mom.gov.sg/passes-and-permits/work-permit-for-foreign-domestic-worker/foreign-domestic-worker-levy/levy-concession
     effective_from: 2019-04-01
@@ -81,8 +101,13 @@ grants:
     amount_meaning: "$400, then $200 a year (up to $400 at a time) for approved courses. She must be 65 or older, or have a disability."
     min_adl: 0
     disability: some
+    criteria:
+      - She is a Singapore Citizen or PR aged 65 or over, or has a disability
+      - For approved caregiver courses
+      - Can be shared between caregivers, including a helper who is the main carer
     other_conditions: For caregivers of a Singapore Citizen or PR aged 65 or over, or with a disability, taking approved courses.
-    official_url: https://www.togetherforbetter.gov.sg/lifestage/caregivers/
+    official_url: https://www.aic.sg/Financial-Assistance/Caregivers-Training-Grant
+    official_source_id: aic_ctg
     effective_from: 2026-01-01
     source_id: tfb_caregivers
   - grant_id: pioneer_das
@@ -93,7 +118,12 @@ grants:
     min_adl: 3
     disability: some
     ask_if: if she is a Pioneer Generation member
+    requires_generation: pg
     citizens_only: true
+    criteria:
+      - A Pioneer Generation member (born in 1949 or earlier, and a citizen by the end of 1986)
+      - Permanently needs some help with 3 or more daily activities
     other_conditions: For Pioneer Generation members who permanently need some assistance with 3 or more of the 6 daily activities. Paid automatically to people already getting the Home Caregiving Grant, CareShield Life, MediSave Care or ElderFund.
     official_url: https://www.aic.sg/financial-assistance/pioneer-generation-disability-assistance-scheme/
+    official_source_id: moh_pg
     source_id: aic_pioneerdas

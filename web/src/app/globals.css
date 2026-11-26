@@ -40,6 +40,9 @@ legend { padding: 0; margin-bottom: 4px; }
 .opt { position: relative; min-height: 56px; border: 1px solid var(--border-control); border-radius: var(--r-md);
   background: var(--bg-surface); display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; }
 .opt input { width: 22px; height: 22px; accent-color: var(--primary); flex: none; margin: 0; }
+.opt > span { min-width: 0; overflow-wrap: anywhere; }   /* long words (Malay, Tamil) wrap instead of widening the page */
+.btn, .seg label, .row > * { min-width: 0; overflow-wrap: anywhere; }
+.seg label { text-align: center; padding: 4px 6px; }
 .opt:has(input:checked) { border: 2px solid var(--primary); background: var(--sel-fill); padding: 11px 15px; }
 .opt:has(input:focus-visible) { outline: 3px solid var(--primary); outline-offset: 2px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -172,14 +175,14 @@ footer.ft nav a { min-height: 44px; display: inline-flex; align-items: center; }
 .how-num { position: absolute; top: 12px; right: 18px; font-family: var(--font-serif); font-size: 2.75rem; line-height: 1; color: var(--sel-fill); }
 .how-icon { width: 44px; height: 44px; padding: 10px; border-radius: 12px; background: var(--sel-fill); fill: none; stroke: var(--primary);
   stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.how-card p, .example-copy p { color: var(--text-secondary); font-size: var(--fs-small); }
+.how-card p, .example-copy p { color: var(--text-secondary); font-size: var(--fs-body); }
 .example-copy { display: flex; flex-direction: column; gap: 10px; }
 .example-card { box-shadow: 0 18px 40px rgba(43, 29, 20, 0.10); }
 .example-card ol.steps { gap: 10px; font-size: var(--fs-small); }
 .tag { align-self: flex-start; font-size: var(--fs-meta); font-weight: 600; color: var(--sage); background: var(--sage-fill); padding: 2px 10px; border-radius: 999px; }
 .trust { display: grid; gap: 18px; background: var(--bg-band); }
 .trust b { font-family: var(--font-serif); font-size: 1.25rem; color: var(--text-heading); }
-.trust p { font-size: var(--fs-small); color: var(--text-secondary); }
+.trust p { font-size: var(--fs-body); color: var(--text-secondary); }
 .cta-band { margin: 8px 16px 32px; padding: 28px 20px; border-radius: var(--r-lg); background: var(--hero-bg); display: flex; flex-direction: column; gap: 16px; }
 .cta-band h2 { color: var(--on-hero); }
 .cta-band .btn { background: var(--on-hero); color: var(--hero-bg); }
@@ -253,6 +256,74 @@ footer.ft nav a { min-height: 44px; display: inline-flex; align-items: center; }
     .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
     @keyframes reveal { from { transform: translateY(36px) scale(0.98); } }   /* movement only: text keeps full contrast */
   }
+}
+
+
+/* ---------- Action plan: next steps (8.2, 8.6) and handover summary (8.4) ---------- */
+.timeline { display: flex; flex-direction: column; gap: 12px; }
+.timeline h2 { font-size: 1.375rem; }
+.when { display: flex; flex-direction: column; gap: 8px; }
+.when h3 { font-size: var(--fs-meta); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-heading); }
+.tl { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.tl .tick { align-items: flex-start; }
+.tl .tick input { margin-top: 2px; }
+.tl .tick > span { display: flex; flex-direction: column; gap: 2px; }
+.tl .tick b { font-weight: 600; }
+.tl li.done .tick { border-color: var(--sage); background: var(--sage-fill); padding: 11px 15px; border-width: 2px; }
+.step-meta { display: block; }
+.ask { margin: 8px 0 0 50px; display: flex; flex-direction: column; gap: 4px; }
+.handover-box > summary { font-weight: 600; }
+/* Language switch and the Chinese draft banner (8.13) */
+.lang { display: flex; justify-content: flex-end; padding: 8px 16px 0; }
+.lang select { width: auto; min-height: 48px; padding: 4px 10px; font-size: var(--fs-small); }
+.lang-draft { background: var(--banner-fill); color: var(--banner); }
+.hero-langs { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.hero .hero-langs a { color: var(--on-hero-muted); font-size: var(--fs-meta); text-underline-offset: 3px; min-height: 32px; display: inline-flex; align-items: center; }
+.onpage { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font-size: var(--fs-meta); }
+.onpage a { min-height: 24px; display: inline-flex; align-items: center; }
+#total, #each, #grants, #workings { scroll-margin-top: 16px; }
+ul.criteria { list-style: none; padding: 4px 0 4px 0; display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-meta); color: var(--text-secondary); }
+ul.criteria li::before { content: "✓ "; color: var(--sage); font-weight: 600; }
+.providers { display: flex; flex-direction: column; gap: 10px; }
+.providers h2 { font-size: 1.375rem; }
+.providers h3 { font-size: var(--fs-small); }
+.handover { display: flex; flex-direction: column; gap: 10px; }
+.handover h2 { font-size: 1.25rem; }
+.handover dl { display: grid; gap: 6px; }
+.handover dl > div { display: grid; grid-template-columns: minmax(120px, 40%) 1fr; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--border-subtle); }
+.handover dt { font-size: var(--fs-meta); color: var(--text-secondary); }
+.handover dd { margin: 0; font-size: var(--fs-small); }
+@media print {
+  .handover-box { display: none; }
+  html { font-size: 13px; }                  /* rem-based sizes shrink together on paper */
+  body { line-height: 1.3; }
+  .sources { display: none; }
+  .providers { display: none; }          /* the call-the-provider questions stay on screen; the paper plan keeps to one page */
+  .timeline > p.meta { display: none; }   /* section intros are for the screen */
+  .carer-steps .step-meta { display: none; }
+  /* A long plan may run onto a second page: break between steps and panels, never through one. */
+  .tl > li, .panel, ol.steps > li { break-inside: avoid; }
+  .timeline h2, .when h3 { break-after: avoid; }
+  ul.plain { gap: 0; }
+  .opt input { width: 14px; height: 14px; }
+  h1 { font-size: 16pt; }
+  .panel { padding: 5px 10px; }
+  .tl .tick > span { display: block; }
+  .timeline, .when, .tl, ol.steps { gap: 3px; }
+  .timeline h2 { font-size: 13pt; }
+  .step-meta { display: inline; margin-left: 6px; }
+  .tl .tick { border: 0; padding: 0; min-height: 0; background: none; }
+  .tl li.done .tick { border: 0; padding: 0; background: none; }
+  .ask { margin-left: 34px; }
+  /* "Print 1-page plan": the first call, this week, what to bring, the cost and who to call later. */
+  html.print-compact .when[data-timing="month"], html.print-compact .when[data-timing="later"],
+  html.print-compact .carer-steps, html.print-compact .print-only.ahead-line { display: none !important; }
+  .print-only.compact-only { display: none !important; }
+  html.print-compact .print-only.compact-only { display: block !important; }
+  /* "Print this summary": only the handover, on its own page. */
+  html.print-handover .scr > :not(.handover-box) { display: none !important; }
+  html.print-handover .handover-box { display: block; border: 0; padding: 0; }
+  html.print-handover .handover-box > summary { display: none; }
 }
 
 /* Print: the action plan on one A4 page; no chrome. */

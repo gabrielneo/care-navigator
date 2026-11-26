@@ -77,6 +77,23 @@ test("print: the action plan fits on one A4 page", async ({ page, browserName },
   expect(pdf.match(/\/Type\s*\/Page[^s]/g)?.length).toBe(1);
 });
 
+test("print: a rich plan fits the 1-page print, and the full plan stays within 2 pages", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "page.pdf runs once, in Chromium");
+  // The heaviest plan we test: every activity, a serious illness, a stroke, a helper and a carer at their limit.
+  const heavy: Session = { ...MEI, adl: ["bath", "dress", "toilet", "move", "eat", "transfer"], sev: ["bath", "dress", "toilet"], med: true,
+    hlp: "yes", lim: "cant", cond: ["stroke", "eol"],
+    plan: [{ s: "day_care", n: 5 }, { s: "home_personal_care", n: 3 }, { s: "home_nursing", n: 1 }, { s: "home_therapy", n: 1 },
+      { s: "medical_escort", n: 1 }, { s: "meals_on_wheels", n: 5 }] };
+  await page.goto(`/plan/${encodeHash("action", heavy)}`);
+  await expect(page.getByText(/^About|In your area|AIC Link/).first()).toBeVisible();
+  const pages = async () => (await page.pdf({ format: "A4", printBackground: true })).toString("latin1").match(/\/Type\s*\/Page[^s]/g)?.length;
+  await page.emulateMedia({ media: "print" });
+  expect(await pages()).toBeLessThanOrEqual(2);                                // "Print full plan"
+  await page.evaluate(() => document.documentElement.classList.add("print-compact"));
+  expect(await pages()).toBe(1);                                               // "Print 1-page plan"
+  await expect(page.getByText("Later steps, support for you and things worth doing ahead are in this plan's link.")).toBeVisible();
+});
+
 test("Start: the 3D home appears, and reduced motion keeps the still mark", async ({ page, browser }) => {
   await page.goto("/");
   await expect(page.locator(".hero-3d > .scene.shown canvas")).toBeVisible({ timeout: 10_000 });

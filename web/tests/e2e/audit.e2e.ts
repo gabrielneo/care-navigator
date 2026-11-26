@@ -48,7 +48,8 @@ for (const [name, hash] of [
     await expect(page.locator("h1")).toBeVisible();
     const more = page.getByRole("button", { name: "See what a nursing home may cost" });
     if (await more.count()) await more.click();
-    const boxes = page.locator(".svc, .panel:not(.line):not(.lines), p.why");
+    // .handover-box repeats her own answers (e.g. her income range), whose sources are on the cost screen.
+    const boxes = page.locator(".svc, .panel:not(.line):not(.lines):not(.handover-box), p.why");
     let figures = 0;
     for (const box of await boxes.all()) {
       const text = (await box.textContent()) ?? "";

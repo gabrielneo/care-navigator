@@ -25,6 +25,8 @@ export const SessionSchema = z.strictObject({
   // Of those, the ones she can't do at all (severe disability: CareShield Life, MediSave Care, ElderFund). Absent on
   // older links, which then read as "some help" and show no severe-only payouts.
   sev: z.optional(z.array(ADL).check(z.maxLength(6), z.refine(unique, "repeated activity"))),
+  // Health events (8.7): a recent fall, a stroke, a hip fracture, a serious illness with under a year expected.
+  cond: z.optional(z.array(z.enum(["fall", "stroke", "hip", "eol"])).check(z.maxLength(4), z.refine(unique, "repeated condition"))),
   al: z.optional(z.enum(["weekdays", "most", "no", "unsure"])),
   mem: z.optional(z.enum(["dx", "undx", "no", "unsure"])),
   hlp: z.optional(z.enum(["yes", "considering", "no", "unsure"])),
@@ -39,8 +41,11 @@ export const SessionSchema = z.strictObject({
   t: z.optional(z.enum(["T0", "T1", "T2", "T3", "T4", "T5"])),
   r: z.optional(z.enum(["sc", "pr", "none"])),
   b: z.optional(z.enum(["le1969", "gt1969"])),
+  g: z.optional(z.enum(["pg", "mg", "no", "unsure"])),               // Pioneer or Merdeka Generation (8.12)
   q: z.optional(z.record(id, intIn(1, 10_000))),                     // quoted fee per unit, whole dollars
   x: z.optional(intIn(1, 10)),                                       // split between n people
+  l: z.optional(z.enum(["zh", "ms", "ta"])),                          // language: a draft translation (8.13); absent = English
+  done: z.optional(z.array(id).check(z.maxLength(20), z.refine(unique, "repeated step"))),  // ticked next steps (8.6)
 });
 export type Session = z.infer<typeof SessionSchema>;
 
