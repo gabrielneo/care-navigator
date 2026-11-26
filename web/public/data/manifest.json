@@ -1,6 +1,6 @@
 {
  "dataVersion": "2026.11.26-8",
- "builtAt": "2026-11-26T10:02:39+00:00",
+ "builtAt": "2026-11-26T10:28:43+00:00",
  "curatedHash": "2ae1b801e01aa81f7067f4c764122643b8901fc773992f6495dee9ae8be89e51",
  "sources": [
   {
@@ -392,7 +392,8 @@
   "price respite (high) comes from an aggregator (agg_thebestsingapore); check the provider's page",
   "78 open-data places were last edited over 24 months ago",
   "source moh_mg is not referenced by any table",
-  "official page did not return HTTP 200 after retries: https://www.healthhub.sg/a-z/costs-and-financing/elderfund",
+  "official page did not return HTTP 200 after retries: https://www.msf.gov.sg/what-we-do/comcare",
+  "official page did not return HTTP 200 after retries: https://www.msf.gov.sg/what-we-do/opg/lasting-power-of-attorney",
   "official page did not return HTTP 200 after retries: https://www.nhghealth.com.sg/nhg-polyclinics"
  ]
 }
