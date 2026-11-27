@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { Brand } from "@/components/Brand";
 import { LangText } from "@/components/LangText";
 import { Offline } from "@/components/Offline";
 import "./globals.css";
@@ -35,6 +36,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="proto" role="note">
             <LangText>Prototype for testing. Figures and wording have not yet been checked by a care professional.</LangText>
           </div>
+          {/* Sticky top bar: the logo (home) on the left; the page's language menu moves into nav-slot on the right. */}
+          <header className="nav no-print">
+            <Brand />
+            <div id="nav-slot" className="nav-slot" />
+          </header>
           <noscript>
             <p className="notice warn">
               This planner needs JavaScript. For help, call the AIC hotline on 1800-650-6060.

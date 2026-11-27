@@ -86,7 +86,7 @@ export function Planner() {
   const f = flow(s);
   const next = (session: Session = s) => go(f[f.indexOf(step) + 1] ?? "action", session);
   // The on-screen Back goes to the previous step even on a shared link, where there's no history to go back to.
-  const back = () => { const i = f.indexOf(step); if (i > 0) go(f[i - 1]!); else window.location.href = "/"; };
+  const back = () => { const i = f.indexOf(step); if (i > 0) go(f[i - 1]!); else window.location.href = s.l ? `/${s.l}/` : "/"; };
 
   setLang(s.l ?? "en");
   setMale(isMale(s));
@@ -95,7 +95,7 @@ export function Planner() {
   const startNew = () => {
     if (window.confirm(t("Start a new plan? Your browser's Back button still brings you back to this one."))) go("where", { v: manifest.dataVersion, l: s.l });
   };
-  const screen = { s, update, next, restart: () => go("where"), startNew, toWeek: () => go("week") };
+  const screen = { s, update, next, restart: () => go("where"), startNew, toWeek: () => go("week"), back };
   return (
     <>
       <LangMenu value={s.l ?? "en"} onChange={(l) => loadLang(l).then(() => update({ l: l === "en" ? undefined : l }))} />
@@ -110,7 +110,9 @@ export function Planner() {
       <PlanSoFar s={s} step={step} flow={f} go={(to) => go(to)} startNew={startNew} />
       <div className="scr enter" key={step}>
         {step !== "action" && <div className="top no-print">
-          <button type="button" className="link" onClick={back}>{t("Back")}</button>
+          <button type="button" className="back-btn" onClick={back}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>{t("Back")}
+          </button>
         </div>}
         {qIndex >= 0 ? <Question step={step} s={s} update={update} next={next} back={back} />
           : <Suspense fallback={<p className="help" aria-busy="true">{t("Loading…")}</p>}>

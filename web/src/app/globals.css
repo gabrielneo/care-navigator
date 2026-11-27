@@ -51,6 +51,25 @@ fieldset > .errtxt:empty { margin-block-start: -12px; }
 .or { display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: var(--fs-small); }
 .or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--border-subtle); }
 .alt .opt { border-style: dashed; }
+/* Sticky top bar: logo (home) left, language right. Sections scrolled to stop below it. */
+.nav { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 64px; padding: 8px 16px; background: color-mix(in srgb, var(--bg-page) 94%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border-subtle); }
+.brand { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; color: var(--text-heading); text-decoration: none;
+  font-family: var(--font-serif); font-weight: 600; font-size: 1.2rem; letter-spacing: -0.01em; white-space: nowrap; }
+.brand svg { width: 36px; height: 36px; flex: none; }
+.brand:hover span { text-decoration: underline; text-underline-offset: 4px; }
+.nav-slot { min-height: 48px; display: flex; align-items: center; min-width: 0; }
+.nav .lang { padding: 0; }
+/* Narrow phones: the mark alone, so a long language name still fits beside it. */
+@media (max-width: 419px) { .brand span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+[id], .scr { scroll-margin-top: 80px; }
+/* Back: a real button with an arrow, at the top of each screen and beside the main button at the bottom. */
+.back-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px 0 10px; border-radius: 999px;
+  border: 1.5px solid var(--border-control); background: var(--bg-surface); color: var(--primary); font: inherit;
+  font-size: var(--fs-small); font-weight: 600; cursor: pointer; }
+.back-btn:hover { border-color: var(--primary); }
+.back-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 /* Her week: drag a service's tag onto another day, or tap it and then "Move here". */
 .weekboard .day { min-height: 56px; gap: 12px; border-radius: var(--r-sm); transition: background-color 120ms ease-out; }
 .weekboard .day.over { background: var(--sel-fill); }

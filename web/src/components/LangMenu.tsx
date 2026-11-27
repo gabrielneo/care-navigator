@@ -2,7 +2,8 @@
 // The language menu on the Start page and the planner. On the planner it changes the plan's link; on the Start page it
 // goes to that language's Start page and marks the page's language for screen readers.
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { LANGS, type Lang } from "@/lib/i18n";
 
 export function LangMenu({ value, onChange }: { value: Lang; onChange?: (l: Lang) => void }) {
@@ -13,7 +14,11 @@ export function LangMenu({ value, onChange }: { value: Lang; onChange?: (l: Lang
     document.documentElement.lang = html;
     return () => { document.documentElement.lang = "en-SG"; };
   }, [html, onChange]);
-  return (
+  // It lives in the sticky top bar (the layout's #nav-slot); until the page has mounted it waits, so nothing jumps.
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  useEffect(() => setSlot(document.getElementById("nav-slot")), []);
+  if (!slot) return null;
+  return createPortal(
     <div className="lang no-print">
       <label className="lang-menu">
         <span className="sr-only">Language / 语言 / Bahasa / மொழி</span>
@@ -26,6 +31,7 @@ export function LangMenu({ value, onChange }: { value: Lang; onChange?: (l: Lang
         </select>
         <svg className="lang-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
       </label>
-    </div>
+    </div>,
+    slot,
   );
 }

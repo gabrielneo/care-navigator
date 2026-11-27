@@ -19,7 +19,12 @@ import { CountRange, money, NO_PRICE, range, Radio, Seg, Stepper, tilt, UNIT_ONE
 import { DAY_KEYS, daysOf, daysText, entryFor, startingDays } from "@/lib/engine/days";
 
 type P = { s: Session; update: (p: Partial<Session>) => void; next: (s?: Session) => void; restart: () => void; startNew: () => void;
-  toWeek: () => void };
+  toWeek: () => void; back: () => void };
+
+/** The main button with Back beside it, at the bottom of each screen, so neither is a scroll away. */
+function NextRow({ back, children }: { back: () => void; children: React.ReactNode }) {
+  return <div className="row nav-row"><button type="button" className="btn sec" onClick={back}>{t("Back")}</button>{children}</div>;
+}
 const services = new Map(rules.serviceTypes.map((x) => [x.serviceId, x]));
 const prices = new Map(rules.priceReferences.prices.map((p) => [p.serviceId, p]));
 const svcName = (id: string) => t(services.get(id)?.name ?? id);
@@ -73,7 +78,7 @@ const priceSources = (id: string) => {
 };
 
 // ---------- 3 · Matches ----------
-export function Matches({ s, update, next, restart }: P) {
+export function Matches({ s, update, next, restart, back }: P) {
   const m = matchServices(rules, s);
   const because = (x: (typeof m.matches)[number]) => becauseOf(x.when, s);
   // Matches beyond the top 3 that come from something she ticked herself (a health event, medical care) open by default;
@@ -128,7 +133,7 @@ export function Matches({ s, update, next, restart }: P) {
           {m.more.map(card)}
         </details>
       )}
-      <button type="button" className="btn" onClick={build}>{t("Build her week")}</button>
+      <NextRow back={back}><button type="button" className="btn" onClick={build}>{t("Build her week")}</button></NextRow>
     </>
   );
 }
@@ -268,7 +273,7 @@ function DayStrip({ days, onChange, name }: { days: number[]; onChange: (days: n
     </div>
   );
 }
-export function Week({ s, update, next }: P) {
+export function Week({ s, update, next, back }: P) {
   const plan = (s.plan ?? []).filter((e) => e.s !== "day_care_transport");
   // Change one service's count in place (keeps the order); 0 removes it. Transport's n: 0 opt-out is kept.
   // A service keeps its place while its days change, even with none chosen (it then isn't costed); Remove takes it out.
@@ -342,7 +347,7 @@ export function Week({ s, update, next }: P) {
         <p className="note">{t("A break for you isn't in the week: respite is booked as a stay of at least 7 days. Ask about it when you call.")}</p>
       )}
       <AddService options={addable} onAdd={(id) => set(id, services.get(id)?.defaultUnitsPerWeek ?? 1)} />
-      <button type="button" className="btn" onClick={() => next()}>{t("See the cost")}</button>
+      <NextRow back={back}><button type="button" className="btn" onClick={() => next()}>{t("See the cost")}</button></NextRow>
     </>
   );
 }
@@ -375,7 +380,7 @@ function AddService({ options, onAdd }: { options: typeof rules.serviceTypes; on
 }
 
 // ---------- 5 · Cost ----------
-export function CostScreen({ s, update, next, toWeek }: P) {
+export function CostScreen({ s, update, next, toWeek, back }: P) {
   const nursing = s.w === "in_nursing_home";
   const c = costPlan(rules, s);
   const m = matchServices(rules, s);
@@ -540,7 +545,7 @@ export function CostScreen({ s, update, next, toWeek }: P) {
       )}
 
       <p className="note">{disclaimer()}</p>
-      <button type="button" className="btn" onClick={() => next()}>{nursing ? t("See what to ask") : t("See who to call")}</button>
+      <NextRow back={back}><button type="button" className="btn" onClick={() => next()}>{nursing ? t("See what to ask") : t("See who to call")}</button></NextRow>
     </>
   );
 }
@@ -613,7 +618,7 @@ function IncomeHelper({ onPick }: { onPick: (t: TierId) => void }) {
 }
 
 // ---------- 6 · Who to call ----------
-export function ContactsScreen({ s, update, next }: P) {
+export function ContactsScreen({ s, update, next, back }: P) {
   const geo = useGeo();
   if (!geo) {
     return (
@@ -673,7 +678,7 @@ export function ContactsScreen({ s, update, next }: P) {
       </div>
       {near.linkOutSourceIds.map((id) => source(id) && <a key={id} className="link" href={source(id)!.url}>{LINK_LABEL[id] ? t(LINK_LABEL[id]) : source(id)!.title}</a>)}
       <p className="note">{t("Distances are from the centre of her area, so they're approximate.")}</p>
-      <button type="button" className="btn" onClick={() => next()}>{t("See her action plan")}</button>
+      <NextRow back={back}><button type="button" className="btn" onClick={() => next()}>{t("See her action plan")}</button></NextRow>
     </>
   );
 }

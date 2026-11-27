@@ -255,3 +255,24 @@ test("the dragged tag stays under the pointer, where it was picked up", async ({
   await page.mouse.up();
   await expect(page.locator(".tag.ghost")).toHaveCount(0);
 });
+
+test("sticky top bar with the logo and language; Back at the top and bottom of every screen", async ({ page }, info) => {
+  await page.goto(`/plan/${encodeHash("cost", MEI)}`);
+  const nav = page.locator("header.nav");
+  await expect(nav.getByRole("link", { name: "Care Navigator, home" })).toHaveAttribute("href", "/");
+  await expect(nav.getByLabel("Language / 语言 / Bahasa / மொழி")).toBeVisible();
+  await expect(page.locator("#total")).toBeVisible();                                 // the screen has loaded
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => nav.evaluate((e) => e.getBoundingClientRect().top)).toBeLessThanOrEqual(1);   // still at the top
+  for (const step of ["matches", "week", "cost", "contacts"] as const) {
+    await page.goto(`/plan/${encodeHash(step, MEI)}`);
+    await expect(page.locator(".top .back-btn")).toBeVisible();
+    await expect(page.locator(".nav-row").getByRole("button", { name: "Back" })).toBeVisible();
+  }
+  if (info.project.name !== "desktop") return;
+  // In a draft, the logo goes to that language's Start page; Back from the first question too.
+  await page.goto(`/plan/${encodeHash("where", { v: MEI.v, l: "zh" } as Session)}`);
+  await expect(nav.getByRole("link", { name: "Care Navigator, home" })).toHaveAttribute("href", "/zh/");
+  await page.locator(".top .back-btn").click();
+  await expect(page).toHaveURL(/\/zh\/$/);
+});
