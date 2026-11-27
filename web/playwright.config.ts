@@ -20,7 +20,9 @@ export default defineConfig({
     { name: "desktop", use: { viewport: { width: 1280, height: 800 } } },
     // Safari's engine on an iPhone-sized touch screen, and Firefox: the browsers families use besides Chrome.
     { name: "iphone", use: { ...devices["iPhone 14"], browserName: "webkit" } },
-    { name: "firefox", use: { browserName: "firefox", viewport: { width: 1280, height: 800 } } },
+    // shortcut: CI's Firefox tab sometimes crashes ("Page crashed") during axe on the largest Chinese screens though the page
+    // renders; one retry in CI only, so a real failure still fails twice. Drop it if a newer Firefox stops crashing.
+    { name: "firefox", retries: process.env.CI ? 1 : 0, use: { browserName: "firefox", viewport: { width: 1280, height: 800 } } },
   ],
   webServer: LIVE ? undefined : {
     command: `node tests/e2e/serve.mjs ${PORT}`,
