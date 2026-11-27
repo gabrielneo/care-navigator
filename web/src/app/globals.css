@@ -61,7 +61,8 @@ fieldset > .errtxt:empty { margin-block-start: -12px; }
 .weekboard .tag.movable:hover { border-color: var(--sage); }
 .weekboard .tag.movable[aria-pressed="true"] { border-color: var(--sage); background: var(--bg-surface); }
 .weekboard .drop { min-height: 36px; font-size: var(--fs-small); }
-.tag.ghost { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -130%); font-size: var(--fs-small);
+.tag.ghost { position: fixed; z-index: 50; pointer-events: none; white-space: nowrap; transform: scale(1.06) rotate(-2deg);
+  transform-origin: center; font-size: var(--fs-small); line-height: 1.6; min-height: 36px; display: inline-flex; align-items: center;
   font-weight: 600; color: var(--sage); background: var(--sage-fill); border: 1.5px solid var(--sage); border-radius: 999px;
   padding: 6px 14px; box-shadow: 0 8px 20px color-mix(in srgb, var(--text-primary) 20%, transparent); }
 /* Long source lists: the first 2 show, the rest open on tap; printed plans list them all. */

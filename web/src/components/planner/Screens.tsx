@@ -1,6 +1,7 @@
 "use client";
 // Screens 3–7. Wording: docs/specs/08; behaviour and edge cases: docs/specs/06 and 09; layouts: docs/wireframes.
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { dataDate, longDate, manifest, rules, source } from "@/lib/data";
 import { useGeo } from "@/lib/data/geo";
 import { costPlan, nursingHome, potentialGrants, planEntries, severeOnlyHidden, type Range } from "@/lib/engine/cost";
@@ -138,8 +139,9 @@ export function Matches({ s, update, next, restart }: P) {
  *  service can't take a second one. */
 function WeekBoard({ plan, onMove }: { plan: { s: string; n: number; d?: number }[]; onMove: (s: string, from: number, to: number) => void }) {
   const board = useRef<HTMLDivElement>(null);
-  const press = useRef<{ s: string; from: number; x: number; y: number; id: number } | null>(null);
-  const [drag, setDrag] = useState<{ s: string; from: number; x: number; y: number; over: number | null } | null>(null);
+  // Where the tag was grabbed (dx, dy inside it), so the dragged copy stays under the pointer exactly as picked up.
+  const press = useRef<{ s: string; from: number; x: number; y: number; id: number; dx: number; dy: number } | null>(null);
+  const [drag, setDrag] = useState<{ s: string; from: number; x: number; y: number; dx: number; dy: number; over: number | null } | null>(null);
   const [picked, setPicked] = useState<{ s: string; from: number } | null>(null);
   const [said, setSaid] = useState("");
   // Escape puts a picked-up service back. Listened for on the page: Safari doesn't focus a tapped button.
@@ -165,14 +167,17 @@ function WeekBoard({ plan, onMove }: { plan: { s: string; n: number; d?: number 
     <div className="panel weekboard" ref={board} aria-label={t("Her week")}
       onPointerDown={(e) => {
         const tag = (e.target as HTMLElement).closest<HTMLElement>("[data-tag]");
-        if (tag) press.current = { s: tag.dataset.tag!, from: Number(tag.dataset.from), x: e.clientX, y: e.clientY, id: e.pointerId };
+        if (!tag) return;
+        const r = tag.getBoundingClientRect();
+        press.current = { s: tag.dataset.tag!, from: Number(tag.dataset.from), x: e.clientX, y: e.clientY, id: e.pointerId,
+          dx: e.clientX - r.left, dy: e.clientY - r.top };
       }}
       onPointerMove={(e) => {
         const p = press.current;
         if (!p) return;
         if (!drag && Math.hypot(e.clientX - p.x, e.clientY - p.y) < 6) return;       // a tap, not a drag (yet)
         if (!drag) board.current?.setPointerCapture(p.id);
-        setDrag({ s: p.s, from: p.from, x: e.clientX, y: e.clientY, over: rowAt(e.clientX, e.clientY) });
+        setDrag({ s: p.s, from: p.from, x: e.clientX, y: e.clientY, dx: p.dx, dy: p.dy, over: rowAt(e.clientX, e.clientY) });
       }}
       onPointerUp={() => {
         if (drag && drag.over != null) move(drag.s, drag.from, drag.over);
@@ -204,7 +209,10 @@ function WeekBoard({ plan, onMove }: { plan: { s: string; n: number; d?: number 
         );
       })}
       <p className="sr-only" aria-live="polite">{said}</p>
-      {drag && <span className="tag ghost" aria-hidden="true" style={{ left: drag.x, top: drag.y }}>{shortName(drag.s)}</span>}
+      {/* On <body>, not inside the screen: the screen's slide-in animation holds a transform, which makes "fixed"
+          measure from the screen instead of the window and threw the copy off to the side. */}
+      {drag && createPortal(<span className="tag ghost" aria-hidden="true"
+        style={{ left: drag.x - drag.dx, top: drag.y - drag.dy }}>{shortName(drag.s)}</span>, document.body)}
     </div>
   );
 }

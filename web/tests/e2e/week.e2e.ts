@@ -230,3 +230,28 @@ test("the add-a-service dropdown draws its own arrow inside the box", async ({ p
   expect(await sel.evaluate((e) => getComputedStyle(e).appearance)).toBe("none");
   expect(await sel.evaluate((e) => parseFloat(getComputedStyle(e).paddingRight))).toBeGreaterThanOrEqual(44);
 });
+
+test("the dragged tag stays under the pointer, where it was picked up", async ({ page }, info) => {
+  test.skip(info.project.name === "iphone", "mouse drag");
+  await page.goto(`/plan/${encodeHash("week", { ...MEI, plan: [{ s: "home_personal_care", n: 3, d: 0b111000 }] })}`);
+  const board = page.getByLabel("Her week");
+  await board.scrollIntoViewIfNeeded();
+  const tag = board.getByRole("button", { name: /Home care/ }).first();
+  await expect(page.locator(".scr")).toHaveCSS("opacity", "1");                    // the slide-in has finished
+  const b = (await tag.boundingBox())!;
+  const grab = { x: b.x + 12, y: b.y + b.height / 2 };                             // near the tag's left edge
+  await page.mouse.move(grab.x, grab.y);
+  await page.mouse.down();
+  for (const [x, y] of [[grab.x + 40, grab.y + 30], [grab.x - 60, grab.y + 90]] as const) {
+    await page.mouse.move(x, y, { steps: 4 });
+    const g = (await page.locator(".tag.ghost").boundingBox())!;
+    expect(x).toBeGreaterThan(g.x - 4);
+    expect(x).toBeLessThan(g.x + g.width + 4);
+    expect(y).toBeGreaterThan(g.y - 4);
+    expect(y).toBeLessThan(g.y + g.height + 4);
+    expect(Math.abs(g.x + 12 - x)).toBeLessThan(10);                                // same grab point as picked up
+    expect(g.height).toBeLessThan(60);                                              // one line, not wrapped
+  }
+  await page.mouse.up();
+  await expect(page.locator(".tag.ghost")).toHaveCount(0);
+});
