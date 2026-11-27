@@ -59,8 +59,11 @@ fieldset > .errtxt:empty { margin-block-start: -12px; }
   font-family: var(--font-serif); font-weight: 600; font-size: 1.2rem; letter-spacing: -0.01em; white-space: nowrap; }
 .brand svg { width: 36px; height: 36px; flex: none; }
 .brand:hover span { text-decoration: underline; text-underline-offset: 4px; }
-.nav-slot { min-height: 48px; display: flex; align-items: center; min-width: 0; }
-.nav .lang { padding: 0; }
+.nav-slot { min-height: 48px; display: flex; align-items: center; justify-content: flex-end; flex: 0 1 auto; min-width: 0; }
+/* The language pill may shrink (its name then ends in "…") so a long name never pushes the page wider than a phone. */
+.nav .lang, .nav .lang-menu { min-width: 0; max-width: 100%; padding: 0; }
+.nav .lang-menu select { max-width: 100%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 359px) { .nav .lang-menu select { padding-left: 14px; } .nav .lang-globe { display: none; } }
 /* Narrow phones: the mark alone, so a long language name still fits beside it. */
 @media (max-width: 419px) { .brand span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
 [id], .scr { scroll-margin-top: 80px; }

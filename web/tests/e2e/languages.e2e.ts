@@ -38,7 +38,11 @@ async function checkScreen(page: Page, lang: Lang = "zh") {
   });
   await expect(page.getByText(LANGS.find((x) => x.id === lang)!.banner!)).toBeVisible();
   expect(await leftoverEnglish(page, lang)).toEqual([]);
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  // Firefox on CI crashes inside axe's contrast scan on the largest translated screens (the page itself renders); the
+  // same CSS passes that rule in Chromium and WebKit, so Firefox runs every other rule there.
+  const axe = new AxeBuilder({ page });
+  if (page.context().browser()?.browserType().name() === "firefox") axe.disableRules(["color-contrast"]);
+  const { violations } = await axe.analyze();
   expect(violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
 }
 const next = (page: Page) => page.getByRole("button", { name: "下一步", exact: true }).click();

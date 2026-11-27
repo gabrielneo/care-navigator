@@ -66,3 +66,15 @@ for (const l of [undefined, "zh", "ms", "ta"] as const) {
     }
   });
 }
+
+test("the top bar never makes the page wider than the phone, even with the longest language name and a wide font", async ({ page }, info) => {
+  test.skip(info.project.name !== "phone", "checked once");
+  await page.setViewportSize({ width: 320, height: 640 });
+  for (const l of ["ms", "ta"] as const) {
+    await page.goto(`/plan/${encodeHash("where", { ...RICH, l })}`);
+    await expect(page.locator("header.nav select")).toBeVisible();
+    // Linux CI fonts run wider than macOS ones: widen the text on purpose and check nothing spills sideways.
+    await page.addStyleTag({ content: "header.nav * { letter-spacing: 0.12em !important; }" });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${l} scrolls sideways`).toBe(true);
+  }
+});
