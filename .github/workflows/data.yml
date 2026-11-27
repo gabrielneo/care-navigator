@@ -40,8 +40,20 @@ jobs:
           git diff --exit-code web/src/lib/data/schema.json
       - name: Commit changed data
         run: |
+          # Commit only when the data itself changed. Warnings (like pages that refuse automated checks) and the build
+          # time change on almost every run; committing those made the owner's next push bounce. The alarm below still
+          # reads this run's warnings from the working copy.
+          same_files=$(python - <<'PY'
+          import json, subprocess
+          new = json.load(open("web/public/data/manifest.json"))["files"]
+          old = json.loads(subprocess.run(["git", "show", "HEAD:web/public/data/manifest.json"], capture_output=True, text=True).stdout or "{}").get("files")
+          print("yes" if new == old else "no")
+          PY
+          )
           if git diff --quiet web/public/data; then
             echo "No data change."
+          elif [ "$same_files" = "yes" ] && git diff --quiet -- web/public/data ':!web/public/data/manifest.json'; then
+            echo "Only warnings or the build time changed; not committed."
           else
             git config user.name "care-navigator-data-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

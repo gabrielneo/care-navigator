@@ -620,5 +620,11 @@ export const TA: Record<string, string> = {
  "Directions": "வழி",
  "No days chosen yet. Go back to her week to pick days.": "இன்னும் நாட்கள் தேர்ந்தெடுக்கப்படவில்லை. நாட்களைத் தேர்ந்தெடுக்க அவரது வாரத்துக்குத் திரும்பவும்.",
  "Back to her week": "அவரது வாரத்துக்குத் திரும்பு",
- "and {n} more": "மேலும் {n}"
+ "and {n} more": "மேலும் {n}",
+ "Drag a service to another day, or tap it, then choose the day.": "ஒரு சேவையை வேறு நாளுக்கு இழுக்கவும், அல்லது அதைத் தட்டி, பிறகு நாளைத் தேர்ந்தெடுக்கவும்.",
+ "Now tap Move here on another day, or tap {name} again to cancel.": "இப்போது வேறு நாளில் 'இங்கே நகர்த்து' என்பதைத் தட்டவும், அல்லது ரத்து செய்ய {name} ஐ மீண்டும் தட்டவும்.",
+ "Move here": "இங்கே நகர்த்து",
+ "{name} moved from {from} to {to}.": "{name} {from} இலிருந்து {to} க்கு நகர்த்தப்பட்டது.",
+ "{name} is already on {day}.": "{name} ஏற்கெனவே {day} அன்று உள்ளது.",
+ ", {day}": ", {day}"
 };

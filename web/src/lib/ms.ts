@@ -620,5 +620,11 @@ export const MS: Record<string, string> = {
  "Directions": "Arah",
  "No days chosen yet. Go back to her week to pick days.": "Belum ada hari dipilih. Kembali ke jadual mingguannya untuk memilih hari.",
  "Back to her week": "Kembali ke jadual mingguannya",
- "and {n} more": "dan {n} lagi"
+ "and {n} more": "dan {n} lagi",
+ "Drag a service to another day, or tap it, then choose the day.": "Seret perkhidmatan ke hari lain, atau ketik dahulu, kemudian pilih hari.",
+ "Now tap Move here on another day, or tap {name} again to cancel.": "Sekarang ketik Pindah ke sini pada hari lain, atau ketik {name} sekali lagi untuk batal.",
+ "Move here": "Pindah ke sini",
+ "{name} moved from {from} to {to}.": "{name} dipindahkan dari {from} ke {to}.",
+ "{name} is already on {day}.": "{name} sudah ada pada {day}.",
+ ", {day}": ", {day}"
 };

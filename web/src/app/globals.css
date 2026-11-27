@@ -51,6 +51,19 @@ fieldset > .errtxt:empty { margin-block-start: -12px; }
 .or { display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: var(--fs-small); }
 .or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--border-subtle); }
 .alt .opt { border-style: dashed; }
+/* Her week: drag a service's tag onto another day, or tap it and then "Move here". */
+.weekboard .day { min-height: 56px; gap: 12px; border-radius: var(--r-sm); transition: background-color 120ms ease-out; }
+.weekboard .day.over { background: var(--sel-fill); }
+.weekboard .day.over.no { background: var(--bg-sunken); }
+.weekboard .tag.movable { font: inherit; font-size: var(--fs-small); font-weight: 600; color: var(--sage); background: var(--sage-fill);
+  border: 1.5px solid transparent; border-radius: 999px; padding: 6px 14px; min-height: 36px; cursor: grab;
+  touch-action: none; user-select: none; -webkit-user-select: none; }
+.weekboard .tag.movable:hover { border-color: var(--sage); }
+.weekboard .tag.movable[aria-pressed="true"] { border-color: var(--sage); background: var(--bg-surface); }
+.weekboard .drop { min-height: 36px; font-size: var(--fs-small); }
+.tag.ghost { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, -130%); font-size: var(--fs-small);
+  font-weight: 600; color: var(--sage); background: var(--sage-fill); border: 1.5px solid var(--sage); border-radius: 999px;
+  padding: 6px 14px; box-shadow: 0 8px 20px color-mix(in srgb, var(--text-primary) 20%, transparent); }
 /* Long source lists: the first 2 show, the rest open on tap; printed plans list them all. */
 .sources.folded .src-more { display: none; }
 .sources .src-toggle { display: inline; min-height: 24px; font-size: inherit; }
@@ -137,7 +150,12 @@ legend { padding: 0; margin-bottom: 4px; }
 .input { width: 100%; min-height: 52px; border: 1.5px solid var(--border-control); border-radius: var(--r-md);
   background: var(--bg-surface); padding: 12px 14px; font-variant-numeric: tabular-nums; }
 .input[aria-invalid="true"] { border-color: var(--danger); }
-select.input { appearance: auto; }
+/* Our own chevron, drawn with two gradients in the palette, sitting well inside the border on every browser (the
+   native arrow was clipped against the rounded edge). */
+select.input { appearance: none; -webkit-appearance: none; padding-right: 48px; cursor: pointer; text-overflow: ellipsis;
+  background-image: linear-gradient(45deg, transparent 50%, var(--primary) 50%), linear-gradient(135deg, var(--primary) 50%, transparent 50%);
+  background-position: calc(100% - 24px) 52%, calc(100% - 18px) 52%; background-size: 6px 6px; background-repeat: no-repeat; }
+select.input:hover { border-color: var(--primary); }
 
 /* Cards, panels, steppers */
 .panel, .svc, .line, .contact { border: 1px solid var(--border-subtle); border-radius: var(--r-md);

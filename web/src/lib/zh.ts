@@ -620,5 +620,11 @@ export const ZH: Record<string, string> = {
  "Directions": "路线",
  "No days chosen yet. Go back to her week to pick days.": "还没有选择日子。请回到她的一周安排选择日子。",
  "Back to her week": "回到她的一周安排",
- "and {n} more": "以及另外 {n} 个"
+ "and {n} more": "以及另外 {n} 个",
+ "Drag a service to another day, or tap it, then choose the day.": "把服务拖到另一天，或先点按服务，再选择日子。",
+ "Now tap Move here on another day, or tap {name} again to cancel.": "现在在另一天点按“移到这里”，或再次点按{name}取消。",
+ "Move here": "移到这里",
+ "{name} moved from {from} to {to}.": "{name}已从{from}移到{to}。",
+ "{name} is already on {day}.": "{name}在{day}已经有了。",
+ ", {day}": "，{day}"
 };

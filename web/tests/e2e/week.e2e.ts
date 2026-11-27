@@ -179,3 +179,54 @@ test("next tier: directions, no-days message, folded sources, one-letter days, t
   await page.goto(`/plan/${encodeHash("matches", MEI)}`);
   await expect(page.locator(".svc", { hasText: "Interim Caregiver" }).first()).toContainText("A carer at home for up to 2 weeks after she leaves hospital.");
 });
+
+test("services move between days in Her week: drag a tag, or tap it and then Move here", async ({ page }, info) => {
+  const s: Session = { ...MEI, plan: [{ s: "day_care", n: 5 }, { s: "community_rehab", n: 1, d: 0b100 }] };   // rehab on Wed
+  await page.goto(`/plan/${encodeHash("week", s)}`);
+  const board = page.getByLabel("Her week");
+  const row = (day: string) => board.locator(".day", { has: page.locator("b", { hasText: new RegExp(`^${day}$`) }) });
+  await expect(row("Wed").getByRole("button", { name: /Centre therapy/ })).toBeVisible();
+  const where = () => decodeHash(new URL(page.url()).hash)!.session.plan!.find((e) => e.s === "community_rehab");
+
+  if (info.project.name !== "iphone") {
+    // Drag (mouse here; a finger sends the same pointer events): Wed → Sat.
+    await row("Sun").scrollIntoViewIfNeeded();
+    const tag = (await row("Wed").getByRole("button", { name: /Centre therapy/ }).boundingBox())!;
+    const sat = (await row("Sat").boundingBox())!;
+    await page.mouse.move(tag.x + tag.width / 2, tag.y + tag.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(sat.x + sat.width / 2, sat.y + sat.height / 2, { steps: 8 });
+    await page.mouse.up();
+    await expect(row("Sat").getByRole("button", { name: /Centre therapy/ })).toBeVisible();
+    expect(where()).toEqual({ s: "community_rehab", n: 1, d: 0b100000 });
+  } else {
+    await row("Wed").getByRole("button", { name: /Centre therapy/ }).click();
+    await row("Sat").getByRole("button", { name: /Move here/ }).click();
+    await expect(row("Sat").getByRole("button", { name: /Centre therapy/ })).toBeVisible();
+  }
+  // Tap, then Move here: Sat → Sun. Days that already have the service offer no Move here.
+  await row("Sat").getByRole("button", { name: /Centre therapy/ }).click();
+  await expect(row("Sat").getByRole("button", { name: /Centre therapy/ })).toHaveAttribute("aria-pressed", "true");
+  await expect(row("Sat").getByRole("button", { name: /Move here/ })).toHaveCount(0);
+  await row("Sun").getByRole("button", { name: /Move here/ }).click();
+  await expect(row("Sun").getByRole("button", { name: /Centre therapy/ })).toBeVisible();
+  expect(where()?.d).toBe(0b1000000);
+  // Day care is on every weekday, so its Mon tag can only go to the weekend.
+  await row("Mon").getByRole("button", { name: /Day care/ }).click();
+  await expect(row("Tue").getByRole("button", { name: /Move here/ })).toHaveCount(0);
+  await expect(row("Sat").getByRole("button", { name: /Move here/ })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(board.getByRole("button", { name: /Move here/ })).toHaveCount(0);
+  // The strip for the service shows the same days.
+  const strip = page.getByRole("group", { name: "Days for Therapy at a centre" });
+  await expect(strip.getByRole("button", { pressed: true })).toHaveCount(1);
+  await expect(strip.getByRole("button", { name: "Sun", pressed: true })).toBeVisible();
+});
+
+test("the add-a-service dropdown draws its own arrow inside the box", async ({ page }, info) => {
+  test.skip(info.project.name !== "phone", "checked once");
+  await page.goto(`/plan/${encodeHash("week", MEI)}`);
+  const sel = page.getByLabel("Add a service");
+  expect(await sel.evaluate((e) => getComputedStyle(e).appearance)).toBe("none");
+  expect(await sel.evaluate((e) => parseFloat(getComputedStyle(e).paddingRight))).toBeGreaterThanOrEqual(44);
+});

@@ -133,6 +133,82 @@ export function Matches({ s, update, next, restart }: P) {
 }
 
 // ---------- 4 · Week ----------
+/** The week at a glance, where each service can be moved to another day: drag its tag onto a day, or tap the tag and
+ *  then "Move here" (the way that works for touch, keyboard and screen readers alike). A day that already has that
+ *  service can't take a second one. */
+function WeekBoard({ plan, onMove }: { plan: { s: string; n: number; d?: number }[]; onMove: (s: string, from: number, to: number) => void }) {
+  const board = useRef<HTMLDivElement>(null);
+  const press = useRef<{ s: string; from: number; x: number; y: number; id: number } | null>(null);
+  const [drag, setDrag] = useState<{ s: string; from: number; x: number; y: number; over: number | null } | null>(null);
+  const [picked, setPicked] = useState<{ s: string; from: number } | null>(null);
+  const [said, setSaid] = useState("");
+  // Escape puts a picked-up service back. Listened for on the page: Safari doesn't focus a tapped button.
+  useEffect(() => {
+    if (!picked) return;
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setPicked(null); };
+    addEventListener("keydown", esc);
+    return () => removeEventListener("keydown", esc);
+  }, [picked]);
+  const on = (s: string) => daysOf(plan.find((e) => e.s === s) ?? { n: 0 });
+  const rowAt = (x: number, y: number) => {
+    const el = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-row]");
+    return el && board.current?.contains(el) ? Number(el.dataset.row) : null;
+  };
+  const move = (s: string, from: number, to: number) => {
+    const name = shortName(s), day = (i: number) => t(DAY_KEYS[i]!);
+    if (to === from) return;
+    if (on(s).includes(to)) { setSaid(t("{name} is already on {day}.", { name, day: day(to) })); return; }
+    onMove(s, from, to);
+    setSaid(t("{name} moved from {from} to {to}.", { name, from: day(from), to: day(to) }));
+  };
+  return (
+    <div className="panel weekboard" ref={board} aria-label={t("Her week")}
+      onPointerDown={(e) => {
+        const tag = (e.target as HTMLElement).closest<HTMLElement>("[data-tag]");
+        if (tag) press.current = { s: tag.dataset.tag!, from: Number(tag.dataset.from), x: e.clientX, y: e.clientY, id: e.pointerId };
+      }}
+      onPointerMove={(e) => {
+        const p = press.current;
+        if (!p) return;
+        if (!drag && Math.hypot(e.clientX - p.x, e.clientY - p.y) < 6) return;       // a tap, not a drag (yet)
+        if (!drag) board.current?.setPointerCapture(p.id);
+        setDrag({ s: p.s, from: p.from, x: e.clientX, y: e.clientY, over: rowAt(e.clientX, e.clientY) });
+      }}
+      onPointerUp={() => {
+        if (drag && drag.over != null) move(drag.s, drag.from, drag.over);
+        press.current = null;
+        setDrag(null);
+      }}
+      onPointerCancel={() => { press.current = null; setDrag(null); }}>
+      <p className="help">{picked ? t("Now tap Move here on another day, or tap {name} again to cancel.", { name: shortName(picked.s) })
+        : t("Drag a service to another day, or tap it, then choose the day.")}</p>
+      {DAY_KEYS.map((day, i) => {
+        const here = plan.filter((e) => daysOf(e).includes(i));
+        const canDrop = picked && !on(picked.s).includes(i);
+        return (
+          <div className={`day${drag?.over === i ? (on(drag.s).includes(i) ? " over no" : " over") : ""}`} key={day} data-row={i}>
+            <b>{t(day)}</b>
+            <span className="tags">
+              {here.map((e) => (
+                <button type="button" className="tag movable" key={e.s} data-tag={e.s} data-from={i}
+                  aria-pressed={picked?.s === e.s && picked.from === i}
+                  onClick={(ev) => { if (!drag) { ev.preventDefault(); setPicked(picked?.s === e.s && picked.from === i ? null : { s: e.s, from: i }); } }}>
+                  {shortName(e.s)}<span className="sr-only">{t(", {day}", { day: t(day) })}</span>
+                </button>
+              ))}
+              {canDrop && <button type="button" className="link drop" onClick={() => { move(picked.s, picked.from, i); setPicked(null); }}>
+                {t("Move here")}<span className="sr-only"> ({t(day)})</span></button>}
+              {!here.length && !canDrop && <span className="meta">—</span>}
+            </span>
+          </div>
+        );
+      })}
+      <p className="sr-only" aria-live="polite">{said}</p>
+      {drag && <span className="tag ghost" aria-hidden="true" style={{ left: drag.x, top: drag.y }}>{shortName(drag.s)}</span>}
+    </div>
+  );
+}
+
 /** One letter for a day on narrow phones: the last character in Chinese (周一 → 一), else the first letter as people
  *  read it (Tamil vowel signs stay with their letter). */
 function dayLetter(day: string) {
@@ -204,8 +280,6 @@ export function Week({ s, update, next }: P) {
 
   // Display only: each service goes on weekdays first, spread out (2 a week → Tue and Thu), so services share days
   // as they usually do (a carer in the morning, day care after) instead of spilling onto the weekend.
-  const days: string[][] = DAY_KEYS.map(() => []);
-  for (const e of plan) for (const i of daysOf(e)) days[i]!.push(shortName(e.s));
 
   if (plan.length === 0) {
     return (
@@ -252,13 +326,10 @@ export function Week({ s, update, next }: P) {
           </div>
         );
       })}
-      <div className="panel" style={{ gap: 0 }} aria-label={t("Her week")}>
-        {DAY_KEYS.map((day, i) => (
-          <div className="day" key={day}><b>{t(day)}</b>
-            <span className="tags">{days[i]!.length ? days[i]!.map((t, j) => <span className="tag" key={j}>{t}</span>) : <span className="meta">—</span>}</span>
-          </div>
-        ))}
-      </div>
+      <WeekBoard plan={plan} onMove={(id, from, to) => {
+        const e = plan.find((x) => x.s === id);
+        if (e) setDays(id, [...daysOf(e).filter((x) => x !== from), to].sort());
+      }} />
       {respiteMatched && !plan.some((e) => e.s === "respite") && (
         <p className="note">{t("A break for you isn't in the week: respite is booked as a stay of at least 7 days. Ask about it when you call.")}</p>
       )}

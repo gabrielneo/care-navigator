@@ -500,6 +500,11 @@ Next tier, built 27 Nov 2026:
 - **Shorter cards:** the Interim Caregiver description is now "A carer at home for up to 2 weeks after she leaves hospital". The Caregivers Training Grant no longer repeats its age rule.
 - **Place cards** now say "Address checked …" or "Address from government open data, updated …" instead of "record updated".
 
+### Moving services between days (27 Nov 2026)
+- **Her week:** each service tag can move to another day. Drag it (mouse or finger), or tap it and then "Move here" on a day, which works for keyboard and screen readers too. A day that already has the service offers no "Move here". Escape cancels, and a polite announcement says what moved. The day strip and the cost follow.
+- **Dropdowns** draw their own arrow in the palette, inside the box. The browser's arrow was clipped against the rounded border.
+- **Found in testing:** Safari doesn't focus a tapped button, so Escape is listened for page-wide while a service is picked up.
+
 ---
 
 ## Execution sequence and gates
